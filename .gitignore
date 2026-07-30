@@ -1,0 +1,68 @@
+# Maven / Java
+.m2/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Keep no accidental fat jars outside target
+!**/src/**/*.jar
+
+# Node / Vite / frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.vite/
+**/.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env / secrets (keep samples)
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# IDE / editors
+*.iml
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs / coverage / test output
+*.log
+logs/
+coverage/
+.nyc_output/
+**/jacoco/
+**/surefire-reports/
+**/failsafe-reports/
+
+# Docker / local data volumes (if bind-mounted)
+minio_data/
+postgres_data/
+rabbitmq_data/
+**/data/minio/
+**/data/postgres/
+
+# Misc build / cache
+.cache/
+.turbo/
+dist/
+tmp/
+temp/

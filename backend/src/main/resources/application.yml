@@ -1,0 +1,87 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    multipart:
+      max-file-size: 512MB
+      max-request-size: 512MB
+
+spring:
+  application:
+    name: telerad
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/telerad}
+    username: ${SPRING_DATASOURCE_USERNAME:telerad}
+    password: ${SPRING_DATASOURCE_PASSWORD:telerad}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:telerad}
+    password: ${SPRING_RABBITMQ_PASSWORD:telerad}
+  servlet:
+    multipart:
+      max-file-size: 512MB
+      max-request-size: 512MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+telerad:
+  jwt:
+    secret: ${TELERAD_JWT_SECRET:change-me-in-production-use-a-long-secret-key-32chars}
+    access-token-minutes: 480
+  s3:
+    endpoint: ${TELERAD_S3_ENDPOINT:http://localhost:9000}
+    access-key: ${TELERAD_S3_ACCESS_KEY:minioadmin}
+    secret-key: ${TELERAD_S3_SECRET_KEY:minioadmin}
+    bucket: ${TELERAD_S3_BUCKET:telerad}
+    region: ${TELERAD_S3_REGION:us-east-1}
+  scp:
+    enabled: ${TELERAD_SCP_ENABLED:false}
+    ae-title: ${TELERAD_SCP_AE_TITLE:TELERAD_SCP}
+    port: ${TELERAD_SCP_PORT:11112}
+    bind-address: ${TELERAD_SCP_BIND:0.0.0.0}
+  rabbit:
+    ingest-queue: study.ingest
+    exchange: telerad.exchange
+  notify:
+    email-enabled: ${TELERAD_NOTIFY_EMAIL_ENABLED:true}
+    webhook-enabled: ${TELERAD_NOTIFY_WEBHOOK_ENABLED:true}
+    fallback-email: ${TELERAD_NOTIFY_FALLBACK_EMAIL:ops@telerad.local}
+    default-webhook-url: ${TELERAD_NOTIFY_WEBHOOK_URL:}
+  sla:
+    enabled: ${TELERAD_SLA_ENABLED:true}
+    stat-minutes: ${TELERAD_SLA_STAT_MINUTES:60}
+    urgent-minutes: ${TELERAD_SLA_URGENT_MINUTES:240}
+    routine-minutes: ${TELERAD_SLA_ROUTINE_MINUTES:1440}
+    check-interval-ms: ${TELERAD_SLA_CHECK_MS:60000}
+
+logging:
+  level:
+    com.telerad: INFO
+    org.dcm4che3: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: scp
+
+server:
+  port: ${SERVER_PORT:8081}
+
+telerad:
+  scp:
+    enabled: true
