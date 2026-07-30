@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth'
 import { RequireAuth } from './RequireAuth'
@@ -5,8 +6,12 @@ import { AdminPage } from './pages/AdminPage'
 import { AppShell } from './pages/AppShell'
 import { HospitalPage } from './pages/HospitalPage'
 import { LoginPage } from './pages/LoginPage'
-import { StudyViewerPage } from './pages/StudyViewerPage'
 import { WorklistPage } from './pages/WorklistPage'
+
+// Defer Cornerstone / VTK (and xmlbuilder2) until the viewer route is opened
+const StudyViewerPage = lazy(() =>
+  import('./pages/StudyViewerPage').then((m) => ({ default: m.StudyViewerPage })),
+)
 
 export default function App() {
   return (
@@ -18,7 +23,14 @@ export default function App() {
             <Route element={<AppShell />}>
               <Route element={<RequireAuth roles={['RADIOLOGIST', 'ADMIN']} />}>
                 <Route path="/worklist" element={<WorklistPage />} />
-                <Route path="/studies/:id" element={<StudyViewerPage />} />
+                <Route
+                  path="/studies/:id"
+                  element={
+                    <Suspense fallback={<p className="muted">Loading viewer…</p>}>
+                      <StudyViewerPage />
+                    </Suspense>
+                  }
+                />
               </Route>
               <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
                 <Route path="/hospital" element={<HospitalPage />} />

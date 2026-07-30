@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { DicomViewport } from '../components/DicomViewport'
@@ -42,6 +42,13 @@ export function StudyViewerPage() {
 
   const series = detail?.series?.[seriesIdx]
   const instance = series?.instances?.[instanceIdx]
+  const viewportInstances = useMemo(
+    () => (series?.instances || []).map((i) => ({
+      sopUid: i.sopInstanceUid,
+      numberOfFrames: i.numberOfFrames,
+    })),
+    [series],
+  )
 
   async function saveDraft() {
     setSaving(true)
@@ -122,10 +129,8 @@ export function StudyViewerPage() {
         <DicomViewport
           studyUid={study.studyInstanceUid}
           seriesUid={series.seriesInstanceUid}
-          sopUid={instance.sopInstanceUid}
+          instances={viewportInstances}
           instanceIndex={instanceIdx}
-          instanceCount={series.instances.length}
-          numberOfFrames={instance.numberOfFrames}
           cineRate={instance.cineRate}
           frameTime={instance.frameTime}
           modality={series.modality || study.modality}
@@ -163,8 +168,10 @@ export function StudyViewerPage() {
           <div className="success">Signed {detail.report?.signedAt ? new Date(detail.report.signedAt).toLocaleString() : ''}</div>
         )}
         <p className="muted" style={{ fontSize: '0.8rem' }}>
-          Tools: drag = W/L · Shift+drag = pan · Alt+drag = zoom · wheel = scroll frames ·
-          Ctrl+wheel = zoom · I = invert · Space = play/pause cine
+          Cornerstone3D: left-drag = active tool (W/L, Zoom, Pan, Length) ·
+          middle = pan · right = zoom · wheel = stack scroll ·
+          L = length · I = invert · R = reset · Space = cine (multi-frame).
+          Length uses PixelSpacing (mm) when present in the DICOM.
         </p>
       </aside>
     </div>

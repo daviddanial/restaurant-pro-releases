@@ -137,6 +137,12 @@ public class WadoController {
             meta.put("PhotometricInterpretation", attrs.getString(Tag.PhotometricInterpretation));
             meta.put("WindowCenter", attrs.getString(Tag.WindowCenter));
             meta.put("WindowWidth", attrs.getString(Tag.WindowWidth));
+            if (attrs.containsValue(Tag.PixelSpacing)) {
+                meta.put("PixelSpacing", attrs.getStrings(Tag.PixelSpacing));
+            }
+            if (attrs.containsValue(Tag.ImagerPixelSpacing)) {
+                meta.put("ImagerPixelSpacing", attrs.getStrings(Tag.ImagerPixelSpacing));
+            }
             if (attrs.containsValue(Tag.RescaleSlope)) {
                 meta.put("RescaleSlope", attrs.getDouble(Tag.RescaleSlope, 1.0));
             }
