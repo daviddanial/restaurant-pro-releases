@@ -103,6 +103,15 @@ Registered Calling AEs (seed): `DEMOHOSP_PACS`, `CITYMED_PACS`
 backend/     Spring Boot API + ingest worker + optional DICOM SCP
 frontend/    React (Vite) hospital / radiologist / admin portals
 scripts/     Sample DICOM generator
+docs/        Product requirements (source of truth)
 PLAN.md      Architecture & milestones
 docker-compose.yml
 ```
+
+## Product requirements (source of truth)
+
+Canonical scope, workflows, and granular functional requirements (with Done / Partial / Todo / Deferred status):
+
+→ [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md)
+
+Engineering architecture and delivery plan: [`PLAN.md`](PLAN.md)

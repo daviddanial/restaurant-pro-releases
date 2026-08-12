@@ -1,5 +1,7 @@
 # Teleradiology Platform — Architecture & Delivery Plan
 
+**Product requirements (source of truth):** [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md) — scope, workflows, FRs, progress. This plan covers **architecture & how we build**; requirements own **what we commit to**.
+
 **Stack:** Spring Boot (backend) · React (frontend)  
 **Ingest:** Web DICOM upload **and** hospital PACS (DICOM network)  
 **Goal:** Remote radiologists read studies, record interpretations, and return reports to hospitals — reducing delays caused by scarce on-site radiologists.
