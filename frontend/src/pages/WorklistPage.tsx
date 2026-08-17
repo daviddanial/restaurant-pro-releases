@@ -1,22 +1,25 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
-import type { StudyListItem } from '../types'
+import type { StudyListItem, StudyPriority, StudyStatus } from '../types'
+
+const AVAILABILITY = ['Online', 'On-call', 'Offline'] as const
+type Availability = (typeof AVAILABILITY)[number]
 
 export function WorklistPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [items, setItems] = useState<StudyListItem[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [modality, setModality] = useState('')
   const [priority, setPriority] = useState('')
+  const [site, setSite] = useState('')
+  const [availability, setAvailability] = useState<Availability>('Online')
+  const [claimingId, setClaimingId] = useState<string | null>(null)
 
   async function load() {
     try {
-      const params = new URLSearchParams()
-      if (modality) params.set('modality', modality)
-      if (priority) params.set('priority', priority)
-      const data = await api<StudyListItem[]>(`/api/worklist?${params}`)
+      const data = await api<StudyListItem[]>('/api/worklist')
       setItems(data)
       setError(null)
     } catch (err) {
@@ -26,40 +29,104 @@ export function WorklistPage() {
 
   useEffect(() => {
     load()
-  }, [modality, priority])
+  }, [])
 
-  async function claim(id: string) {
-    await api(`/api/studies/${id}/claim`, { method: 'POST' })
-    await load()
+  const sites = useMemo(() => {
+    const names = items.map((s) => s.hospitalName).filter((n): n is string => Boolean(n))
+    return [...new Set(names)].sort()
+  }, [items])
+
+  const filtered = useMemo(() => {
+    return items.filter((s) => {
+      if (priority === 'STAT' && s.priority !== 'STAT') return false
+      if (priority === 'REGULAR' && s.priority === 'STAT') return false
+      if (site && s.hospitalName !== site) return false
+      return true
+    })
+  }, [items, priority, site])
+
+  const claimedCount = items.filter((s) => s.status === 'IN_PROGRESS').length
+  const queueCount = items.length || 1
+  const progressPct = Math.round((claimedCount / queueCount) * 100)
+
+  async function onClaim(study: StudyListItem) {
+    const mine = study.assignedTo === user?.userId
+    if (study.status === 'IN_PROGRESS' && mine) {
+      navigate(`/studies/${study.id}`)
+      return
+    }
+    setClaimingId(study.id)
+    setError(null)
+    try {
+      await api(`/api/studies/${study.id}/claim`, { method: 'POST' })
+      navigate(`/studies/${study.id}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Claim failed')
+      setClaimingId(null)
+    }
   }
 
   return (
-    <div className="page">
-      <div className="page-header">
+    <div className="page worklist-page">
+      <div className="page-header worklist-header">
         <div>
           <h1>My Worklist</h1>
           <p className="subtitle">
-            {user?.fullName}
+            {user?.fullName || 'Radiologist'}
             {user?.role === 'RADIOLOGIST' ? ' · Radiologist' : ''}
           </p>
         </div>
-        <div className="filters">
-          <select value={modality} onChange={(e) => setModality(e.target.value)}>
-            <option value="">All modalities</option>
-            <option>CT</option>
-            <option>MR</option>
-            <option>CR</option>
-            <option>DX</option>
-            <option>US</option>
-          </select>
+        <div className="worklist-meta">
+          <div className="worklist-progress">
+            <p>
+              {claimedCount}/{items.length} studies claimed
+            </p>
+            <div className="worklist-progress-track" aria-hidden="true">
+              <span style={{ width: `${items.length ? progressPct : 0}%` }} />
+            </div>
+          </div>
+          <div className="avail-toggle" role="radiogroup" aria-label="Availability">
+            {AVAILABILITY.map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                role="radio"
+                aria-checked={availability === opt}
+                className={availability === opt ? 'on' : undefined}
+                onClick={() => setAvailability(opt)}
+              >
+                <span className={`avail-dot ${opt === 'Online' ? 'online' : opt === 'On-call' ? 'oncall' : 'offline'}`} />
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="worklist-filters">
+        <label className="filter-select">
+          <span className="sr-only">Priority</span>
           <select value={priority} onChange={(e) => setPriority(e.target.value)}>
             <option value="">All priorities</option>
             <option value="STAT">STAT</option>
-            <option value="URGENT">URGENT</option>
-            <option value="ROUTINE">ROUTINE</option>
+            <option value="REGULAR">Regular</option>
           </select>
-          <button className="btn secondary" type="button" onClick={load}>Refresh</button>
-        </div>
+        </label>
+        <label className="filter-select">
+          <span className="sr-only">Site</span>
+          <select value={site} onChange={(e) => setSite(e.target.value)}>
+            <option value="">All sites</option>
+            {sites.map((name) => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+        </label>
+        <label className="filter-select">
+          <span className="sr-only">Subspecialty</span>
+          <select defaultValue="">
+            <option value="">All subspecialties</option>
+          </select>
+        </label>
       </div>
 
       {error && <div className="error">{error}</div>}
@@ -69,51 +136,45 @@ export function WorklistPage() {
           <thead>
             <tr>
               <th>Priority</th>
-              <th>Patient</th>
-              <th>Hospital</th>
+              <th>Patient Name</th>
+              <th>MRN</th>
               <th>Modality</th>
-              <th>Accession</th>
+              <th>Referring Site</th>
               <th>Status</th>
-              <th>SLA</th>
-              <th>Instances</th>
-              <th></th>
+              <th>Assign Date</th>
+              <th className="col-action">Action</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((s) => (
-              <tr key={s.id} className={s.slaOverdue ? 'row-overdue' : ''}>
-                <td>
-                  <span className={`badge ${s.priority === 'STAT' ? 'stat' : ''}`}>{s.priority}</span>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 500 }}>{s.patientName || 'Unknown'}</div>
-                  <div className="muted" style={{ fontSize: '0.75rem' }}>{s.patientMrn}</div>
-                </td>
-                <td>{s.hospitalName}</td>
-                <td>{s.modality}</td>
-                <td className="mono">{s.accessionNumber || '—'}</td>
-                <td><span className={`badge ${statusClass(s.status)}`}>{statusLabel(s.status)}</span></td>
-                <td>
-                  {s.slaDueAt ? (
-                    <span className={`badge ${s.slaOverdue ? 'breached' : ''}`}>
-                      {s.slaOverdue ? 'SLA Breached' : formatSla(s.slaDueAt)}
-                    </span>
-                  ) : '—'}
-                </td>
-                <td>{s.instanceCount}</td>
-                <td>
-                  <div className="row" style={{ justifyContent: 'flex-end' }}>
-                    {(s.status === 'READY' || s.status === 'IN_PROGRESS') && (
-                      <button className="btn secondary" type="button" onClick={() => claim(s.id)}>Claim</button>
-                    )}
-                    <Link className="btn" to={`/studies/${s.id}`}>Open</Link>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {items.length === 0 && (
+            {filtered.map((s) => {
+              const claimable = canClaim(s, user?.userId)
+              return (
+                <tr key={s.id} className={s.slaOverdue ? 'row-overdue' : undefined}>
+                  <td><PriorityBadge priority={s.priority} /></td>
+                  <td className="patient-cell">{displayPatientName(s.patientName)}</td>
+                  <td className="mono muted-cell">{s.patientMrn || '—'}</td>
+                  <td className="muted-cell">{s.modality || '—'}</td>
+                  <td className="muted-cell">{s.hospitalName || '—'}</td>
+                  <td><StatusBadge status={s.status} /></td>
+                  <td className="date-cell">{formatAssignDate(s.readyAt)}</td>
+                  <td className="col-action">
+                    <div className="claim-cell">
+                      <button
+                        type="button"
+                        className="btn-claim"
+                        disabled={!claimable || claimingId === s.id}
+                        onClick={() => onClaim(s)}
+                      >
+                        {claimingId === s.id ? 'Opening…' : 'Claim'}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+            {filtered.length === 0 && (
               <tr>
-                <td colSpan={9} className="muted" style={{ padding: '2rem', textAlign: 'center' }}>
+                <td colSpan={8} className="muted" style={{ padding: '2rem', textAlign: 'center' }}>
                   No studies in worklist.
                 </td>
               </tr>
@@ -125,24 +186,35 @@ export function WorklistPage() {
   )
 }
 
-function formatSla(iso: string) {
-  const due = new Date(iso).getTime()
-  const mins = Math.round((due - Date.now()) / 60000)
-  if (mins < 0) return 'SLA Breached'
-  if (mins <= 30) return 'Approaching SLA'
-  if (mins >= 120) return `${Math.round(mins / 60)}h left`
-  return `${mins}m left`
+function canClaim(study: StudyListItem, userId: string | undefined) {
+  if (study.status === 'READY') return true
+  if (study.status === 'IN_PROGRESS' && study.assignedTo && userId && study.assignedTo === userId) return true
+  return false
 }
 
-function statusLabel(status: string) {
-  if (status === 'IN_PROGRESS') return 'Assigned'
-  if (status === 'REPORTED' || status === 'DELIVERED') return 'Report Ready'
-  return status
+function displayPatientName(name: string | null) {
+  if (!name) return 'Unknown'
+  return name.replace(/\^/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
-function statusClass(status: string) {
-  if (status === 'READY') return 'ready'
-  if (status === 'IN_PROGRESS') return 'progress'
-  if (status === 'REPORTED' || status === 'DELIVERED') return 'done'
-  return ''
+function formatAssignDate(iso: string | null) {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return '—'
+  const mon = d.toLocaleString('en-US', { month: 'short' })
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mm = String(d.getMinutes()).padStart(2, '0')
+  return `${mon} ${d.getDate()} · ${hh}:${mm}`
+}
+
+function PriorityBadge({ priority }: { priority: StudyPriority }) {
+  if (priority === 'STAT') return <span className="pri-stat">STAT</span>
+  return <span className="pri-regular">{priority === 'URGENT' ? 'Urgent' : 'Regular'}</span>
+}
+
+function StatusBadge({ status }: { status: StudyStatus }) {
+  if (status === 'READY') return <span className="status-pill ready">Ready</span>
+  if (status === 'IN_PROGRESS') return <span className="status-pill progress">In Progress</span>
+  if (status === 'REPORTED' || status === 'DELIVERED') return <span className="status-pill done">Report Ready</span>
+  return <span className="status-pill">{status}</span>
 }

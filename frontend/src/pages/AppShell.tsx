@@ -26,6 +26,11 @@ export function AppShell() {
         </Link>
 
         <nav className="topbar-nav" aria-label="Primary">
+          {(user.role === 'HOSPITAL_USER' || user.role === 'ADMIN') && (
+            <NavLink to="/hospital" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+              Hospital Portal
+            </NavLink>
+          )}
           {canRead && (
             <NavLink
               to="/worklist"
@@ -39,11 +44,6 @@ export function AppShell() {
             <span className={onReporting ? 'active nav-current' : 'nav-current muted'} aria-current={onReporting ? 'page' : undefined}>
               Reporting
             </span>
-          )}
-          {(user.role === 'HOSPITAL_USER' || user.role === 'ADMIN') && (
-            <NavLink to="/hospital" className={({ isActive }) => (isActive ? 'active' : undefined)}>
-              Hospital Portal
-            </NavLink>
           )}
           {user.role === 'ADMIN' && (
             <NavLink to="/admin" className={({ isActive }) => (isActive ? 'active' : undefined)}>
