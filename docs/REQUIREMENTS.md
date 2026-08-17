@@ -128,7 +128,7 @@ Tracked so they are not lost. **Not commitments** until moved via Open Decision 
 | Fatigue / reading-velocity alerts | Admin-only pace monitoring | OD-SAF |
 | Smart hanging protocols (auto prior 1×2) | Prior fetch + sync scroll | OD-VW |
 | HL7 v2 ORU^R01 outbound | Beyond current FHIR JSON/webhook | OD-INT |
-| Report templates library | Global / personal rich templates | OD-RPT |
+| Report templates admin CRUD | Create/edit personal & global templates | FR-ADM-007 |
 
 ---
 
@@ -390,7 +390,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-RPT-006** | Critical flag shall be persisted and included in PDF and notifications when true. | P0 | P0 | **Done** |
 | **FR-RPT-007** | Report draft shall autosave periodically in the UI with a visible saving indicator. | P1 | P1 | **Todo** |
 | **FR-RPT-008** | Addendum workflow after sign (new version without deleting original). | P2 | P2 | **Todo** |
-| **FR-RPT-009** | Rich-text editor with templates cascade (modality → body part). | P2 | Px | **Deferred** |
+| **FR-RPT-009** | Radiologist shall insert a report template via type → modality → body part cascade; order placeholders auto-fill; remaining clinical tokens stay editable. | P1 | P1 | **Done** |
 
 **Acceptance (RPT-002–003):** Sign without impression → 400; with impression → PDF downloadable; study DELIVERED.
 
@@ -498,7 +498,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **P0 Core loop** | AUTH, ING, WL, VW, RPT, DLV (portal), AUD, NTF (stubs) | End-to-end clinical loop in dev/test |
 | **P1 Integrations & hardening** | PAC, ADM polish, DLV webhook, NTF SMS (sandbox/sim), NFR ops prep | Full integrations working with simulators/stubs |
 | **P2 Clinical safety** | SAF, RPT addendum, WL auto-assign | Safety & ops maturity in the product |
-| **Px Deferred** | BIL, EXT, templates, hanging protocols | Separate product decisions |
+| **Px Deferred** | BIL, EXT, hanging protocols, template admin CRUD | Separate product decisions |
 | **Cutover** | — | Only after P0–P2 (non-Deferred) features accepted; switch simulators → real externals |
 
 ### 8.2 Progress snapshot (2026-08-12)
@@ -513,7 +513,7 @@ Counts exclude Deferred/Out of scope.
 | FR-PAC | 4 | 2 | 0 | 0 |
 | FR-WL | 6 | 0 | 1 | 1 |
 | FR-VW | 5 | 0 | 1 | 1 |
-| FR-RPT | 6 | 0 | 2 | 1 |
+| FR-RPT | 7 | 0 | 2 | 0 |
 | FR-DLV | 6 | 0 | 0 | 2 |
 | FR-NTF | 5 | 0 | 1 | 1 |
 | FR-AUD | 4 | 0 | 1 | 0 |
@@ -521,7 +521,7 @@ Counts exclude Deferred/Out of scope.
 | FR-BIL | 0 | 0 | 0 | 4 |
 | FR-EXT | 0 | 0 | 0 | 3 |
 | NFR | 2 | 4 | 3 | 0 |
-| **Active total (ex-Deferred)** | **≈60 Done** | **≈7 Partial** | **≈9 Todo** | — |
+| **Active total (ex-Deferred)** | **≈61 Done** | **≈7 Partial** | **≈9 Todo** | — |
 
 > Update this table whenever FR statuses change. Use it in sprint reviews to answer: **what is done, what is partial, what remains.**
 
@@ -550,7 +550,7 @@ Unresolved items **block** promoting related Deferred FRs.
 | **OD-EDGE** | Edge ingest node for low bandwidth? | A) Out of scope. B) Include in P1 build sequence. C) Later / Deferred. | Product / Eng | FR-EXT-001 |
 | **OD-POP** | Population health analytics? | A) Out of scope. B) After core features (P0–P2) complete. | Product | FR-EXT-002 |
 | **OD-INT** | HL7 v2 vs FHIR-only outbound? | A) FHIR/webhook only. B) Add ORU^R01. | Eng / Hospital IT | FR-DLV-007 |
-| **OD-RPT** | Report templates priority? | A) Deferred. B) P1. | Radiologist lead | FR-RPT-009, FR-ADM-007 |
+| **OD-RPT** | Report templates priority? | **Resolved B — insert cascade shipped (FR-RPT-009).** Admin CRUD remains Deferred (`FR-ADM-007`). | Radiologist lead | FR-ADM-007 |
 | **OD-NAME** | External brand: TeleRad vs TelerIS vs UniRIS | A) TeleRad (this doc). B) Other — rename everywhere. | Product | Docs/UI copy |
 
 ---

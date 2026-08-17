@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api'
+import { useAuth } from '../auth'
 import { DicomViewport } from '../components/DicomViewport'
+import { InsertTemplateModal } from '../components/InsertTemplateModal'
 import type { StudyDetail } from '../types'
 
 export function StudyViewerPage() {
   const { id } = useParams()
+  const { user } = useAuth()
   const [detail, setDetail] = useState<StudyDetail | null>(null)
   const [seriesIdx, setSeriesIdx] = useState(0)
   const [instanceIdx, setInstanceIdx] = useState(0)
@@ -16,6 +19,7 @@ export function StudyViewerPage() {
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
+  const [templateOpen, setTemplateOpen] = useState(false)
 
   async function load() {
     const data = await api<StudyDetail>(`/api/studies/${id}`)
@@ -194,6 +198,14 @@ export function StudyViewerPage() {
       <aside className="viewer-report" aria-label="Report editor">
         <div className="report-toolbar">
           <strong style={{ fontSize: '0.875rem' }}>Report editor</strong>
+          {!signed && (
+            <button className="btn-insert-tpl" type="button" onClick={() => setTemplateOpen(true)}>
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path fill="currentColor" d="M6 2h6l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm6 1.5V7h3.5L12 3.5ZM7 10h6v1.25H7V10Zm0 2.5h6V14H7v-1.5Zm0 2.5h4V16H7v-1Z" />
+              </svg>
+              Insert Template
+            </button>
+          )}
           <span className="muted" style={{ fontSize: '0.75rem', marginLeft: 'auto' }}>
             {signed
               ? 'Signed'
@@ -238,6 +250,26 @@ export function StudyViewerPage() {
           </p>
         </div>
       </aside>
+
+      <InsertTemplateModal
+        open={templateOpen}
+        onClose={() => setTemplateOpen(false)}
+        order={{
+          modality: study.modality,
+          patientName: study.patientName,
+          mrn: study.patientMrn,
+          accession: study.accessionNumber,
+          hospital: study.hospitalName,
+          studyDate: study.studyDate,
+          studyDescription: study.studyDescription,
+          radiologistName: user?.fullName,
+        }}
+        onInsert={({ findings: nextFindings, impression: nextImpression }) => {
+          setFindings(nextFindings)
+          setImpression(nextImpression)
+          setMessage('Template inserted. Complete the remaining fields, then save or sign.')
+        }}
+      />
     </div>
   )
 }
