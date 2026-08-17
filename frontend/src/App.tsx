@@ -6,6 +6,7 @@ import { AdminPage } from './pages/AdminPage'
 import { AppShell } from './pages/AppShell'
 import { HospitalPage } from './pages/HospitalPage'
 import { LoginPage } from './pages/LoginPage'
+import { SharedReportPage } from './pages/SharedReportPage'
 import { WorklistPage } from './pages/WorklistPage'
 
 // Defer Cornerstone / VTK (and xmlbuilder2) until the viewer route is opened
@@ -20,6 +21,9 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<RequireAuth />}>
+            <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
+              <Route path="/hospital/reports/:studyId" element={<SharedReportPage />} />
+            </Route>
             <Route element={<AppShell />}>
               <Route element={<RequireAuth roles={['RADIOLOGIST', 'ADMIN']} />}>
                 <Route path="/worklist" element={<WorklistPage />} />

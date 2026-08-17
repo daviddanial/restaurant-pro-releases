@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
-import { api, apiBlob } from '../api'
+import { Link } from 'react-router-dom'
+import { api } from '../api'
 import { useAuth } from '../auth'
 import type { HospitalReportItem, StudyListItem, StudyStatus } from '../types'
 
@@ -133,16 +134,6 @@ export function HospitalPage() {
     } finally {
       setUploading(false)
     }
-  }
-
-  async function downloadPdf(reportId: string) {
-    const blob = await apiBlob(`/api/reports/${reportId}/pdf`)
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report-${reportId}.pdf`
-    a.click()
-    URL.revokeObjectURL(url)
   }
 
   const reportByStudy = useMemo(() => {
@@ -308,12 +299,12 @@ export function HospitalPage() {
         <table className="table">
           <thead>
             <tr>
-              <th>Patient name</th>
+              <th>Patient Name</th>
               <th>MRN</th>
               <th>Modality</th>
-              <th>Date created</th>
+              <th>Date Created</th>
               <th>Progress</th>
-              <th>Report</th>
+              <th className="col-report">Report</th>
             </tr>
           </thead>
           <tbody>
@@ -326,7 +317,7 @@ export function HospitalPage() {
                   <td className="patient-cell">{displayPatientName(s.patientName)}</td>
                   <td className="mono muted-cell">{s.patientMrn || '—'}</td>
                   <td className="muted-cell">{s.modality || '—'}</td>
-                  <td className="muted-cell">{formatDateCreated(s)}</td>
+                  <td className="date-cell">{formatDateCreated(s)}</td>
                   <td>
                     <div className={`progress-track tone-${tone}`}>
                       <div className="progress-bars">
@@ -346,16 +337,30 @@ export function HospitalPage() {
                       <div className="progress-caption">{slaCaption(s)}</div>
                     </div>
                   </td>
-                  <td>
+                  <td className="col-report">
                     {report ? (
-                      <button className="btn secondary btn-report" type="button" onClick={() => downloadPdf(report.reportId)}>
-                        <svg viewBox="0 0 20 20" aria-hidden="true">
-                          <path fill="currentColor" d="M6 2h6l4 4v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm6 1.5V7h3.5L12 3.5Z" />
+                      <Link className="btn-report" to={`/hospital/reports/${s.id}`}>
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path
+                            d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M14 2v4a2 2 0 0 0 2 2h4"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path d="M10 9H8M16 13H8M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                         </svg>
                         View Report
-                      </button>
+                      </Link>
                     ) : (
-                      <span className="muted">—</span>
+                      <span className="report-empty">—</span>
                     )}
                   </td>
                 </tr>
