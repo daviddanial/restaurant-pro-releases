@@ -31,6 +31,11 @@ export function AppShell() {
               Hospital Portal
             </NavLink>
           )}
+          {(user.role === 'HOSPITAL_USER' || user.role === 'ADMIN') && (
+            <NavLink to="/dispatch" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+              Dispatch &amp; Triage
+            </NavLink>
+          )}
           {canRead && (
             <NavLink
               to="/worklist"

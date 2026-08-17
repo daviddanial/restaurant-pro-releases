@@ -19,6 +19,8 @@ describe('types smoke', () => {
       source: 'UPLOAD',
       patientName: 'DOE^JOHN',
       patientMrn: 'MRN1',
+      patientSex: 'M',
+      patientBirthDate: '1960-01-01',
       readyAt: '2024-01-01T00:00:00Z',
       reportedAt: null,
       hasSignedReport: false,

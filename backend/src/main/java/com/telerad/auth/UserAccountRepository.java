@@ -9,5 +9,5 @@ import java.util.UUID;
 public interface UserAccountRepository extends JpaRepository<UserAccount, UUID> {
     Optional<UserAccount> findByEmailIgnoreCase(String email);
     List<UserAccount> findByRole(Role role);
-    List<UserAccount> findByTenantId(UUID tenantId);
+    List<UserAccount> findByTenant_Id(UUID tenantId);
 }

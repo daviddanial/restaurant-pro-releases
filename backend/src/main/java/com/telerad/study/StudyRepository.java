@@ -28,6 +28,8 @@ public interface StudyRepository extends JpaRepository<Study, UUID> {
 
     List<Study> findByAssignedToAndStatusIn(UUID userId, List<StudyStatus> statuses);
 
+    long countByAssignedToAndStatus(UUID assignedTo, StudyStatus status);
+
     List<Study> findByStatusInAndSlaDueAtBeforeAndSlaNotifiedFalse(
             java.util.Collection<StudyStatus> statuses, java.time.Instant before);
 }

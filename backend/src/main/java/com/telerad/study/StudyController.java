@@ -37,4 +37,22 @@ public class StudyController {
     public StudyService.StudyListItem claim(@PathVariable UUID id) {
         return studyService.claim(id);
     }
+
+    @GetMapping("/api/radiologists")
+    @PreAuthorize("hasAnyRole('HOSPITAL_USER','ADMIN')")
+    public List<StudyService.RadiologistOption> radiologists() {
+        return studyService.radiologists();
+    }
+
+    @PostMapping("/api/studies/{id}/assign")
+    @PreAuthorize("hasAnyRole('HOSPITAL_USER','ADMIN')")
+    public StudyService.StudyListItem assign(@PathVariable UUID id, @RequestBody AssignRequest body) {
+        if (body == null || body.radiologistId() == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "radiologistId is required");
+        }
+        return studyService.assign(id, body.radiologistId());
+    }
+
+    public record AssignRequest(UUID radiologistId) {}
 }

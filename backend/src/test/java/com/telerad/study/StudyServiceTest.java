@@ -1,6 +1,7 @@
 package com.telerad.study;
 
 import com.telerad.audit.AuditService;
+import com.telerad.auth.UserAccount;
 import com.telerad.auth.UserPrincipal;
 import com.telerad.common.Role;
 import com.telerad.common.StudyPriority;
@@ -35,6 +36,7 @@ class StudyServiceTest {
     @Mock TenantRepository tenantRepository;
     @Mock ReportRepository reportRepository;
     @Mock AuditService auditService;
+    @Mock com.telerad.auth.UserAccountRepository userAccountRepository;
     @InjectMocks StudyService studyService;
 
     private UUID radId;
@@ -189,5 +191,58 @@ class StudyServiceTest {
         when(studyRepository.findWorklist(eq(List.of(StudyStatus.READY)), eq("CT"), eq(StudyPriority.STAT)))
                 .thenReturn(List.of());
         assertThat(studyService.worklist("CT", "STAT", "READY")).isEmpty();
+    }
+
+    @Test
+    void assign_hospitalStaffAssignsReadyStudy() {
+        authenticate(Role.HOSPITAL_USER, UUID.randomUUID(), tenantId);
+        UserAccount rad = UserAccount.builder()
+                .id(radId).email("rad@t.local").fullName("Dr. Jane").role(Role.RADIOLOGIST)
+                .passwordHash("x").active(true).build();
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+        when(userAccountRepository.findById(radId)).thenReturn(Optional.of(rad));
+        when(studyRepository.save(readyStudy)).thenReturn(readyStudy);
+
+        StudyService.StudyListItem item = studyService.assign(readyStudy.getId(), radId);
+
+        assertThat(readyStudy.getAssignedTo()).isEqualTo(radId);
+        assertThat(readyStudy.getStatus()).isEqualTo(StudyStatus.IN_PROGRESS);
+        assertThat(item.assignedTo()).isEqualTo(radId);
+        verify(auditService).record(eq(tenantId), any(), eq("ASSIGN"), eq("Study"),
+                eq(readyStudy.getId().toString()), eq("Dr. Jane"), isNull());
+    }
+
+    @Test
+    void assign_forbiddenForOtherHospital() {
+        authenticate(Role.HOSPITAL_USER, UUID.randomUUID(), UUID.randomUUID());
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+        assertThatThrownBy(() -> studyService.assign(readyStudy.getId(), radId))
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    void assign_rejectsNonRadiologist() {
+        authenticate(Role.HOSPITAL_USER, UUID.randomUUID(), tenantId);
+        UserAccount staff = UserAccount.builder()
+                .id(radId).email("s@t.local").fullName("Staff").role(Role.HOSPITAL_USER)
+                .passwordHash("x").active(true).build();
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+        when(userAccountRepository.findById(radId)).thenReturn(Optional.of(staff));
+        assertThatThrownBy(() -> studyService.assign(readyStudy.getId(), radId))
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getReason()).contains("not an active radiologist"));
+    }
+
+    @Test
+    void radiologists_listsActiveWithPendingCounts() {
+        authenticate(Role.HOSPITAL_USER, UUID.randomUUID(), tenantId);
+        UserAccount rad = UserAccount.builder()
+                .id(radId).email("rad@t.local").fullName("Dr. Jane").role(Role.RADIOLOGIST)
+                .passwordHash("x").active(true).build();
+        when(userAccountRepository.findByRole(Role.RADIOLOGIST)).thenReturn(List.of(rad));
+        when(studyRepository.countByAssignedToAndStatus(radId, StudyStatus.IN_PROGRESS)).thenReturn(2L);
+        List<StudyService.RadiologistOption> opts = studyService.radiologists();
+        assertThat(opts).hasSize(1);
+        assertThat(opts.get(0).fullName()).isEqualTo("Dr. Jane");
+        assertThat(opts.get(0).pendingCount()).isEqualTo(2);
     }
 }

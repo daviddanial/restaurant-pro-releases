@@ -30,12 +30,20 @@ export interface StudyListItem {
   source: string
   patientName: string | null
   patientMrn: string | null
+  patientSex: string | null
+  patientBirthDate: string | null
   readyAt: string | null
   reportedAt: string | null
   hasSignedReport: boolean
   slaDueAt: string | null
   slaBreachedAt: string | null
   slaOverdue: boolean
+}
+
+export interface RadiologistOption {
+  id: string
+  fullName: string
+  pendingCount: number
 }
 
 export interface InstanceDto {

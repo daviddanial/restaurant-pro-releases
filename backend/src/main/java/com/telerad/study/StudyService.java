@@ -1,6 +1,8 @@
 package com.telerad.study;
 
 import com.telerad.audit.AuditService;
+import com.telerad.auth.UserAccount;
+import com.telerad.auth.UserAccountRepository;
 import com.telerad.auth.UserPrincipal;
 import com.telerad.common.Role;
 import com.telerad.common.StudyStatus;
@@ -26,6 +28,7 @@ public class StudyService {
     private final TenantRepository tenantRepository;
     private final ReportRepository reportRepository;
     private final AuditService auditService;
+    private final UserAccountRepository userAccountRepository;
 
     @Transactional(readOnly = true)
     public List<StudyListItem> worklist(String modality, String priority, String status) {
@@ -91,6 +94,47 @@ public class StudyService {
         return toListItem(study);
     }
 
+    @Transactional(readOnly = true)
+    public List<RadiologistOption> radiologists() {
+        UserPrincipal user = UserPrincipal.current();
+        if (user.getRole() != Role.HOSPITAL_USER && user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed");
+        }
+        return userAccountRepository.findByRole(Role.RADIOLOGIST).stream()
+                .filter(UserAccount::isActive)
+                .map(u -> new RadiologistOption(
+                        u.getId(),
+                        u.getFullName(),
+                        (int) studyRepository.countByAssignedToAndStatus(u.getId(), StudyStatus.IN_PROGRESS)))
+                .toList();
+    }
+
+    @Transactional
+    public StudyListItem assign(UUID studyId, UUID radiologistId) {
+        UserPrincipal user = UserPrincipal.current();
+        if (user.getRole() != Role.HOSPITAL_USER && user.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only hospital staff can assign");
+        }
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        assertHospitalAccess(user, study.getTenantId());
+        if (study.getStatus() != StudyStatus.READY && study.getStatus() != StudyStatus.IN_PROGRESS) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Study is not assignable");
+        }
+        UserAccount rad = userAccountRepository.findById(radiologistId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown radiologist"));
+        if (rad.getRole() != Role.RADIOLOGIST || !rad.isActive()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not an active radiologist");
+        }
+        study.setAssignedTo(rad.getId());
+        study.setClaimedAt(Instant.now());
+        study.setStatus(StudyStatus.IN_PROGRESS);
+        studyRepository.save(study);
+        auditService.record(study.getTenantId(), user.getId(), "ASSIGN", "Study", studyId.toString(),
+                rad.getFullName(), null);
+        return toListItem(study);
+    }
+
     private void assertHospitalAccess(UserPrincipal user, UUID hospitalId) {
         if (user.getRole() == Role.ADMIN) return;
         if (user.getRole() == Role.HOSPITAL_USER && hospitalId.equals(user.getTenantId())) return;
@@ -106,11 +150,15 @@ public class StudyService {
     private StudyListItem toListItem(Study s) {
         String patientName = null;
         String patientMrn = null;
+        String patientSex = null;
+        java.time.LocalDate patientBirthDate = null;
         if (s.getPatientId() != null) {
             Optional<Patient> p = patientRepository.findById(s.getPatientId());
             if (p.isPresent()) {
                 patientName = p.get().getPatientName();
                 patientMrn = p.get().getPatientId();
+                patientSex = p.get().getSex();
+                patientBirthDate = p.get().getBirthDate();
             }
         }
         String hospitalName = tenantRepository.findById(s.getTenantId()).map(Tenant::getName).orElse(null);
@@ -124,6 +172,7 @@ public class StudyService {
                 s.getId(), s.getTenantId(), hospitalName, s.getStudyInstanceUid(), s.getAccessionNumber(),
                 s.getStudyDescription(), s.getModality(), s.getStudyDate(), s.getPriority(), s.getStatus(),
                 s.getAssignedTo(), s.getInstanceCount(), s.getSource(), patientName, patientMrn,
+                patientSex, patientBirthDate,
                 s.getReadyAt(), s.getReportedAt(), hasSigned,
                 s.getSlaDueAt(), s.getSlaBreachedAt(), overdue
         );
@@ -153,11 +202,14 @@ public class StudyService {
         return v == null || v.isBlank() ? null : v;
     }
 
+    public record RadiologistOption(UUID id, String fullName, int pendingCount) {}
+
     public record StudyListItem(
             UUID id, UUID tenantId, String hospitalName, String studyInstanceUid, String accessionNumber,
             String studyDescription, String modality, java.time.LocalDate studyDate,
             com.telerad.common.StudyPriority priority, StudyStatus status, UUID assignedTo,
             int instanceCount, com.telerad.common.StudySource source, String patientName, String patientMrn,
+            String patientSex, java.time.LocalDate patientBirthDate,
             Instant readyAt, Instant reportedAt, boolean hasSignedReport,
             Instant slaDueAt, Instant slaBreachedAt, boolean slaOverdue
     ) {}

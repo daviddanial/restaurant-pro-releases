@@ -139,7 +139,7 @@ Tracked so they are not lost. **Not commitments** until moved via Open Decision 
 | Role (UI) | Enum | Description |
 |-----------|------|-------------|
 | Admin | `ADMIN` | Platform operator; cross-tenant admin; may act as radiologist for claim/report |
-| Hospital Staff | `HOSPITAL_USER` | Tenant-scoped; upload studies; view own hospital studies/reports |
+| Hospital Staff | `HOSPITAL_USER` | Tenant-scoped; upload studies; assign to radiologists; view own hospital studies/reports |
 | Radiologist | `RADIOLOGIST` | Read worklist; claim; view DICOM; draft/sign reports |
 
 **Tenant-isolation rule:** A `HOSPITAL_USER` must only access data for their `tenantId`. Radiologists and Admins may see studies across tenants for reading/operations as designed. No user may access another tenant’s hospital portal data.
@@ -151,6 +151,7 @@ Tracked so they are not lost. **Not commitments** until moved via Open Decision 
 | Login / logout | Allow | Allow | Allow |
 | Upload DICOM for own hospital | Allow | Deny | Allow (any hospital) |
 | View hospital studies/reports (own tenant) | Allow | Deny* | Allow |
+| Assign study to a radiologist (own tenant) | Allow | Deny | Allow |
 | View radiologist worklist | Deny | Allow | Allow |
 | Claim study | Deny | Allow | Allow |
 | Open viewer / WADO frames | Deny† | Allow | Allow |
@@ -244,6 +245,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | From | Trigger | Actor | To | Side effects |
 |------|---------|-------|-----|--------------|
 | — | First successful ingest of study | System | `RECEIVED` then `READY` | Upsert Patient/Study/Series/Instance; set `readyAt`; apply `slaDueAt`; notify study ready |
+| `READY` | Hospital assign | Hospital Staff/Admin | `IN_PROGRESS` | Set `assignedTo`, `claimedAt`; audit ASSIGN |
 | `READY` | Claim | Radiologist/Admin | `IN_PROGRESS` | Set `assignedTo`, `claimedAt`; audit CLAIM |
 | `READY` | Save draft report | Radiologist/Admin | `IN_PROGRESS` | Create/update draft; assign if unassigned |
 | `IN_PROGRESS` | Re-claim by same user | Radiologist/Admin | `IN_PROGRESS` | Refresh claim metadata |
@@ -357,8 +359,10 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-WL-006** | Worklist items shall show patient, hospital, modality, accession, status, priority, instance count, SLA due/overdue. | P0 | P0 | **Done** |
 | **FR-WL-007** | Auto-assign rules (round-robin / least-loaded) shall assign READY studies without manual claim. | P2 | P2 | **Todo** |
 | **FR-WL-008** | Claiming shall be blocked if clinical indication is empty. | P2 | P2 | **Deferred** |
+| **FR-WL-009** | Hospital Staff/Admin shall assign a READY (or IN_PROGRESS) study at their hospital to an active radiologist; study becomes `IN_PROGRESS` with audit ASSIGN. | P1 | P1 | **Done** |
 
-**Acceptance (WL-003–004):** First claim 200; second different user 409; audit CLAIM.
+**Acceptance (WL-003–004):** First claim 200; second different user 409; audit CLAIM.  
+**Acceptance (WL-009):** Hospital user assigns READY study → 200, assignee set; other-tenant assign → 403; non-radiologist target → 400.
 
 ---
 
@@ -431,7 +435,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 
 | ID | Requirement | Pri | Phase | Status |
 |----|-------------|-----|-------|--------|
-| **FR-AUD-001** | The system shall record audit events for LOGIN, UPLOAD, CLAIM, SIGN_REPORT, DOWNLOAD_PDF (minimum). | P0 | P0 | **Done** |
+| **FR-AUD-001** | The system shall record audit events for LOGIN, UPLOAD, CLAIM, ASSIGN, SIGN_REPORT, DOWNLOAD_PDF (minimum). | P0 | P0 | **Done** |
 | **FR-AUD-002** | Audit events shall include tenant, user, action, entity type/id, detail, timestamp (and IP when available). | P0 | P0 | **Done** |
 | **FR-AUD-003** | Admin shall query recent audit events. | P0 | P0 | **Done** |
 | **FR-AUD-004** | Audit storage shall be append-oriented (no end-user delete/edit API). | P0 | P0 | **Done** |
@@ -511,7 +515,7 @@ Counts exclude Deferred/Out of scope.
 | FR-ADM | 5 | 1 | 0 | 1 |
 | FR-ING | 10 | 0 | 0 | 0 |
 | FR-PAC | 4 | 2 | 0 | 0 |
-| FR-WL | 6 | 0 | 1 | 1 |
+| FR-WL | 7 | 0 | 1 | 1 |
 | FR-VW | 5 | 0 | 1 | 1 |
 | FR-RPT | 7 | 0 | 2 | 0 |
 | FR-DLV | 6 | 0 | 0 | 2 |
@@ -521,7 +525,7 @@ Counts exclude Deferred/Out of scope.
 | FR-BIL | 0 | 0 | 0 | 4 |
 | FR-EXT | 0 | 0 | 0 | 3 |
 | NFR | 2 | 4 | 3 | 0 |
-| **Active total (ex-Deferred)** | **≈61 Done** | **≈7 Partial** | **≈9 Todo** | — |
+| **Active total (ex-Deferred)** | **≈62 Done** | **≈7 Partial** | **≈9 Todo** | — |
 
 > Update this table whenever FR statuses change. Use it in sprint reviews to answer: **what is done, what is partial, what remains.**
 
@@ -600,6 +604,8 @@ Natural keys: DICOM UIDs. API keys: UUIDs.
 | GET | `/api/hospitals/{id}/studies` | Hospital studies | Hospital, Admin |
 | GET | `/api/studies/{id}` | Study detail | Authorized |
 | POST | `/api/studies/{id}/claim` | Claim | Rad, Admin |
+| GET | `/api/radiologists` | Active radiologists + pending counts | Hospital, Admin |
+| POST | `/api/studies/{id}/assign` | Assign to radiologist | Hospital, Admin |
 | PUT | `/api/studies/{id}/report` | Draft | Rad, Admin |
 | POST | `/api/studies/{id}/report/sign` | Sign | Rad, Admin |
 | GET | `/api/studies/{id}/report` | Get report | Authorized |

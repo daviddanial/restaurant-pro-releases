@@ -4,6 +4,7 @@ import { AuthProvider } from './auth'
 import { RequireAuth } from './RequireAuth'
 import { AdminPage } from './pages/AdminPage'
 import { AppShell } from './pages/AppShell'
+import { DispatchPage } from './pages/DispatchPage'
 import { HospitalPage } from './pages/HospitalPage'
 import { LoginPage } from './pages/LoginPage'
 import { SharedReportPage } from './pages/SharedReportPage'
@@ -38,6 +39,7 @@ export default function App() {
               </Route>
               <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
                 <Route path="/hospital" element={<HospitalPage />} />
+                <Route path="/dispatch" element={<DispatchPage />} />
               </Route>
               <Route element={<RequireAuth roles={['ADMIN']} />}>
                 <Route path="/admin" element={<AdminPage />} />

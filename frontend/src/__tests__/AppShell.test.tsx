@@ -49,6 +49,7 @@ describe('AppShell', () => {
     )
     expect(screen.getByText('Hospital Staff')).toBeInTheDocument()
     expect(screen.getByText('Demo Hospital')).toBeInTheDocument()
+    expect(screen.getByText('Dispatch & Triage')).toBeInTheDocument()
     expect(screen.getByText('child')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /sign out/i }))
     expect(logoutMock).toHaveBeenCalled()
