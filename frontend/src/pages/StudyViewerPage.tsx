@@ -15,6 +15,7 @@ export function StudyViewerPage() {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
 
   async function load() {
     const data = await api<StudyDetail>(`/api/studies/${id}`)
@@ -28,14 +29,15 @@ export function StudyViewerPage() {
     load().catch((err) => setError(err.message))
   }, [id])
 
-  // Autosave draft every 8s while editing
   useEffect(() => {
     if (!detail || detail.report?.status === 'SIGNED') return
     const t = window.setInterval(() => {
       api(`/api/studies/${id}/report`, {
         method: 'PUT',
         body: JSON.stringify({ findings, impression, critical }),
-      }).catch(() => undefined)
+      })
+        .then(() => setLastSavedAt(new Date()))
+        .catch(() => undefined)
     }, 8000)
     return () => window.clearInterval(t)
   }, [id, detail, findings, impression, critical])
@@ -58,6 +60,7 @@ export function StudyViewerPage() {
         method: 'PUT',
         body: JSON.stringify({ findings, impression, critical }),
       })
+      setLastSavedAt(new Date())
       setMessage('Draft saved')
       await load()
     } catch (err) {
@@ -68,7 +71,7 @@ export function StudyViewerPage() {
   }
 
   async function sign() {
-    if (!confirm('Sign and lock this report? This cannot be undone without an addendum.')) return
+    if (!confirm('Sign and finalize this report? This cannot be undone without an addendum.')) return
     setSaving(true)
     setError(null)
     try {
@@ -87,7 +90,11 @@ export function StudyViewerPage() {
   }
 
   if (!detail) {
-    return <div className="page">{error ? <div className="error">{error}</div> : <p className="muted">Loading study…</p>}</div>
+    return (
+      <div className="page">
+        {error ? <div className="error">{error}</div> : <p className="muted">Loading study…</p>}
+      </div>
+    )
   }
 
   const signed = detail.report?.status === 'SIGNED'
@@ -95,34 +102,76 @@ export function StudyViewerPage() {
 
   return (
     <div className="viewer-layout">
-      <aside className="panel series-list">
-        <h3>Series</h3>
-        <p className="muted" style={{ marginTop: 0 }}>
-          {study.patientName || 'Patient'} · {study.modality} · {study.status}
-        </p>
-        {study.slaDueAt && (
-          <div className={`badge ${study.slaOverdue ? 'stat' : ''}`} style={{ marginBottom: '0.5rem' }}>
-            SLA {study.slaOverdue ? 'OVERDUE' : 'due'} {new Date(study.slaDueAt).toLocaleString()}
+      <aside className="viewer-context" aria-label="Patient and order context">
+        <div className="viewer-context-inner">
+          <div>
+            <p className="context-section-label">Patient</p>
+            <h2 className="context-patient">{study.patientName || 'Unknown patient'}</h2>
+            <p className="muted" style={{ margin: '0.2rem 0 0', fontSize: '0.8125rem' }}>
+              MRN {study.patientMrn || '—'}
+            </p>
           </div>
-        )}
-        {detail.series.map((s, idx) => (
-          <button
-            key={s.id}
-            type="button"
-            className={`series-item ${idx === seriesIdx ? 'active' : ''}`}
-            onClick={() => { setSeriesIdx(idx); setInstanceIdx(0) }}
-          >
-            <div>{s.seriesDescription || `Series ${s.seriesNumber ?? idx + 1}`}</div>
-            <div className="muted" style={{ fontSize: '0.8rem' }}>
-              {s.modality} · {s.instanceCount} img
-              {s.instances.some((i) => i.numberOfFrames > 1)
-                ? ` · ${s.instances.reduce((n, i) => n + (i.numberOfFrames || 1), 0)} frames`
-                : ''}
+
+          <dl className="context-meta">
+            <div>
+              <dt>Hospital</dt>
+              <dd>{study.hospitalName || '—'}</dd>
             </div>
-          </button>
-        ))}
-        {detail.series.length === 0 && <div className="muted">No series metadata yet.</div>}
-        <Link className="btn secondary" to="/worklist" style={{ marginTop: '0.5rem' }}>Back to worklist</Link>
+            <div>
+              <dt>Modality</dt>
+              <dd>{study.modality || '—'}</dd>
+            </div>
+            <div>
+              <dt>Accession</dt>
+              <dd style={{ fontFamily: 'ui-monospace, monospace' }}>{study.accessionNumber || '—'}</dd>
+            </div>
+            <div>
+              <dt>Priority</dt>
+              <dd>
+                <span className={`badge ${study.priority === 'STAT' ? 'stat' : ''}`}>{study.priority}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd><span className="badge">{study.status}</span></dd>
+            </div>
+            {study.slaDueAt && (
+              <div>
+                <dt>SLA</dt>
+                <dd>
+                  <span className={`badge ${study.slaOverdue ? 'breached' : ''}`}>
+                    {study.slaOverdue ? 'SLA Breached' : `Due ${new Date(study.slaDueAt).toLocaleString()}`}
+                  </span>
+                </dd>
+              </div>
+            )}
+          </dl>
+
+          <div>
+            <p className="context-section-label">Series</p>
+            <div className="stack">
+              {detail.series.map((s, idx) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className={`series-item ${idx === seriesIdx ? 'active' : ''}`}
+                  onClick={() => { setSeriesIdx(idx); setInstanceIdx(0) }}
+                >
+                  <div style={{ fontWeight: 500 }}>{s.seriesDescription || `Series ${s.seriesNumber ?? idx + 1}`}</div>
+                  <div className="muted" style={{ fontSize: '0.75rem', marginTop: 2 }}>
+                    {s.modality} · {s.instanceCount} img
+                    {s.instances.some((i) => i.numberOfFrames > 1)
+                      ? ` · ${s.instances.reduce((n, i) => n + (i.numberOfFrames || 1), 0)} frames`
+                      : ''}
+                  </div>
+                </button>
+              ))}
+              {detail.series.length === 0 && <div className="muted">No series metadata yet.</div>}
+            </div>
+          </div>
+
+          <Link className="btn secondary" to="/worklist">Back to worklist</Link>
+        </div>
       </aside>
 
       {series && instance ? (
@@ -138,41 +187,56 @@ export function StudyViewerPage() {
         />
       ) : (
         <section className="viewport">
-          <div className="muted">No frame available</div>
+          <div className="muted" style={{ color: '#94a3b8' }}>No frame available</div>
         </section>
       )}
 
-      <aside className="panel stack" style={{ overflow: 'auto' }}>
-        <h3>Interpretation</h3>
-        {message && <div className="success">{message}</div>}
-        {error && <div className="error">{error}</div>}
-        <div className="field">
-          <label>Findings</label>
-          <textarea value={findings} disabled={signed} onChange={(e) => setFindings(e.target.value)} />
+      <aside className="viewer-report" aria-label="Report editor">
+        <div className="report-toolbar">
+          <strong style={{ fontSize: '0.875rem' }}>Report editor</strong>
+          <span className="muted" style={{ fontSize: '0.75rem', marginLeft: 'auto' }}>
+            {signed
+              ? 'Signed'
+              : lastSavedAt
+                ? `Saved ${lastSavedAt.toLocaleTimeString()}`
+                : 'Autosave on'}
+          </span>
         </div>
-        <div className="field">
-          <label>Impression</label>
-          <textarea value={impression} disabled={signed} onChange={(e) => setImpression(e.target.value)} />
-        </div>
-        <label className="row">
-          <input type="checkbox" checked={critical} disabled={signed} onChange={(e) => setCritical(e.target.checked)} />
-          Critical result
-        </label>
-        {!signed && (
-          <div className="row">
-            <button className="btn secondary" type="button" disabled={saving} onClick={saveDraft}>Save draft</button>
-            <button className="btn" type="button" disabled={saving} onClick={sign}>Sign & deliver</button>
+        <div className="viewer-report-inner">
+          {message && <div className="success">{message}</div>}
+          {error && <div className="error">{error}</div>}
+          <div className="field">
+            <label>Findings</label>
+            <textarea value={findings} disabled={signed} onChange={(e) => setFindings(e.target.value)} />
           </div>
-        )}
-        {signed && (
-          <div className="success">Signed {detail.report?.signedAt ? new Date(detail.report.signedAt).toLocaleString() : ''}</div>
-        )}
-        <p className="muted" style={{ fontSize: '0.8rem' }}>
-          Cornerstone3D: left-drag = active tool (W/L, Zoom, Pan, Length) ·
-          middle = pan · right = zoom · wheel = stack scroll ·
-          L = length · I = invert · R = reset · Space = cine (multi-frame).
-          Length uses PixelSpacing (mm) when present in the DICOM.
-        </p>
+          <div className="field">
+            <label>Impression</label>
+            <textarea value={impression} disabled={signed} onChange={(e) => setImpression(e.target.value)} />
+          </div>
+          <label className="critical-toggle">
+            <input type="checkbox" checked={critical} disabled={signed} onChange={(e) => setCritical(e.target.checked)} />
+            Critical Finding
+          </label>
+          {!signed && (
+            <div className="report-actions">
+              <button className="btn secondary" type="button" disabled={saving} onClick={saveDraft}>
+                Save draft
+              </button>
+              <button className="btn" type="button" disabled={saving} onClick={sign}>
+                Sign &amp; Finalize
+              </button>
+            </div>
+          )}
+          {signed && (
+            <div className="success">
+              Signed {detail.report?.signedAt ? new Date(detail.report.signedAt).toLocaleString() : ''}
+            </div>
+          )}
+          <p className="muted" style={{ fontSize: '0.7rem', lineHeight: 1.45, margin: 0 }}>
+            Viewer: left-drag = tool · middle = pan · right = zoom · wheel = scroll ·
+            L = length · I = invert · R = reset · Space = cine.
+          </p>
+        </div>
       </aside>
     </div>
   )

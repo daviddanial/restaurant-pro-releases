@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
+import { useAuth } from '../auth'
 import type { StudyListItem } from '../types'
 
 export function WorklistPage() {
+  const { user } = useAuth()
   const [items, setItems] = useState<StudyListItem[]>([])
   const [error, setError] = useState<string | null>(null)
   const [modality, setModality] = useState('')
@@ -33,29 +35,37 @@ export function WorklistPage() {
 
   return (
     <div className="page">
-      <div className="panel">
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <h2 style={{ margin: 0 }}>Radiologist worklist</h2>
-          <div className="row">
-            <select value={modality} onChange={(e) => setModality(e.target.value)}>
-              <option value="">All modalities</option>
-              <option>CT</option>
-              <option>MR</option>
-              <option>CR</option>
-              <option>DX</option>
-              <option>US</option>
-            </select>
-            <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-              <option value="">All priorities</option>
-              <option value="STAT">STAT</option>
-              <option value="URGENT">URGENT</option>
-              <option value="ROUTINE">ROUTINE</option>
-            </select>
-            <button className="btn secondary" type="button" onClick={load}>Refresh</button>
-          </div>
+      <div className="page-header">
+        <div>
+          <h1>My Worklist</h1>
+          <p className="subtitle">
+            {user?.fullName}
+            {user?.role === 'RADIOLOGIST' ? ' · Radiologist' : ''}
+          </p>
         </div>
-        {error && <div className="error" style={{ marginTop: '0.8rem' }}>{error}</div>}
-        <table className="table" style={{ marginTop: '1rem' }}>
+        <div className="filters">
+          <select value={modality} onChange={(e) => setModality(e.target.value)}>
+            <option value="">All modalities</option>
+            <option>CT</option>
+            <option>MR</option>
+            <option>CR</option>
+            <option>DX</option>
+            <option>US</option>
+          </select>
+          <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <option value="">All priorities</option>
+            <option value="STAT">STAT</option>
+            <option value="URGENT">URGENT</option>
+            <option value="ROUTINE">ROUTINE</option>
+          </select>
+          <button className="btn secondary" type="button" onClick={load}>Refresh</button>
+        </div>
+      </div>
+
+      {error && <div className="error">{error}</div>}
+
+      <div className="panel table-card">
+        <table className="table">
           <thead>
             <tr>
               <th>Priority</th>
@@ -72,33 +82,41 @@ export function WorklistPage() {
           <tbody>
             {items.map((s) => (
               <tr key={s.id} className={s.slaOverdue ? 'row-overdue' : ''}>
-                <td><span className={`badge ${s.priority === 'STAT' ? 'stat' : ''}`}>{s.priority}</span></td>
                 <td>
-                  <div>{s.patientName || 'Unknown'}</div>
-                  <div className="muted" style={{ fontSize: '0.8rem' }}>{s.patientMrn}</div>
+                  <span className={`badge ${s.priority === 'STAT' ? 'stat' : ''}`}>{s.priority}</span>
+                </td>
+                <td>
+                  <div style={{ fontWeight: 500 }}>{s.patientName || 'Unknown'}</div>
+                  <div className="muted" style={{ fontSize: '0.75rem' }}>{s.patientMrn}</div>
                 </td>
                 <td>{s.hospitalName}</td>
                 <td>{s.modality}</td>
-                <td>{s.accessionNumber || '—'}</td>
-                <td><span className={`badge ${statusClass(s.status)}`}>{s.status}</span></td>
+                <td className="mono">{s.accessionNumber || '—'}</td>
+                <td><span className={`badge ${statusClass(s.status)}`}>{statusLabel(s.status)}</span></td>
                 <td>
                   {s.slaDueAt ? (
-                    <span className={`badge ${s.slaOverdue ? 'stat' : ''}`}>
-                      {s.slaOverdue ? 'OVERDUE' : formatSla(s.slaDueAt)}
+                    <span className={`badge ${s.slaOverdue ? 'breached' : ''}`}>
+                      {s.slaOverdue ? 'SLA Breached' : formatSla(s.slaDueAt)}
                     </span>
                   ) : '—'}
                 </td>
                 <td>{s.instanceCount}</td>
-                <td className="row">
-                  {(s.status === 'READY' || s.status === 'IN_PROGRESS') && (
-                    <button className="btn secondary" type="button" onClick={() => claim(s.id)}>Claim</button>
-                  )}
-                  <Link className="btn" to={`/studies/${s.id}`}>Open</Link>
+                <td>
+                  <div className="row" style={{ justifyContent: 'flex-end' }}>
+                    {(s.status === 'READY' || s.status === 'IN_PROGRESS') && (
+                      <button className="btn secondary" type="button" onClick={() => claim(s.id)}>Claim</button>
+                    )}
+                    <Link className="btn" to={`/studies/${s.id}`}>Open</Link>
+                  </div>
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={9} className="muted">No studies in worklist.</td></tr>
+              <tr>
+                <td colSpan={9} className="muted" style={{ padding: '2rem', textAlign: 'center' }}>
+                  No studies in worklist.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
@@ -110,9 +128,16 @@ export function WorklistPage() {
 function formatSla(iso: string) {
   const due = new Date(iso).getTime()
   const mins = Math.round((due - Date.now()) / 60000)
+  if (mins < 0) return 'SLA Breached'
+  if (mins <= 30) return 'Approaching SLA'
   if (mins >= 120) return `${Math.round(mins / 60)}h left`
-  if (mins >= 0) return `${mins}m left`
-  return `${Math.abs(mins)}m late`
+  return `${mins}m left`
+}
+
+function statusLabel(status: string) {
+  if (status === 'IN_PROGRESS') return 'Assigned'
+  if (status === 'REPORTED' || status === 'DELIVERED') return 'Report Ready'
+  return status
 }
 
 function statusClass(status: string) {

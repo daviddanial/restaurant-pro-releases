@@ -88,6 +88,12 @@ export function AdminPage() {
 
   return (
     <div className="page stack">
+      <div className="page-header">
+        <div>
+          <h1>Admin</h1>
+          <p className="subtitle">Tenants, DICOM nodes, users, notifications, and audit</p>
+        </div>
+      </div>
       {error && <div className="error">{error}</div>}
       {message && <div className="success">{message}</div>}
 

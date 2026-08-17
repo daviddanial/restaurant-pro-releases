@@ -26,7 +26,7 @@ export default function App() {
                 <Route
                   path="/studies/:id"
                   element={
-                    <Suspense fallback={<p className="muted">Loading viewer…</p>}>
+                    <Suspense fallback={<div className="page"><p className="muted">Loading viewer…</p></div>}>
                       <StudyViewerPage />
                     </Suspense>
                   }

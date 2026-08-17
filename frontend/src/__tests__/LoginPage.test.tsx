@@ -57,7 +57,7 @@ describe('LoginPage', () => {
         <LoginPage />
       </MemoryRouter>,
     )
-    expect(screen.queryByRole('button', { name: /sign in/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /log in/i })).not.toBeInTheDocument()
   })
 
   it('submits credentials and navigates on success', async () => {
@@ -80,7 +80,7 @@ describe('LoginPage', () => {
     )
 
     // Defaults are already rad@telerad.local / password; submit as-is
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
 
     await waitFor(() => {
       expect(loginMock).toHaveBeenCalledWith('rad@telerad.local', 'password')
@@ -97,7 +97,7 @@ describe('LoginPage', () => {
         <LoginPage />
       </MemoryRouter>,
     )
-    await user.click(screen.getByRole('button', { name: /sign in/i }))
+    await user.click(screen.getByRole('button', { name: /log in/i }))
     expect(await screen.findByText('Invalid credentials')).toBeInTheDocument()
   })
 })
