@@ -16,31 +16,7 @@ import {
   LengthTool,
 } from '@cornerstonejs/tools'
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
-
-export type WlPreset = { label: string; center: number; width: number }
-
-export const WL_PRESETS: Record<string, WlPreset[]> = {
-  CT: [
-    { label: 'Soft tissue', center: 40, width: 400 },
-    { label: 'Lung', center: -600, width: 1500 },
-    { label: 'Bone', center: 400, width: 1800 },
-    { label: 'Brain', center: 40, width: 80 },
-  ],
-  XR: [
-    { label: 'Default', center: 2048, width: 4096 },
-    { label: 'High contrast', center: 2000, width: 2000 },
-  ],
-  MR: [
-    { label: 'Wide', center: 1024, width: 2048 },
-    { label: 'Narrow', center: 512, width: 512 },
-  ],
-  DEFAULT: [
-    { label: 'Wide', center: 128, width: 512 },
-    { label: 'Default', center: 128, width: 256 },
-  ],
-}
-
-type WlState = { center: number; width: number }
+import { presetsForModality } from '../wlPresets'
 
 export type ViewportInstance = {
   sopUid: string
@@ -66,13 +42,7 @@ type StackEntry = {
   frameIndex: number // 1-based within SOP when multi-frame; else 1
 }
 
-function presetsForModality(modality?: string | null): WlPreset[] {
-  const m = (modality || '').toUpperCase()
-  if (m === 'CT') return WL_PRESETS.CT
-  if (m === 'CR' || m === 'DX' || m === 'XR') return WL_PRESETS.XR
-  if (m === 'MR') return WL_PRESETS.MR
-  return WL_PRESETS.DEFAULT
-}
+type WlState = { center: number; width: number }
 
 function resolveFps(opts: {
   cineRate?: number | null
@@ -514,12 +484,7 @@ export function DicomViewport({
     setWl(next)
   }
 
-  const selectValue =
-    wl.width > 0 && presets.some((p) => p.center === wl.center && p.width === wl.width)
-      ? `${wl.center}:${wl.width}`
-      : wl.width > 0
-        ? 'custom'
-        : ''
+  const activePreset = presets.find((p) => p.center === wl.center && p.width === wl.width)
 
   return (
     <div className="viewport">
@@ -567,23 +532,22 @@ export function DicomViewport({
           </>
         )}
         <button className="btn secondary" type="button" onClick={resetView}>Reset</button>
-        <select
-          value={selectValue}
-          onChange={(e) => {
-            const v = e.target.value
-            if (!v || v === 'custom') return
-            const [c, w] = v.split(':').map(Number)
-            applyPreset({ center: c, width: w })
-          }}
-        >
-          <option value="" disabled>W/L preset</option>
-          {presets.map((p) => (
-            <option key={p.label} value={`${p.center}:${p.width}`}>{p.label}</option>
-          ))}
-          {selectValue === 'custom' && (
-            <option value="custom">Custom (W:{Math.round(wl.width)} L:{Math.round(wl.center)})</option>
-          )}
-        </select>
+        <div className="wl-presets" role="group" aria-label="Window/level presets">
+          {presets.map((p) => {
+            const on = activePreset?.label === p.label
+            return (
+              <button
+                key={p.label}
+                type="button"
+                className={`wl-preset ${on ? 'on' : ''}`}
+                aria-pressed={on}
+                onClick={() => applyPreset({ center: p.center, width: p.width })}
+              >
+                {p.label}
+              </button>
+            )
+          })}
+        </div>
         <span className="badge">{counterLabel}</span>
       </div>
     </div>

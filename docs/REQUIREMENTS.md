@@ -383,10 +383,11 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-VW-003** | The viewer shall support window/level, zoom, pan, stack scroll, invert, and length measurement. | P0 | P0 | **Done** |
 | **FR-VW-004** | Multi-frame / cine playback shall be supported when frame timing metadata exists. | P0 | P0 | **Done** |
 | **FR-VW-005** | Series navigation (select series / instance) shall be available in the study viewer. | P0 | P0 | **Done** |
-| **FR-VW-006** | W/L presets (CT soft tissue / lung / bone, etc.) shall be one-click. | P1 | P1 | **Todo** |
+| **FR-VW-006** | W/L presets (CT soft tissue / lung / bone, etc.) shall be one-click. | P1 | P1 | **Done** |
 | **FR-VW-007** | Smart hanging protocol: auto-load prior same patient/body part in 1×2 sync scroll. | P3 | Px | **Deferred** |
 
-**Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load.
+**Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load.  
+**Acceptance (VW-006):** Viewer toolbar shows modality presets as buttons (CT: Soft tissue, Lung, Bone, Brain); click applies W/L immediately.
 
 ---
 
@@ -524,7 +525,7 @@ Counts exclude Deferred/Out of scope.
 | FR-ING | 10 | 0 | 0 | 0 |
 | FR-PAC | 4 | 2 | 0 | 0 |
 | FR-WL | 7 | 0 | 1 | 1 |
-| FR-VW | 5 | 0 | 1 | 1 |
+| FR-VW | 6 | 0 | 0 | 1 |
 | FR-RPT | 7 | 0 | 2 | 0 |
 | FR-DLV | 6 | 0 | 0 | 2 |
 | FR-NTF | 5 | 0 | 1 | 1 |
@@ -533,7 +534,7 @@ Counts exclude Deferred/Out of scope.
 | FR-BIL | 0 | 0 | 0 | 4 |
 | FR-EXT | 0 | 0 | 0 | 3 |
 | NFR | 2 | 4 | 3 | 0 |
-| **Active total (ex-Deferred)** | **≈62 Done** | **≈7 Partial** | **≈9 Todo** | — |
+| **Active total (ex-Deferred)** | **≈63 Done** | **≈7 Partial** | **≈8 Todo** | — |
 
 > Update this table whenever FR statuses change. Use it in sprint reviews to answer: **what is done, what is partial, what remains.**
 
@@ -541,7 +542,7 @@ Counts exclude Deferred/Out of scope.
 
 1. **P1:** Harden PAC TLS/IP allowlist; document transfer-syntax policy (`FR-PAC-005/006`) — validate with DICOM simulator / lab AE.
 2. **P1:** Complete tenant SLA/webhook admin editing UI (`FR-ADM-006`).
-3. **P1:** W/L presets (`FR-VW-006`); report autosave UX (`FR-RPT-007`).
+3. **P1:** Report autosave UX (`FR-RPT-007`).
 4. **P1:** SMS provider integration via sandbox/simulator (`FR-NTF-006`); draft HTTPS/VPN cutover runbook (`NFR-005`) without treating it as launch.
 5. **P0/P1:** CI pipeline running backend + frontend unit tests (`NFR-009`).
 6. **P2:** Addendum (`FR-RPT-008`); auto-assign (`FR-WL-007`); then safety pack after OD-SAF.
@@ -673,6 +674,6 @@ OpenAPI: `/swagger-ui.html` on the API process.
 |---------|------|--------|---------|
 | 1.0 | 2026-08-12 | Engineering (SoT rewrite) | Rebuilt from PM draft + codebase. Locked 3 roles, 5 study states, granular FRs with Done/Partial/Todo/Deferred, deferred billing/nurse/edge/pop-health. |
 | 1.1 | 2026-08-12 | Engineering | Clarified: not live. Renamed “P1 Go-live” → “P1 Integrations & hardening”. Phases = build order; externals via simulators/stubs until features complete; cutover is separate. |
-| 1.2 | 2026-08-19 | Engineering | Documented hospital assign workflow (WF-12 / FR-WL-009): Dispatch & Triage UI, reassign on IN_PROGRESS, assign rejection cases, non-diagnostic hospital series preview. |
+| 1.3 | 2026-08-19 | Engineering | FR-VW-006 Done: one-click W/L preset buttons in the reporting viewer. |
 
 **End of TeleRad Requirements Source of Truth**
