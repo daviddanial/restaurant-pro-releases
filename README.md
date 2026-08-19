@@ -91,9 +91,10 @@ curl -X POST "http://localhost:18080/api/hospitals/11111111-1111-1111-1111-11111
 
 1. Hospital staff uploads `.dcm` / ZIP (or PACS C-STOREs to `TELERAD_SCP` from allowlisted AE)
 2. Study becomes READY → SLA timer starts → radiologists notified (email stub + webhook)
-3. Radiologist claims study, views frames (W/L, zoom, pan, invert, scroll), drafts/signs report
-4. Signed report delivered: portal PDF, stored FHIR JSON, outbound FHIR webhook + email stub
-5. Admin reviews tenants, AE titles, audit, and notification outbox
+3. Hospital staff may assign a radiologist from **Dispatch & Triage**, or a radiologist claims the study from the worklist
+4. Radiologist views frames (W/L, zoom, pan, invert, scroll), drafts/signs report
+5. Signed report delivered: portal PDF, stored FHIR JSON, outbound FHIR webhook + email stub
+6. Admin reviews tenants, AE titles, audit, and notification outbox
 
 Registered Calling AEs (seed): `DEMOHOSP_PACS`, `CITYMED_PACS`
 

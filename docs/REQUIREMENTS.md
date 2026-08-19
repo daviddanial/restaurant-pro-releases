@@ -54,7 +54,7 @@ TeleRad is in **feature development**. We are **not** in production / hospital g
 
 | Phase | Outcome |
 |-------|---------|
-| **P0 Core loop** | Upload → READY → claim → view → draft/sign → hospital PDF |
+| **P0 Core loop** | Upload → READY → (hospital assign or radiologist claim) → view → draft/sign → hospital PDF |
 | **P1 Integrations & hardening** | PACS SCP, SLA/notify polish, FHIR/webhook delivery, admin completeness — **with simulated/stubbed externals as needed** |
 | **P2 Clinical safety** | Indication gate, missing-images loop, critical acknowledgment, addenda |
 | **Px Deferred products** | Billing, nurse triage, edge ingest, population health — only after OD sign-off |
@@ -96,13 +96,13 @@ Hospitals and imaging centers lack enough on-site radiologists. Studies wait, re
 - Multi-tenant auth with roles: Admin, Hospital Staff, Radiologist
 - Portal DICOM upload (.dcm / ZIP)
 - DICOM PACS C-STORE SCP with AE allowlist (P1)
-- Study worklist, claim, priorities (STAT / URGENT / ROUTINE)
+- Study worklist, hospital assign (Dispatch & Triage), radiologist claim, priorities (STAT / URGENT / ROUTINE)
 - Cornerstone-based viewer (W/L, zoom, pan, scroll, invert, length, cine)
 - Draft + sign report → PDF + hospital inbox download
 - Portal / stored FHIR JSON / webhook / email-stub delivery channels
 - SLA deadlines + overdue detection + notification outbox
 - Admin: tenants, users, DICOM nodes, audit, notification outbox
-- Immutable audit for login, upload, claim, sign, PDF download
+- Immutable audit for login, upload, claim, assign, sign, PDF download
 
 ### 2.2 Out of scope (this version)
 
@@ -154,7 +154,8 @@ Tracked so they are not lost. **Not commitments** until moved via Open Decision 
 | Assign study to a radiologist (own tenant) | Allow | Deny | Allow |
 | View radiologist worklist | Deny | Allow | Allow |
 | Claim study | Deny | Allow | Allow |
-| Open viewer / WADO frames | Deny† | Allow | Allow |
+| Open diagnostic viewer | Deny | Allow | Allow |
+| Non-diagnostic series preview (own tenant) | Allow† | Allow | Allow |
 | Draft report | Deny | Allow | Allow |
 | Sign report | Deny | Allow | Allow |
 | Download signed PDF (own tenant / authorized) | Allow | Allow | Allow |
@@ -162,7 +163,7 @@ Tracked so they are not lost. **Not commitments** until moved via Open Decision 
 | View audit / notification outbox | Deny | Deny | Allow |
 
 \* Radiologists access studies via worklist/viewer, not the hospital staff portal.  
-† Hospital portal may show study status metadata only in P0 (no diagnostic viewer required for staff).
+† Hospital Staff may load WADO thumbnails in Dispatch case detail for their own tenant. Diagnostic reading remains Radiologist/Admin.
 
 ### 3.3 Future roles (Deferred)
 
@@ -188,8 +189,9 @@ sequenceDiagram
   API->>ST: Store DICOM objects
   API->>W: Upsert metadata
   W->>API: Study status READY + SLA due
+  HS->>API: Assign radiologist (optional)
   RAD->>API: Login + open worklist
-  RAD->>API: Claim study
+  RAD->>API: Claim study (if still unassigned)
   RAD->>API: Load study + WADO frames
   RAD->>API: Save draft report
   RAD->>API: Sign report
@@ -214,6 +216,7 @@ sequenceDiagram
 | WF-09 | Missing images loop | Request missing → hospital re-upload → return to reader | P2 Deferred |
 | WF-10 | Critical ack chain | SMS/push ack with escalation timeout | P2 Deferred |
 | WF-11 | Patient-pay gate | AWAITING_PAYMENT before READY | Px Deferred |
+| WF-12 | Hospital assign | Staff/Admin assigns READY or IN_PROGRESS study to an active radiologist via Dispatch & Triage | P1 |
 
 ### 4.3 Critical safety workflows (target — P2)
 
@@ -234,7 +237,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 |-------|---------|
 | `RECEIVED` | Objects arrived; metadata ingest in progress / not yet ready to read |
 | `READY` | Study available on worklist; SLA clock started when first marked ready |
-| `IN_PROGRESS` | Claimed / being reported by a radiologist |
+| `IN_PROGRESS` | Assigned or claimed; being reported by a radiologist |
 | `REPORTED` | Report signed (transient around delivery pipeline) |
 | `DELIVERED` | Delivery channels recorded; hospital can access signed report |
 
@@ -248,6 +251,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | `READY` | Hospital assign | Hospital Staff/Admin | `IN_PROGRESS` | Set `assignedTo`, `claimedAt`; audit ASSIGN |
 | `READY` | Claim | Radiologist/Admin | `IN_PROGRESS` | Set `assignedTo`, `claimedAt`; audit CLAIM |
 | `READY` | Save draft report | Radiologist/Admin | `IN_PROGRESS` | Create/update draft; assign if unassigned |
+| `IN_PROGRESS` | Hospital assign (reassign) | Hospital Staff/Admin | `IN_PROGRESS` | Update `assignedTo`, `claimedAt`; audit ASSIGN |
 | `IN_PROGRESS` | Re-claim by same user | Radiologist/Admin | `IN_PROGRESS` | Refresh claim metadata |
 | `IN_PROGRESS` | Sign (valid draft) | Radiologist/Admin | `REPORTED` → `DELIVERED` | Lock report; PDF; FHIR JSON; deliveries; notify; audit SIGN |
 | Any open | SLA checker (due passed, not notified) | System | (status unchanged) | Set `slaBreachedAt`, `slaNotified`; notify SLA overdue |
@@ -259,6 +263,9 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | Hospital user claims | 403 |
 | Claim when not READY/IN_PROGRESS | 409 |
 | Claim IN_PROGRESS owned by another | 409 |
+| Assign other-tenant study | 403 |
+| Assign to inactive or non-radiologist user | 400 |
+| Assign when not READY/IN_PROGRESS | 409 |
 | Sign without impression | 400 |
 | Sign already signed | 409 |
 | Draft/sign when study already REPORTED/DELIVERED | 409 |
@@ -362,7 +369,8 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-WL-009** | Hospital Staff/Admin shall assign a READY (or IN_PROGRESS) study at their hospital to an active radiologist; study becomes `IN_PROGRESS` with audit ASSIGN. | P1 | P1 | **Done** |
 
 **Acceptance (WL-003–004):** First claim 200; second different user 409; audit CLAIM.  
-**Acceptance (WL-009):** Hospital user assigns READY study → 200, assignee set; other-tenant assign → 403; non-radiologist target → 400.
+**Acceptance (WL-009):** Hospital user assigns READY study → 200, assignee set; other-tenant assign → 403; non-radiologist target → 400.  
+**UX (WL-009):** Hospital Staff/Admin use **Dispatch & Triage** (`/dispatch`): Pending Assignment vs Assigned queues; choosing a radiologist POSTs `/api/studies/{id}/assign`. Row click opens a case panel (demographics, clinical notes, series preview). Payment request and reject-incomplete-study actions are **not** in product (see WF-11, FR-SAF-002 Deferred).
 
 ---
 
@@ -645,6 +653,9 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | **STAT** | Highest clinical priority |
 | **StudyInstanceUID** | DICOM unique study identifier |
 | **WADO** | Web Access to DICOM Objects (HTTP frame/metadata access) |
+| **Assign** | Hospital Staff/Admin sets `assignedTo` on a study (audit `ASSIGN`); study is `IN_PROGRESS` |
+| **Claim** | Radiologist self-assigns a study from the worklist (audit `CLAIM`) |
+| **Dispatch & Triage** | Hospital coordinator queue to assign studies; not a Nurse role (OD-ROLE still Deferred) |
 | **Worklist** | Queue of studies available for radiologist reading |
 
 ### Appendix F — References
@@ -662,5 +673,6 @@ OpenAPI: `/swagger-ui.html` on the API process.
 |---------|------|--------|---------|
 | 1.0 | 2026-08-12 | Engineering (SoT rewrite) | Rebuilt from PM draft + codebase. Locked 3 roles, 5 study states, granular FRs with Done/Partial/Todo/Deferred, deferred billing/nurse/edge/pop-health. |
 | 1.1 | 2026-08-12 | Engineering | Clarified: not live. Renamed “P1 Go-live” → “P1 Integrations & hardening”. Phases = build order; externals via simulators/stubs until features complete; cutover is separate. |
+| 1.2 | 2026-08-19 | Engineering | Documented hospital assign workflow (WF-12 / FR-WL-009): Dispatch & Triage UI, reassign on IN_PROGRESS, assign rejection cases, non-diagnostic hospital series preview. |
 
 **End of TeleRad Requirements Source of Truth**

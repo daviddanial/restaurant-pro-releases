@@ -19,7 +19,7 @@
 
 **Primary actors**
 
-- **Hospital staff** — register patients/orders, upload or push studies, receive reports  
+- **Hospital staff** — upload or push studies, assign to radiologists (Dispatch & Triage), receive reports  
 - **Radiologist** — claim/assigned worklist, view DICOM, dictate/type report, sign  
 - **Admin** — tenants, users, AE titles, audit, SLAs  
 
@@ -170,7 +170,9 @@ AuditEvent (...)
 | Method | Path | Purpose |
 |--------|------|---------|
 | GET | `/api/worklist` | Filtered studies for radiologist |
-| POST | `/api/studies/{id}/claim` | Assign to current user |
+| POST | `/api/studies/{id}/claim` | Radiologist self-assign |
+| GET | `/api/radiologists` | Active radiologists + pending counts |
+| POST | `/api/studies/{id}/assign` | Hospital/Admin assign to a radiologist |
 | GET | `/api/studies/{id}` | Metadata + series list |
 | GET | `/api/dicom/studies/{uid}/series/...` | WADO-RS / frames |
 | PUT | `/api/studies/{id}/report` | Save draft |
@@ -211,7 +213,7 @@ Layout: left series thumbnails · center viewport · right report editor (split 
 ### 5.3 UX states that matter
 
 - Worklist badges: STAT, overdue SLA, unread critical  
-- “Claim” vs auto-assign to avoid double-reading  
+- Dispatch & Triage: hospital assign (or reassign); radiologist Claim still used for unassigned studies  
 - Autosave report drafts every few seconds  
 - Sign confirmation modal (irreversible without addendum)  
 
