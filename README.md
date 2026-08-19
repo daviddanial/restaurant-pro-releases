@@ -115,4 +115,6 @@ Canonical scope, workflows, and granular functional requirements (with Done / Pa
 
 → [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md)
 
+Ethiopia selling points and go-to-market (draft, not product commitments): [`docs/ETHIOPIA-GTM.md`](docs/ETHIOPIA-GTM.md)
+
 Engineering architecture and delivery plan: [`PLAN.md`](PLAN.md)

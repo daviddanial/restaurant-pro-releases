@@ -8,7 +8,7 @@
 | **Date** | 2026-08-12 |
 | **Owners** | Product + Engineering |
 | **Status** | Active — **feature development (not live)** |
-| **Related** | [`PLAN.md`](../PLAN.md) (architecture & delivery), [`README.md`](../README.md) (runbook) |
+| **Related** | [`PLAN.md`](../PLAN.md) (architecture & delivery), [`README.md`](../README.md) (runbook), [`ETHIOPIA-GTM.md`](ETHIOPIA-GTM.md) (sales/GTM draft) |
 
 This document defines **what** TeleRad must do. Engineering design lives in `PLAN.md`. UI visuals live in design tools. Sprint tasks live on the project board. **If a feature is not listed here (or is Deferred / Out of scope), it is not a current commitment.**
 
@@ -663,6 +663,7 @@ OpenAPI: `/swagger-ui.html` on the API process.
 
 - Engineering plan: [`PLAN.md`](../PLAN.md)
 - Runbook: [`README.md`](../README.md)
+- Ethiopia selling points (draft, not FRs): [`ETHIOPIA-GTM.md`](ETHIOPIA-GTM.md)
 - Prior PM draft: `TELERIS .docx.pdf` (UniRIS/TeleRIS v2.0) — **superseded by this document** for commitments
 - OpenAPI: local `/swagger-ui.html`
 
