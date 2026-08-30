@@ -7,6 +7,7 @@ import { AppShell } from './pages/AppShell'
 import { DispatchPage } from './pages/DispatchPage'
 import { HospitalPage } from './pages/HospitalPage'
 import { LoginPage } from './pages/LoginPage'
+import { ReportEditorPage } from './pages/ReportEditorPage'
 import { SharedReportPage } from './pages/SharedReportPage'
 import { WorklistPage } from './pages/WorklistPage'
 
@@ -36,6 +37,7 @@ export default function App() {
                     </Suspense>
                   }
                 />
+                <Route path="/studies/:id/report" element={<ReportEditorPage />} />
               </Route>
               <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
                 <Route path="/hospital" element={<HospitalPage />} />
