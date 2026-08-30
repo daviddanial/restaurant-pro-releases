@@ -87,12 +87,28 @@ curl -X POST "http://localhost:18080/api/hospitals/11111111-1111-1111-1111-11111
   -H "Authorization: Bearer $TOKEN" -F "files=@/tmp/sample.dcm"
 ```
 
+### Working with real studies
+
+```bash
+# Strip patient/institution identifiers, keep all clinical content and pixel data
+python3 scripts/anonymize_dicom.py IN.zip -o ANON.zip --name "TEST^PATIENT" --id ANON-0001
+
+# Derive a dated-back copy with fresh UIDs, to exercise prior comparison (FR-VW-007)
+python3 scripts/make_prior_study.py ANON.zip -o PRIOR.zip --days-ago 90 --accession ACC-PRIOR-001
+
+# Delete a study and its series/instances/reports so the same set can be re-ingested
+./scripts/reset_study.sh            # list
+./scripts/reset_study.sh <study-id> # delete
+```
+
+Both scripts need `pydicom`.
+
 ## Core flow
 
 1. Hospital staff uploads `.dcm` / ZIP (or PACS C-STOREs to `TELERAD_SCP` from allowlisted AE)
 2. Study becomes READY → SLA timer starts → radiologists notified (email stub + webhook)
 3. Hospital staff may assign a radiologist from **Dispatch & Triage**, or a radiologist claims the study from the worklist
-4. Radiologist views frames (W/L, zoom, pan, invert, scroll), drafts/signs report
+4. Radiologist views frames (W/L, zoom, pan, rotate, invert, scroll); a prior study for the same patient is hung side by side with synchronized scrolling when one exists, then drafts/signs the report
 5. Signed report delivered: portal PDF, stored FHIR JSON, outbound FHIR webhook + email stub
 6. Admin reviews tenants, AE titles, audit, and notification outbox
 
@@ -103,7 +119,7 @@ Registered Calling AEs (seed): `DEMOHOSP_PACS`, `CITYMED_PACS`
 ```
 backend/     Spring Boot API + ingest worker + optional DICOM SCP
 frontend/    React (Vite) hospital / radiologist / admin portals
-scripts/     Sample DICOM generator
+scripts/     Sample DICOM generator, anonymizer, prior-study builder, study reset
 docs/        Product requirements (source of truth)
 PLAN.md      Architecture & milestones
 docker-compose.yml

@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   Enums,
   RenderingEngine,
@@ -32,6 +41,13 @@ type Props = {
   frameTime?: number | null
   modality?: string | null
   onInstanceChange: (idx: number) => void
+  /** Position through the stack (0–1) after a user-driven move; drives scroll sync. */
+  onProgress?: (fraction: number) => void
+}
+
+export type DicomViewportHandle = {
+  /** Jump to the frame at this position through the stack, without echoing onProgress. */
+  goToFraction: (fraction: number) => void
 }
 
 type Tool = 'wwwc' | 'zoom' | 'pan' | 'length'
@@ -102,7 +118,7 @@ function applyWl(viewport: Types.IStackViewport, wl: WlState) {
  * Cornerstone3D stack viewport: WADO-URI DICOM bytes with W/L, zoom, pan, invert,
  * stack scroll, cine, and length measurement (mm when PixelSpacing is present).
  */
-export function DicomViewport({
+export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function DicomViewport({
   studyUid,
   seriesUid,
   instances,
@@ -111,7 +127,8 @@ export function DicomViewport({
   frameTime,
   modality,
   onInstanceChange,
-}: Props) {
+  onProgress,
+}: Props, ref) {
   const reactId = useId().replace(/:/g, '')
   const renderingEngineId = `telerad-re-${reactId}`
   const viewportId = `telerad-vp-${reactId}`
@@ -123,6 +140,9 @@ export function DicomViewport({
   const syncingRef = useRef(false)
   const playingRef = useRef(false)
   const invertRef = useRef(false)
+  // Read through a ref: the listener is bound once but the callback identity changes.
+  const onProgressRef = useRef(onProgress)
+  onProgressRef.current = onProgress
 
   const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -266,6 +286,8 @@ export function DicomViewport({
           if (!entry) return
           setStackIndex(idx)
           onInstanceChange(entry.instanceIndex)
+          const total = stackRef.current.length
+          onProgressRef.current?.(total > 1 ? idx / (total - 1) : 0)
 
           const vp = getViewport()
           if (vp) {
@@ -443,6 +465,24 @@ export function DicomViewport({
     if (next >= stack.length) next = 0
     viewport.setImageIdIndex(next)
   }, [getViewport, stack.length])
+
+  const goToFraction = useCallback((fraction: number) => {
+    const viewport = getViewport()
+    const total = stackRef.current.length
+    if (!viewport || total === 0) return
+    const clamped = Math.min(1, Math.max(0, fraction))
+    const target = Math.round(clamped * (total - 1))
+    if (target === viewport.getCurrentImageIdIndex()) return
+    syncingRef.current = true
+    viewport.setImageIdIndex(target).finally(() => {
+      syncingRef.current = false
+      setStackIndex(target)
+      const entry = stackRef.current[target]
+      if (entry) onInstanceChange(entry.instanceIndex)
+    })
+  }, [getViewport, onInstanceChange])
+
+  useImperativeHandle(ref, () => ({ goToFraction }), [goToFraction])
 
   const zoomBy = useCallback((factor: number) => {
     const viewport = getViewport()
@@ -627,4 +667,4 @@ export function DicomViewport({
       </div>
     </div>
   )
-}
+})

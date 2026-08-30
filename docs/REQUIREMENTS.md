@@ -384,11 +384,12 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-VW-004** | Multi-frame / cine playback shall be supported when frame timing metadata exists. | P0 | P0 | **Done** |
 | **FR-VW-005** | Series navigation (select series / instance) shall be available in the study viewer. | P0 | P0 | **Done** |
 | **FR-VW-006** | W/L presets (CT soft tissue / lung / bone, etc.) shall be one-click. | P1 | P1 | **Done** |
-| **FR-VW-007** | Smart hanging protocol: auto-load prior same patient/body part in 1×2 sync scroll. | P3 | Px | **Deferred** |
+| **FR-VW-007** | Smart hanging protocol: auto-load prior same patient/body part in 1×2 sync scroll. | P3 | P1 | **Done** |
 | **FR-VW-008** | The radiologist viewer shall be a dedicated image-only workspace (RadiAnt-style series rail + viewport); the report editor shall open in a separate browser tab. | P1 | P1 | **Done** |
 
 **Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load. Zoom in/out/fit and rotate ±90°/flip are available as discrete toolbar buttons (and `+` / `-` / `0` / `[` / `]` keys), independent of the drag-tool selection; the HUD reports the current zoom percentage and rotation angle.  
 **Acceptance (VW-006):** Viewer toolbar shows modality presets as buttons (CT: Soft tissue, Lung, Bone, Brain); click applies W/L immediately.  
+**Acceptance (VW-007):** `GET /api/studies/{id}/priors` returns the patient's earlier studies, same-modality first. Opening a study with a same-modality prior hangs it 1×2 (current left, prior right) with the interval shown ("3 months earlier"), the series rail split into Current and Prior sections, and Sync scroll on by default so stepping either stack drives the other proportionally. Body part is not captured at ingest, so modality is the matching proxy; the Compare picker lists every prior and can be set to Off.  
 **Acceptance (VW-008):** Claim opens `/studies/:id` with no report editor on the page; the viewer Report link opens `/studies/:id/report` in a new browser tab where findings/impression/sign live.
 
 ---
@@ -513,7 +514,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **P0 Core loop** | AUTH, ING, WL, VW, RPT, DLV (portal), AUD, NTF (stubs) | End-to-end clinical loop in dev/test |
 | **P1 Integrations & hardening** | PAC, ADM polish, DLV webhook, NTF SMS (sandbox/sim), NFR ops prep | Full integrations working with simulators/stubs |
 | **P2 Clinical safety** | SAF, RPT addendum, WL auto-assign | Safety & ops maturity in the product |
-| **Px Deferred** | BIL, EXT, hanging protocols, template admin CRUD | Separate product decisions |
+| **Px Deferred** | BIL, EXT, template admin CRUD | Separate product decisions |
 | **Cutover** | — | Only after P0–P2 (non-Deferred) features accepted; switch simulators → real externals |
 
 ### 8.2 Progress snapshot (2026-08-12)
@@ -527,7 +528,7 @@ Counts exclude Deferred/Out of scope.
 | FR-ING | 10 | 0 | 0 | 0 |
 | FR-PAC | 4 | 2 | 0 | 0 |
 | FR-WL | 7 | 0 | 1 | 1 |
-| FR-VW | 7 | 0 | 0 | 1 |
+| FR-VW | 8 | 0 | 0 | 0 |
 | FR-RPT | 7 | 0 | 2 | 0 |
 | FR-DLV | 6 | 0 | 0 | 2 |
 | FR-NTF | 5 | 0 | 1 | 1 |
@@ -614,6 +615,7 @@ Natural keys: DICOM UIDs. API keys: UUIDs.
 | GET | `/api/worklist` | Radiologist worklist | Rad, Admin |
 | GET | `/api/hospitals/{id}/studies` | Hospital studies | Hospital, Admin |
 | GET | `/api/studies/{id}` | Study detail | Authorized |
+| GET | `/api/studies/{id}/priors` | Earlier studies for the same patient | Authorized |
 | POST | `/api/studies/{id}/claim` | Claim | Rad, Admin |
 | GET | `/api/radiologists` | Active radiologists + pending counts | Hospital, Admin |
 | POST | `/api/studies/{id}/assign` | Assign to radiologist | Hospital, Admin |
@@ -680,5 +682,6 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | 1.3 | 2026-08-19 | Engineering | FR-VW-006 Done: one-click W/L preset buttons in the reporting viewer. |
 | 1.4 | 2026-08-30 | Engineering | FR-VW-008 Done: split the reporting workspace — image-only viewer at `/studies/:id`, report editor at `/studies/:id/report` in its own browser tab. |
 | 1.5 | 2026-08-30 | Engineering | FR-VW-003: added rotate/flip controls and discrete zoom in/out/fit buttons; mouse bindings are now rebuilt on every tool switch. |
+| 1.6 | 2026-08-30 | Engineering | FR-VW-007 Done (promoted P3 → P1): prior comparison with auto-hung 1×2 layout and synchronized scrolling, backed by a new priors endpoint. |
 
 **End of TeleRad Requirements Source of Truth**

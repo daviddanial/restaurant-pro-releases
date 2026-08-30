@@ -32,6 +32,11 @@ public class StudyController {
         return studyService.getStudy(id);
     }
 
+    @GetMapping("/api/studies/{id}/priors")
+    public List<StudyService.StudyListItem> priors(@PathVariable UUID id) {
+        return studyService.priors(id);
+    }
+
     @PostMapping("/api/studies/{id}/claim")
     @PreAuthorize("hasAnyRole('RADIOLOGIST','ADMIN')")
     public StudyService.StudyListItem claim(@PathVariable UUID id) {

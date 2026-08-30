@@ -233,6 +233,77 @@ class StudyServiceTest {
     }
 
     @Test
+    void priors_returnsOnlyStudiesOlderThanTheCurrentOne() {
+        authenticate(Role.RADIOLOGIST, radId, null);
+        UUID patientId = UUID.randomUUID();
+        readyStudy.setPatientId(patientId);
+        readyStudy.setModality("MR");
+        readyStudy.setStudyDate(java.time.LocalDate.of(2026, 8, 5));
+
+        Study older = priorCandidate(patientId, "MR", java.time.LocalDate.of(2026, 5, 7));
+        Study newer = priorCandidate(patientId, "MR", java.time.LocalDate.of(2026, 9, 1));
+
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+        when(studyRepository.findPriors(patientId, tenantId, readyStudy.getId(), "MR"))
+                .thenReturn(List.of(newer, older));
+
+        List<StudyService.StudyListItem> priors = studyService.priors(readyStudy.getId());
+
+        assertThat(priors).extracting(StudyService.StudyListItem::id).containsExactly(older.getId());
+    }
+
+    @Test
+    void priors_fallsBackToCreatedAtWhenStudyDatesMatch() {
+        authenticate(Role.RADIOLOGIST, radId, null);
+        UUID patientId = UUID.randomUUID();
+        java.time.LocalDate sameDay = java.time.LocalDate.of(2026, 8, 5);
+        readyStudy.setPatientId(patientId);
+        readyStudy.setModality("CT");
+        readyStudy.setStudyDate(sameDay);
+        readyStudy.setCreatedAt(java.time.Instant.parse("2026-08-05T12:00:00Z"));
+
+        Study earlierSameDay = priorCandidate(patientId, "CT", sameDay);
+        earlierSameDay.setCreatedAt(java.time.Instant.parse("2026-08-05T08:00:00Z"));
+
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+        when(studyRepository.findPriors(patientId, tenantId, readyStudy.getId(), "CT"))
+                .thenReturn(List.of(earlierSameDay));
+
+        assertThat(studyService.priors(readyStudy.getId())).hasSize(1);
+    }
+
+    @Test
+    void priors_emptyWhenStudyHasNoPatient() {
+        authenticate(Role.RADIOLOGIST, radId, null);
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+
+        assertThat(studyService.priors(readyStudy.getId())).isEmpty();
+        verify(studyRepository, never()).findPriors(any(), any(), any(), any());
+    }
+
+    @Test
+    void priors_hospitalUserCannotReachAnotherTenant() {
+        authenticate(Role.HOSPITAL_USER, UUID.randomUUID(), UUID.randomUUID());
+        when(studyRepository.findById(readyStudy.getId())).thenReturn(Optional.of(readyStudy));
+        assertThatThrownBy(() -> studyService.priors(readyStudy.getId()))
+                .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
+    }
+
+    private Study priorCandidate(UUID patientId, String modality, java.time.LocalDate studyDate) {
+        return Study.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .patientId(patientId)
+                .studyInstanceUid("1.2.3." + UUID.randomUUID())
+                .modality(modality)
+                .studyDate(studyDate)
+                .status(StudyStatus.DELIVERED)
+                .priority(StudyPriority.ROUTINE)
+                .createdAt(studyDate.atStartOfDay(java.time.ZoneOffset.UTC).toInstant())
+                .build();
+    }
+
+    @Test
     void radiologists_listsActiveWithPendingCounts() {
         authenticate(Role.HOSPITAL_USER, UUID.randomUUID(), tenantId);
         UserAccount rad = UserAccount.builder()

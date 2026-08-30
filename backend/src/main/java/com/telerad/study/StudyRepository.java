@@ -26,6 +26,26 @@ public interface StudyRepository extends JpaRepository<Study, UUID> {
                              @Param("modality") String modality,
                              @Param("priority") com.telerad.common.StudyPriority priority);
 
+    /**
+     * Earlier studies for the same patient, most recent first. Same-modality studies sort
+     * ahead of the rest so the caller can default to the closest comparison.
+     */
+    @Query("""
+        SELECT s FROM Study s
+        WHERE s.patientId = :patientId
+        AND s.tenantId = :tenantId
+        AND s.id <> :excludeId
+        AND s.instanceCount > 0
+        ORDER BY
+          CASE WHEN s.modality = :modality THEN 0 ELSE 1 END ASC,
+          s.studyDate DESC NULLS LAST,
+          s.createdAt DESC
+        """)
+    List<Study> findPriors(@Param("patientId") UUID patientId,
+                           @Param("tenantId") UUID tenantId,
+                           @Param("excludeId") UUID excludeId,
+                           @Param("modality") String modality);
+
     List<Study> findByAssignedToAndStatusIn(UUID userId, List<StudyStatus> statuses);
 
     long countByAssignedToAndStatus(UUID assignedTo, StudyStatus status);

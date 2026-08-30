@@ -21,6 +21,8 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class StudyService {
+    private static final int MAX_PRIORS = 10;
+
     private final StudyRepository studyRepository;
     private final SeriesQueryRepository seriesQueryRepository;
     private final InstanceRepository instanceRepository;
@@ -69,6 +71,36 @@ public class StudyService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
         assertCanView(UserPrincipal.current(), study);
         return toDetail(study);
+    }
+
+    /**
+     * Earlier studies for the same patient, for side-by-side comparison. Body part is not
+     * modelled, so same-modality studies are ranked first as the closest available proxy.
+     */
+    @Transactional(readOnly = true)
+    public List<StudyListItem> priors(UUID id) {
+        Study study = studyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
+        assertCanView(UserPrincipal.current(), study);
+        if (study.getPatientId() == null) {
+            return List.of();
+        }
+        return studyRepository
+                .findPriors(study.getPatientId(), study.getTenantId(), study.getId(), study.getModality())
+                .stream()
+                .filter(candidate -> isPriorOf(candidate, study))
+                .limit(MAX_PRIORS)
+                .map(this::toListItem)
+                .toList();
+    }
+
+    private boolean isPriorOf(Study candidate, Study current) {
+        java.time.LocalDate candidateDate = candidate.getStudyDate();
+        java.time.LocalDate currentDate = current.getStudyDate();
+        if (candidateDate != null && currentDate != null && !candidateDate.isEqual(currentDate)) {
+            return candidateDate.isBefore(currentDate);
+        }
+        return candidate.getCreatedAt().isBefore(current.getCreatedAt());
     }
 
     @Transactional
