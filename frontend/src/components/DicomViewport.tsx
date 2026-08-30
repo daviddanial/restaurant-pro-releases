@@ -44,6 +44,10 @@ type StackEntry = {
 
 type WlState = { center: number; width: number }
 
+const ZOOM_STEP = 1.25
+const MIN_ZOOM = 0.1
+const MAX_ZOOM = 20
+
 function resolveFps(opts: {
   cineRate?: number | null
   frameTime?: number | null
@@ -129,6 +133,9 @@ export function DicomViewport({
   const [stackIndex, setStackIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [fps, setFps] = useState(() => resolveFps({ cineRate, frameTime, modality }))
+  const [zoomLevel, setZoomLevel] = useState(1)
+  const [rotation, setRotation] = useState(0)
+  const [flipped, setFlipped] = useState(false)
 
   const stackKey = useMemo(
     () => instances.map((i) => `${i.sopUid}:${i.numberOfFrames}`).join('|'),
@@ -160,28 +167,35 @@ export function DicomViewport({
   const setActiveTool = useCallback((next: Tool) => {
     const tg = ToolGroupManager.getToolGroup(toolGroupId)
     if (!tg) return
-    const primary = ToolsEnums.MouseBindings.Primary
-    const names = [
-      WindowLevelTool.toolName,
-      ZoomTool.toolName,
-      PanTool.toolName,
-      LengthTool.toolName,
-    ]
-    for (const name of names) {
-      try {
-        tg.setToolPassive(name)
-      } catch {
-        /* tool may not be added yet */
-      }
-    }
+    const { Primary, Secondary, Auxiliary, Wheel } = ToolsEnums.MouseBindings
     const activeName =
       next === 'wwwc' ? WindowLevelTool.toolName
         : next === 'zoom' ? ZoomTool.toolName
           : next === 'pan' ? PanTool.toolName
             : LengthTool.toolName
-    tg.setToolActive(activeName, {
-      bindings: [{ mouseButton: primary }],
-    })
+
+    // setToolPassive only drops the primary binding, so tools that also own a
+    // secondary/middle/wheel button stay half-active. Clear everything and
+    // rebuild the full scheme so the left button always follows the selection.
+    for (const name of [
+      WindowLevelTool.toolName,
+      ZoomTool.toolName,
+      PanTool.toolName,
+      LengthTool.toolName,
+      StackScrollTool.toolName,
+    ]) {
+      try {
+        tg.setToolPassive(name, { removeAllBindings: true })
+      } catch {
+        /* tool may not be added yet */
+      }
+    }
+
+    tg.setToolActive(activeName, { bindings: [{ mouseButton: Primary }] })
+    tg.setToolActive(ZoomTool.toolName, { bindings: [{ mouseButton: Secondary }] })
+    tg.setToolActive(PanTool.toolName, { bindings: [{ mouseButton: Auxiliary }] })
+    tg.setToolActive(StackScrollTool.toolName, { bindings: [{ mouseButton: Wheel }] })
+
     // Keep length visible after drawing when switching away
     if (next !== 'length') {
       try {
@@ -278,8 +292,16 @@ export function DicomViewport({
           setWl({ center: windowCenter, width: windowWidth })
         }
 
+        const onCamera = () => {
+          const vp = getViewport()
+          if (!vp) return
+          setZoomLevel(vp.getZoom())
+          setRotation(Math.round(vp.getRotation()) % 360)
+        }
+
         el.addEventListener(Enums.Events.STACK_NEW_IMAGE, onNewImage)
         el.addEventListener(Enums.Events.VOI_MODIFIED, onVoi)
+        el.addEventListener(Enums.Events.CAMERA_MODIFIED, onCamera)
 
         resizeObs = new ResizeObserver(() => {
           engine.resize(true, false)
@@ -422,6 +444,63 @@ export function DicomViewport({
     viewport.setImageIdIndex(next)
   }, [getViewport, stack.length])
 
+  const zoomBy = useCallback((factor: number) => {
+    const viewport = getViewport()
+    if (!viewport) return
+    const next = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, viewport.getZoom() * factor))
+    viewport.setZoom(next)
+    viewport.render()
+    setZoomLevel(next)
+  }, [getViewport])
+
+  const fitToWindow = useCallback(() => {
+    const viewport = getViewport()
+    if (!viewport) return
+    viewport.resetCamera()
+    viewport.render()
+    setZoomLevel(viewport.getZoom())
+  }, [getViewport])
+
+  const rotateBy = useCallback((degrees: number) => {
+    const viewport = getViewport()
+    if (!viewport) return
+    const next = (((Math.round(viewport.getRotation()) + degrees) % 360) + 360) % 360
+    viewport.setViewPresentation({ rotation: next })
+    viewport.render()
+    setRotation(next)
+  }, [getViewport])
+
+  const toggleFlip = useCallback(() => {
+    const viewport = getViewport()
+    if (!viewport) return
+    const current = viewport.getViewPresentation({ flipHorizontal: true })
+    const next = !current.flipHorizontal
+    viewport.setViewPresentation({ flipHorizontal: next })
+    viewport.render()
+    setFlipped(next)
+  }, [getViewport])
+
+  const resetView = useCallback(() => {
+    const viewport = getViewport()
+    if (!viewport) return
+    viewport.resetCamera()
+    viewport.resetProperties()
+    viewport.setViewPresentation({ rotation: 0, flipHorizontal: false, flipVertical: false })
+    viewport.render()
+    setInvert(false)
+    setRotation(0)
+    setFlipped(false)
+    setZoomLevel(viewport.getZoom())
+    const props = viewport.getProperties()
+    if (props.voiRange) {
+      const { windowWidth, windowCenter } = utilities.windowLevel.toWindowLevel(
+        props.voiRange.lower,
+        props.voiRange.upper,
+      )
+      setWl({ center: windowCenter, width: windowWidth })
+    }
+  }, [getViewport])
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName
@@ -435,22 +514,12 @@ export function DicomViewport({
         setPlaying((p) => !p)
       }
       if (e.key === 'i' || e.key === 'I') setInvert((v) => !v)
-      if (e.key === 'r' || e.key === 'R') {
-        const viewport = getViewport()
-        if (!viewport) return
-        viewport.resetCamera()
-        viewport.resetProperties()
-        viewport.render()
-        setInvert(false)
-        const props = viewport.getProperties()
-        if (props.voiRange) {
-          const { windowWidth, windowCenter } = utilities.windowLevel.toWindowLevel(
-            props.voiRange.lower,
-            props.voiRange.upper,
-          )
-          setWl({ center: windowCenter, width: windowWidth })
-        }
-      }
+      if (e.key === 'r' || e.key === 'R') resetView()
+      if (e.key === '+' || e.key === '=') zoomBy(ZOOM_STEP)
+      if (e.key === '-' || e.key === '_') zoomBy(1 / ZOOM_STEP)
+      if (e.key === '0') fitToWindow()
+      if (e.key === '[') rotateBy(-90)
+      if (e.key === ']') rotateBy(90)
       if (e.key === 'l' || e.key === 'L') setTool('length')
       if (e.key === 'w' || e.key === 'W') setTool('wwwc')
       if (e.key === 'z' || e.key === 'Z') setTool('zoom')
@@ -458,24 +527,7 @@ export function DicomViewport({
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [stepFrame, hasMultiFrame, getViewport])
-
-  function resetView() {
-    const viewport = getViewport()
-    if (!viewport) return
-    viewport.resetCamera()
-    viewport.resetProperties()
-    setInvert(false)
-    viewport.render()
-    const props = viewport.getProperties()
-    if (props.voiRange) {
-      const { windowWidth, windowCenter } = utilities.windowLevel.toWindowLevel(
-        props.voiRange.lower,
-        props.voiRange.upper,
-      )
-      setWl({ center: windowCenter, width: windowWidth })
-    }
-  }
+  }, [stepFrame, hasMultiFrame, resetView, zoomBy, fitToWindow, rotateBy])
 
   function applyPreset(next: WlState) {
     const viewport = getViewport()
@@ -497,6 +549,11 @@ export function DicomViewport({
       {error && <div className="viewport-overlay error">{error}</div>}
       <div className="viewport-hud">
         <div>{wl.width > 0 ? `W: ${Math.round(wl.width)}  L: ${Math.round(wl.center)}` : 'W/L: DICOM'}</div>
+        <div>
+          Zoom {Math.round(zoomLevel * 100)}%
+          {rotation ? ` · ${rotation}°` : ''}
+          {flipped ? ' · flipped' : ''}
+        </div>
         <div>{counterLabel}</div>
         {playing && <div>Cine {Math.round(fps)} fps</div>}
       </div>
@@ -506,6 +563,24 @@ export function DicomViewport({
         <button className={`btn secondary ${tool === 'pan' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('pan')}>Pan</button>
         <button className={`btn secondary ${tool === 'length' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('length')}>Length</button>
         <button className={`btn secondary ${invert ? 'active-tool' : ''}`} type="button" onClick={() => setInvert((v) => !v)}>Invert</button>
+        <div className="tool-group" role="group" aria-label="Zoom">
+          <button className="tool-btn" type="button" title="Zoom out (-)" aria-label="Zoom out" onClick={() => zoomBy(1 / ZOOM_STEP)}>−</button>
+          <button className="tool-btn" type="button" title="Fit to window (0)" onClick={fitToWindow}>Fit</button>
+          <button className="tool-btn" type="button" title="Zoom in (+)" aria-label="Zoom in" onClick={() => zoomBy(ZOOM_STEP)}>+</button>
+        </div>
+        <div className="tool-group" role="group" aria-label="Rotate and flip">
+          <button className="tool-btn" type="button" title="Rotate left 90° ([)" aria-label="Rotate left" onClick={() => rotateBy(-90)}>↺</button>
+          <button className="tool-btn" type="button" title="Rotate right 90° (])" aria-label="Rotate right" onClick={() => rotateBy(90)}>↻</button>
+          <button
+            className={`tool-btn ${flipped ? 'on' : ''}`}
+            type="button"
+            title="Flip horizontal"
+            aria-pressed={flipped}
+            onClick={toggleFlip}
+          >
+            ⇋
+          </button>
+        </div>
         <button className="btn secondary" type="button" onClick={() => stepFrame(-1)}>Prev</button>
         <button className="btn secondary" type="button" onClick={() => stepFrame(1)}>Next</button>
         {hasMultiFrame && (

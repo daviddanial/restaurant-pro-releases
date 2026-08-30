@@ -380,14 +380,14 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 |----|-------------|-----|-------|--------|
 | **FR-VW-001** | Radiologist/Admin shall open a study detail including series and instance metadata. | P0 | P0 | **Done** |
 | **FR-VW-002** | The system shall serve DICOM frames via WADO-style HTTP endpoints for the web viewer. | P0 | P0 | **Done** |
-| **FR-VW-003** | The viewer shall support window/level, zoom, pan, stack scroll, invert, and length measurement. | P0 | P0 | **Done** |
+| **FR-VW-003** | The viewer shall support window/level, zoom, pan, stack scroll, invert, rotate/flip, and length measurement. | P0 | P0 | **Done** |
 | **FR-VW-004** | Multi-frame / cine playback shall be supported when frame timing metadata exists. | P0 | P0 | **Done** |
 | **FR-VW-005** | Series navigation (select series / instance) shall be available in the study viewer. | P0 | P0 | **Done** |
 | **FR-VW-006** | W/L presets (CT soft tissue / lung / bone, etc.) shall be one-click. | P1 | P1 | **Done** |
 | **FR-VW-007** | Smart hanging protocol: auto-load prior same patient/body part in 1×2 sync scroll. | P3 | Px | **Deferred** |
 | **FR-VW-008** | The radiologist viewer shall be a dedicated image-only workspace (RadiAnt-style series rail + viewport); the report editor shall open in a separate browser tab. | P1 | P1 | **Done** |
 
-**Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load.  
+**Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load. Zoom in/out/fit and rotate ±90°/flip are available as discrete toolbar buttons (and `+` / `-` / `0` / `[` / `]` keys), independent of the drag-tool selection; the HUD reports the current zoom percentage and rotation angle.  
 **Acceptance (VW-006):** Viewer toolbar shows modality presets as buttons (CT: Soft tissue, Lung, Bone, Brain); click applies W/L immediately.  
 **Acceptance (VW-008):** Claim opens `/studies/:id` with no report editor on the page; the viewer Report link opens `/studies/:id/report` in a new browser tab where findings/impression/sign live.
 
@@ -679,5 +679,6 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | 1.1 | 2026-08-12 | Engineering | Clarified: not live. Renamed “P1 Go-live” → “P1 Integrations & hardening”. Phases = build order; externals via simulators/stubs until features complete; cutover is separate. |
 | 1.3 | 2026-08-19 | Engineering | FR-VW-006 Done: one-click W/L preset buttons in the reporting viewer. |
 | 1.4 | 2026-08-30 | Engineering | FR-VW-008 Done: split the reporting workspace — image-only viewer at `/studies/:id`, report editor at `/studies/:id/report` in its own browser tab. |
+| 1.5 | 2026-08-30 | Engineering | FR-VW-003: added rotate/flip controls and discrete zoom in/out/fit buttons; mouse bindings are now rebuilt on every tool switch. |
 
 **End of TeleRad Requirements Source of Truth**
