@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { api, apiBlob } from '../api'
+import { api } from '../api'
 import { DicomViewport } from '../components/DicomViewport'
+import { SeriesThumbnail } from '../components/SeriesThumbnail'
 import type { StudyDetail } from '../types'
 
 export function StudyViewerPage() {
@@ -10,7 +11,6 @@ export function StudyViewerPage() {
   const [seriesIdx, setSeriesIdx] = useState(0)
   const [instanceIdx, setInstanceIdx] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [thumbs, setThumbs] = useState<Record<string, string>>({})
 
   useEffect(() => {
     let cancelled = false
@@ -25,36 +25,6 @@ export function StudyViewerPage() {
       cancelled = true
     }
   }, [id])
-
-  useEffect(() => {
-    if (!detail) return
-    let cancelled = false
-    const objectUrls: string[] = []
-
-    async function loadThumbs(data: StudyDetail) {
-      for (const series of data.series) {
-        const inst = series.instances[0]
-        if (!inst || cancelled) continue
-        try {
-          const blob = await apiBlob(
-            `/api/dicom/studies/${data.study.studyInstanceUid}/series/${series.seriesInstanceUid}/instances/${inst.sopInstanceUid}/frames/1`,
-          )
-          if (cancelled) return
-          const src = URL.createObjectURL(blob)
-          objectUrls.push(src)
-          setThumbs((prev) => ({ ...prev, [series.id]: src }))
-        } catch {
-          /* series preview is optional */
-        }
-      }
-    }
-
-    loadThumbs(detail)
-    return () => {
-      cancelled = true
-      objectUrls.forEach((u) => URL.revokeObjectURL(u))
-    }
-  }, [detail])
 
   const series = detail?.series?.[seriesIdx]
   const instance = series?.instances?.[instanceIdx]
@@ -113,7 +83,7 @@ export function StudyViewerPage() {
           <p className="viewer-series-label">Series</p>
           {detail.series.map((s, idx) => {
             const frames = s.instances.reduce((n, i) => n + (i.numberOfFrames || 1), 0)
-            const thumb = thumbs[s.id]
+            const firstInstance = s.instances[0]
             return (
               <button
                 key={s.id}
@@ -121,9 +91,15 @@ export function StudyViewerPage() {
                 className={`series-item ${idx === seriesIdx ? 'active' : ''}`}
                 onClick={() => { setSeriesIdx(idx); setInstanceIdx(0) }}
               >
-                <span className="series-thumb">
-                  {thumb ? <img src={thumb} alt="" /> : <span className="series-thumb-empty" />}
-                </span>
+                {firstInstance ? (
+                  <SeriesThumbnail
+                    studyUid={study.studyInstanceUid}
+                    seriesUid={s.seriesInstanceUid}
+                    sopUid={firstInstance.sopInstanceUid}
+                  />
+                ) : (
+                  <span className="series-thumb"><span className="series-thumb-empty" /></span>
+                )}
                 <span className="series-text">
                   <span className="series-title">
                     {s.seriesDescription || `Series ${s.seriesNumber ?? idx + 1}`}

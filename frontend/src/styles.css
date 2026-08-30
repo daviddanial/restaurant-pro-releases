@@ -497,6 +497,13 @@ button, input, select, textarea {
   height: 100%;
   object-fit: cover;
 }
+/* Cornerstone sizes the thumbnail canvas inline; override it to fit the rail. */
+.series-thumb canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+}
 .series-thumb-empty { background: #1e293b; }
 .series-text { display: grid; gap: 2px; min-width: 0; }
 .series-title {
