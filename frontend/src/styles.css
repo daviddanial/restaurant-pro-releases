@@ -638,6 +638,7 @@ button, input, select, textarea {
   height: 100%;
   cursor: crosshair;
   touch-action: none;
+  outline: none;
 }
 .viewport-canvas.cs-viewport {
   position: absolute;
@@ -674,6 +675,32 @@ button, input, select, textarea {
   max-height: 100%;
   object-fit: contain;
   user-select: none;
+}
+.viewport-ctx-menu {
+  position: fixed;
+  z-index: 40;
+  min-width: 9rem;
+  padding: 0.25rem;
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+.viewport-ctx-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.viewport-ctx-menu button:hover {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
 }
 .viewport-tools {
   position: absolute;

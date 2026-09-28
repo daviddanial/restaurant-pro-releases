@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type MouseEvent as ReactMouseEvent,
 } from 'react'
 import {
   Enums,
@@ -14,6 +15,7 @@ import {
   type Types,
   utilities,
   getRenderingEngine,
+  eventTarget,
 } from '@cornerstonejs/core'
 import {
   Enums as ToolsEnums,
@@ -23,9 +25,14 @@ import {
   ZoomTool,
   StackScrollTool,
   LengthTool,
+  annotation,
+  cancelActiveManipulations,
+  utilities as toolUtilities,
 } from '@cornerstonejs/tools'
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
 import { presetsForModality } from '../wlPresets'
+
+type CtxMenu = { clientX: number; clientY: number; annotationUID: string }
 
 export type ViewportInstance = {
   sopUid: string
@@ -117,6 +124,8 @@ function applyWl(viewport: Types.IStackViewport, wl: WlState) {
 /**
  * Cornerstone3D stack viewport: WADO-URI DICOM bytes with W/L, zoom, pan, invert,
  * stack scroll, cine, and length measurement (mm when PixelSpacing is present).
+ * Finished lengths can be selected and removed (Delete / Backspace, right-click
+ * Delete, or the contextual toolbar Delete); Esc cancels an unfinished draw.
  */
 export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function DicomViewport({
   studyUid,
@@ -156,6 +165,10 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const [zoomLevel, setZoomLevel] = useState(1)
   const [rotation, setRotation] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const [selectedCount, setSelectedCount] = useState(0)
+  const [ctxMenu, setCtxMenu] = useState<CtxMenu | null>(null)
+  const ctxMenuRef = useRef<CtxMenu | null>(null)
+  ctxMenuRef.current = ctxMenu
 
   const stackKey = useMemo(
     () => instances.map((i) => `${i.sopUid}:${i.numberOfFrames}`).join('|'),
@@ -216,10 +229,11 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     tg.setToolActive(PanTool.toolName, { bindings: [{ mouseButton: Auxiliary }] })
     tg.setToolActive(StackScrollTool.toolName, { bindings: [{ mouseButton: Wheel }] })
 
-    // Keep length visible after drawing when switching away
+    // Passive (not Enabled) so finished lengths stay clickable for selection/delete
+    // while another tool owns the primary button.
     if (next !== 'length') {
       try {
-        tg.setToolEnabled(LengthTool.toolName)
+        tg.setToolPassive(LengthTool.toolName)
       } catch {
         /* ignore */
       }
@@ -260,7 +274,24 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         tg.addTool(PanTool.toolName)
         tg.addTool(ZoomTool.toolName)
         tg.addTool(StackScrollTool.toolName)
-        tg.addTool(LengthTool.toolName)
+        tg.addTool(LengthTool.toolName, {
+          actions: {
+            cancelInProgress: {
+              // Cornerstone keyboard path (element-focused). Only abort new draws.
+              method(element: HTMLDivElement) {
+                const self = this as {
+                  editData?: { newAnnotation?: boolean; annotation?: { annotationUID?: string } }
+                  cancel?: (el: HTMLDivElement) => string | undefined
+                }
+                if (!self.editData?.newAnnotation) return
+                const uid = self.editData.annotation?.annotationUID
+                self.cancel?.(element)
+                if (uid) annotation.state.removeAnnotation(uid)
+              },
+              bindings: [{ key: 'Escape' }],
+            },
+          },
+        })
         tg.addViewport(viewportId, renderingEngineId)
 
         tg.setToolActive(StackScrollTool.toolName, {
@@ -541,11 +572,158 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     }
   }, [getViewport])
 
+  const refreshAnnotations = useCallback(() => {
+    const viewport = getViewport()
+    viewport?.render()
+    try {
+      toolUtilities.triggerAnnotationRenderForViewportIds([viewportId])
+    } catch {
+      /* viewport may not be ready */
+    }
+    setSelectedCount(annotation.selection.getAnnotationsSelectedCount())
+  }, [getViewport, viewportId])
+
+  const deleteAnnotationUids = useCallback((uids: string[]) => {
+    if (uids.length === 0) return false
+    for (const uid of uids) {
+      annotation.state.removeAnnotation(uid)
+    }
+    annotation.selection.deselectAnnotation()
+    setCtxMenu(null)
+    refreshAnnotations()
+    setSelectedCount(0)
+    return true
+  }, [refreshAnnotations])
+
+  const deleteSelectedMeasurements = useCallback(() => {
+    return deleteAnnotationUids(annotation.selection.getAnnotationsSelected())
+  }, [deleteAnnotationUids])
+
+  /** Remove the most recently added length on this viewport (Esc "undo last"). */
+  const deleteLastLengthMeasurement = useCallback(() => {
+    const el = elementRef.current
+    if (!el) return false
+    const anns = annotation.state.getAnnotations(LengthTool.toolName, el) || []
+    if (anns.length === 0) return false
+    const last = anns[anns.length - 1]
+    if (!last?.annotationUID) return false
+    return deleteAnnotationUids([last.annotationUID])
+  }, [deleteAnnotationUids])
+
+  /** Esc: drop an unfinished length draw without leaving a stub annotation.
+   *  Returns true only when a *new* in-progress annotation was discarded — never
+   *  for modify/select of a finished measurement (that must fall through to Delete). */
+  const cancelUnfinishedMeasurement = useCallback(() => {
+    const el = elementRef.current
+    if (!el) return false
+    const tg = ToolGroupManager.getToolGroup(toolGroupId)
+    const lengthTool = tg?.getToolInstance(LengthTool.toolName) as {
+      isDrawing?: boolean
+      editData?: {
+        newAnnotation?: boolean
+        annotation?: { annotationUID?: string }
+      }
+      cancel?: (element: HTMLDivElement) => string | undefined
+    } | undefined
+
+    // Finished measurements keep editData briefly while selected/moved; only a
+    // brand-new draw (newAnnotation) is "unfinished".
+    const wasNew = Boolean(lengthTool?.editData?.newAnnotation)
+    if (!wasNew) return false
+
+    const pendingUid = lengthTool?.editData?.annotation?.annotationUID
+    try {
+      lengthTool?.cancel?.(el)
+    } catch {
+      /* ignore */
+    }
+    try {
+      cancelActiveManipulations(el)
+    } catch {
+      /* ignore */
+    }
+
+    if (pendingUid) {
+      annotation.state.removeAnnotation(pendingUid)
+    }
+    // Do not clear selection here — Esc may still need to delete a selected prior.
+    refreshAnnotations()
+    return true
+  }, [toolGroupId, refreshAnnotations])
+
+  useEffect(() => {
+    function onSelectionChange() {
+      setSelectedCount(annotation.selection.getAnnotationsSelectedCount())
+    }
+    eventTarget.addEventListener(ToolsEnums.Events.ANNOTATION_SELECTION_CHANGE, onSelectionChange)
+    return () => {
+      eventTarget.removeEventListener(ToolsEnums.Events.ANNOTATION_SELECTION_CHANGE, onSelectionChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!ctxMenu) return
+    function dismiss() {
+      setCtxMenu(null)
+    }
+    window.addEventListener('click', dismiss)
+    window.addEventListener('scroll', dismiss, true)
+    return () => {
+      window.removeEventListener('click', dismiss)
+      window.removeEventListener('scroll', dismiss, true)
+    }
+  }, [ctxMenu])
+
+  const onAnnotationContextMenu = useCallback((e: ReactMouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const el = elementRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const canvasPoint: [number, number] = [e.clientX - rect.left, e.clientY - rect.top]
+    try {
+      const near = toolUtilities.getAnnotationNearPoint(el, canvasPoint, 12)
+      if (!near?.annotationUID) {
+        setCtxMenu(null)
+        return
+      }
+      annotation.selection.setAnnotationSelected(near.annotationUID, true)
+      setSelectedCount(1)
+      setCtxMenu({ clientX: e.clientX, clientY: e.clientY, annotationUID: near.annotationUID })
+      getViewport()?.render()
+    } catch {
+      setCtxMenu(null)
+    }
+  }, [getViewport])
+
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target as HTMLElement)?.isContentEditable) {
         return
+      }
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        e.preventDefault()
+        e.stopPropagation()
+        if (ctxMenuRef.current) {
+          setCtxMenu(null)
+          return
+        }
+        // 1) Abort an unfinished draw only — do not also delete prior lengths.
+        if (cancelUnfinishedMeasurement()) return
+        // 2) Delete any selected finished measurement.
+        if (deleteSelectedMeasurements()) return
+        // 3) Length active + nothing selected → remove the last length (undo last draw).
+        if (tool === 'length') {
+          deleteLastLengthMeasurement()
+        }
+        return
+      }
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (deleteSelectedMeasurements()) {
+          e.preventDefault()
+          return
+        }
       }
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowRight') stepFrame(1)
       if (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'ArrowLeft') stepFrame(-1)
@@ -565,9 +743,22 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       if (e.key === 'z' || e.key === 'Z') setTool('zoom')
       if (e.key === 'p' || e.key === 'P') setTool('pan')
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [stepFrame, hasMultiFrame, resetView, zoomBy, fitToWindow, rotateBy])
+    // Capture so Esc still reaches us while Cornerstone is mid-draw.
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
+  }, [
+    stepFrame,
+    hasMultiFrame,
+    resetView,
+    zoomBy,
+    fitToWindow,
+    rotateBy,
+    deleteSelectedMeasurements,
+    deleteLastLengthMeasurement,
+    cancelUnfinishedMeasurement,
+    refreshAnnotations,
+    tool,
+  ])
 
   function applyPreset(next: WlState) {
     const viewport = getViewport()
@@ -583,7 +774,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       <div
         ref={elementRef}
         className="viewport-canvas cs-viewport"
-        onContextMenu={(e) => e.preventDefault()}
+        tabIndex={0}
+        onContextMenu={onAnnotationContextMenu}
       />
       {loading && <div className="viewport-overlay muted">Loading DICOM…</div>}
       {error && <div className="viewport-overlay error">{error}</div>}
@@ -597,11 +789,40 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         <div>{counterLabel}</div>
         {playing && <div>Cine {Math.round(fps)} fps</div>}
       </div>
+      {ctxMenu && (
+        <div
+          className="viewport-ctx-menu"
+          role="menu"
+          style={{ left: ctxMenu.clientX, top: ctxMenu.clientY }}
+          onClick={(e) => e.stopPropagation()}
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              deleteAnnotationUids([ctxMenu.annotationUID])
+            }}
+          >
+            Delete
+          </button>
+        </div>
+      )}
       <div className="viewport-tools">
         <button className={`btn secondary ${tool === 'wwwc' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('wwwc')}>W/L</button>
         <button className={`btn secondary ${tool === 'zoom' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('zoom')}>Zoom</button>
         <button className={`btn secondary ${tool === 'pan' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('pan')}>Pan</button>
-        <button className={`btn secondary ${tool === 'length' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('length')}>Length</button>
+        <button className={`btn secondary ${tool === 'length' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('length')} title="Length (L)">Length</button>
+        {selectedCount > 0 && (
+          <button
+            className="btn secondary"
+            type="button"
+            title="Delete selected measurement (Delete)"
+            onClick={() => deleteSelectedMeasurements()}
+          >
+            Delete
+          </button>
+        )}
         <button className={`btn secondary ${invert ? 'active-tool' : ''}`} type="button" onClick={() => setInvert((v) => !v)}>Invert</button>
         <div className="tool-group" role="group" aria-label="Zoom">
           <button className="tool-btn" type="button" title="Zoom out (-)" aria-label="Zoom out" onClick={() => zoomBy(1 / ZOOM_STEP)}>−</button>
