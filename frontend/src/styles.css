@@ -517,12 +517,18 @@ button, input, select, textarea {
 }
 .viewer-pane {
   display: grid;
+  /* Row 1 is the optional Current/Prior label; the viewport always sits in
+     row 2 so a single-pane study still fills height when no label is rendered. */
   grid-template-rows: auto minmax(0, 1fr);
   min-height: 0;
   min-width: 0;
   background: #0f172a;
 }
-.viewer-pane .viewport { min-height: 0; }
+.viewer-pane .viewport {
+  grid-row: 2;
+  min-height: 0;
+  height: 100%;
+}
 .viewer-pane-label {
   display: flex;
   align-items: center;
