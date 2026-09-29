@@ -55,6 +55,8 @@ export interface InstanceDto {
   numberOfFrames: number
   cineRate?: number | null
   frameTime?: number | null
+  imagePositionPatient?: number[] | null
+  imageOrientationPatient?: number[] | null
 }
 
 export interface SeriesDto {

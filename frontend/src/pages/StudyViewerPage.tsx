@@ -201,20 +201,25 @@ export function StudyViewerPage() {
     setActiveSlotId(targetId)
   }, [comparing, activeSlot?.id, slots, setSlotSeries])
 
-  const onSlotProgress = useCallback((sourceId: string, fraction: number) => {
+  const onSlotProgress = useCallback((sourceId: string, progress: { fraction: number; positionMm: number | null }) => {
     if (!syncScroll) return
+    const drive = (handle: DicomViewportHandle | null | undefined) => {
+      if (!handle) return
+      if (progress.positionMm != null && handle.goToPosition(progress.positionMm)) return
+      handle.goToFraction(progress.fraction)
+    }
     if (comparing) {
       if (sourceId === 'current') {
-        priorViewport.current?.goToFraction(fraction)
+        drive(priorViewport.current)
       } else {
         const leftId = slots[0]?.id
-        if (leftId) viewportRefs.current[leftId]?.goToFraction(fraction)
+        if (leftId) drive(viewportRefs.current[leftId])
       }
       return
     }
     for (const slot of slots) {
       if (slot.id === sourceId) continue
-      viewportRefs.current[slot.id]?.goToFraction(fraction)
+      drive(viewportRefs.current[slot.id])
     }
   }, [syncScroll, comparing, slots])
 
@@ -234,6 +239,8 @@ export function StudyViewerPage() {
   const priorViewportInstances = (priorSeries?.instances || []).map((i) => ({
     sopUid: i.sopInstanceUid,
     numberOfFrames: i.numberOfFrames,
+    imagePositionPatient: i.imagePositionPatient,
+    imageOrientationPatient: i.imageOrientationPatient,
   }))
 
   const showSync = comparing || slots.length > 1
@@ -374,7 +381,7 @@ export function StudyViewerPage() {
                   viewportRefs.current[sid] = handle
                 }}
                 onInstanceChange={(idx) => setSlotInstance(slots[0]?.id ?? 'slot-0', idx)}
-                onProgress={(f) => onSlotProgress('current', f)}
+                onProgress={(progress) => onSlotProgress('current', progress)}
               />
             </ViewportPane>
             <ViewportPane
@@ -400,7 +407,7 @@ export function StudyViewerPage() {
                   frameTime={priorInstance.frameTime}
                   modality={priorSeries.modality || priorStudy.modality}
                   onInstanceChange={setPriorInstanceIdx}
-                  onProgress={(f) => onSlotProgress('prior', f)}
+                  onProgress={(progress) => onSlotProgress('prior', progress)}
                   active={activeSlotId === 'prior'}
                   showToolbar={activeSlotId === 'prior'}
                 />
@@ -436,7 +443,7 @@ export function StudyViewerPage() {
                     showToolbar={isActive}
                     viewportRef={(handle) => { viewportRefs.current[slot.id] = handle }}
                     onInstanceChange={(idx) => setSlotInstance(slot.id, idx)}
-                    onProgress={(f) => onSlotProgress(slot.id, f)}
+                    onProgress={(progress) => onSlotProgress(slot.id, progress)}
                   />
                 </ViewportPane>
               )
@@ -485,7 +492,7 @@ function SlotViewport({
   showToolbar: boolean
   viewportRef: Ref<DicomViewportHandle>
   onInstanceChange: (idx: number) => void
-  onProgress: (fraction: number) => void
+  onProgress: (progress: { fraction: number; positionMm: number | null }) => void
 }) {
   const study = detail.study
   const series = detail.series[slot.seriesIdx]
@@ -494,6 +501,8 @@ function SlotViewport({
     () => (series?.instances || []).map((i) => ({
       sopUid: i.sopInstanceUid,
       numberOfFrames: i.numberOfFrames,
+      imagePositionPatient: i.imagePositionPatient,
+      imageOrientationPatient: i.imageOrientationPatient,
     })),
     [series],
   )

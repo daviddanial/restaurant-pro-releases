@@ -43,6 +43,14 @@ public class Instance {
     @Column(name = "frame_time")
     private Double frameTime;
 
+    /** ImagePositionPatient as "x,y,z" (mm). */
+    @Column(name = "image_position_patient", length = 128)
+    private String imagePositionPatient;
+
+    /** ImageOrientationPatient as "r0,r1,r2,c0,c1,c2". */
+    @Column(name = "image_orientation_patient", length = 256)
+    private String imageOrientationPatient;
+
     @Column(name = "storage_key", nullable = false, length = 512)
     private String storageKey;
 

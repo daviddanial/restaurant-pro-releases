@@ -387,13 +387,14 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-VW-007** | Smart hanging protocol: auto-load prior same patient/body part in 1×2 sync scroll. | P3 | P1 | **Done** |
 | **FR-VW-008** | The radiologist viewer shall be a dedicated image-only workspace (RadiAnt-style series rail + viewport); the report editor shall open in a separate browser tab. | P1 | P1 | **Done** |
 | **FR-VW-009** | Multi-viewport layouts: user may switch 1×1 / 1×2 / 2×2; each pane shows a series from the current study; click selects the active pane; series rail loads into the active pane; toolbar/keys apply only to the active pane. Prior compare remains a 1×2 preset. | P1 | P1 | **Done** |
+| **FR-VW-010** | Sync scroll shall link multi-viewport / prior panes by anatomical position (ImagePositionPatient along the stack normal, or SliceLocation). When plane tags are missing, fall back to proportional index. | P1 | P1 | **Done** |
 
 **Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load. Zoom in/out/fit and rotate ±90°/flip are available as discrete toolbar buttons (and `+` / `-` / `0` / `[` / `]` keys), independent of the drag-tool selection; the HUD reports the current zoom percentage and rotation angle. Finished length measurements can be selected and removed with Delete/Backspace, right-click → Delete, or the contextual toolbar Delete control; Esc cancels an unfinished length draw.  
 **Acceptance (VW-006):** Viewer toolbar shows modality presets as buttons (CT: Soft tissue, Lung, Bone, Brain); click applies W/L immediately.  
 **Acceptance (VW-007):** `GET /api/studies/{id}/priors` returns the patient's earlier studies, same-modality first. Opening a study with a same-modality prior hangs it 1×2 (current left, prior right) with the interval shown ("3 months earlier"), the series rail split into Current and Prior sections, and Sync scroll on by default so stepping either stack drives the other proportionally. Body part is not captured at ingest, so modality is the matching proxy; the Compare picker lists every prior and can be set to Off.  
 **Acceptance (VW-008):** Claim opens `/studies/:id` with no report editor on the page; the viewer Report link opens `/studies/:id/report` in a new browser tab where findings/impression/sign live.  
 **Acceptance (VW-009):** Layout buttons switch 1×1 / 1×2 / 2×2 for the current study; panes auto-seed consecutive series; clicking a pane marks it active (highlight) and only that pane shows tools / receives shortcuts; clicking a series loads it into the active pane. With Compare on, layout is forced to 1×2 (current | prior) and layout buttons for other grids are disabled.  
-
+**Acceptance (VW-010):** With Sync scroll on and two series that share orientation but differ in slice count/spacing, scrolling one pane jumps the other to the nearest ImagePositionPatient along the stack normal (not the same index fraction). US/cine or series without plane tags still sync by fraction.
 ---
 
 ### 6.7 Reporting — `FR-RPT`
@@ -687,5 +688,6 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | 1.6 | 2026-08-30 | Engineering | FR-VW-007 Done (promoted P3 → P1): prior comparison with auto-hung 1×2 layout and synchronized scrolling, backed by a new priors endpoint. |
 | 1.7 | 2026-09-28 | Engineering | FR-VW-003: length measurements can be deleted (Delete/Backspace, right-click Delete, toolbar Delete) and Esc cancels an unfinished draw. |
 | 1.8 | 2026-09-29 | Engineering | FR-VW-009 Done: multi-viewport layouts 1×1 / 1×2 / 2×2 with active pane and series-to-active loading; prior compare stays a 1×2 preset. |
+| 1.9 | 2026-09-29 | Engineering | FR-VW-010 Done: sync scroll by ImagePositionPatient / SliceLocation with proportional-index fallback. |
 
 **End of TeleRad Requirements Source of Truth**

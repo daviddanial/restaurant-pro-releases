@@ -143,6 +143,23 @@ public class WadoController {
             if (attrs.containsValue(Tag.ImagerPixelSpacing)) {
                 meta.put("ImagerPixelSpacing", attrs.getStrings(Tag.ImagerPixelSpacing));
             }
+            if (attrs.containsValue(Tag.ImagePositionPatient)) {
+                double[] ipp = attrs.getDoubles(Tag.ImagePositionPatient);
+                if (ipp != null && ipp.length >= 3) {
+                    meta.put("ImagePositionPatient", new double[]{ipp[0], ipp[1], ipp[2]});
+                }
+            }
+            if (attrs.containsValue(Tag.ImageOrientationPatient)) {
+                double[] iop = attrs.getDoubles(Tag.ImageOrientationPatient);
+                if (iop != null && iop.length >= 6) {
+                    meta.put("ImageOrientationPatient",
+                            new double[]{iop[0], iop[1], iop[2], iop[3], iop[4], iop[5]});
+                }
+            }
+            if (attrs.containsValue(Tag.SliceLocation)) {
+                double sl = attrs.getDouble(Tag.SliceLocation, Double.NaN);
+                if (!Double.isNaN(sl)) meta.put("SliceLocation", sl);
+            }
             if (attrs.containsValue(Tag.RescaleSlope)) {
                 meta.put("RescaleSlope", attrs.getDouble(Tag.RescaleSlope, 1.0));
             }

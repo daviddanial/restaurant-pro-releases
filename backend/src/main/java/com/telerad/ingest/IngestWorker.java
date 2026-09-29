@@ -67,6 +67,11 @@ public class IngestWorker {
         if (existing.isPresent()) {
             Instance inst = existing.get();
             inst.setStorageKey(storageKey);
+            // Backfill plane tags on re-upload so sync scroll works for older studies.
+            String ipp = encodeDoubles(attrs, Tag.ImagePositionPatient, 3);
+            String iop = encodeDoubles(attrs, Tag.ImageOrientationPatient, 6);
+            if (ipp != null) inst.setImagePositionPatient(ipp);
+            if (iop != null) inst.setImageOrientationPatient(iop);
             instanceRepository.save(inst);
             Study study = inst.getSeries().getStudy();
             if (study.getStatus() != StudyStatus.REPORTED && study.getStatus() != StudyStatus.DELIVERED) {
@@ -118,6 +123,8 @@ public class IngestWorker {
                 .numberOfFrames(Math.max(1, attrs.getInt(Tag.NumberOfFrames, 1)))
                 .cineRate(readPositiveDouble(attrs, Tag.CineRate, Tag.RecommendedDisplayFrameRate))
                 .frameTime(readPositiveDouble(attrs, Tag.FrameTime))
+                .imagePositionPatient(encodeDoubles(attrs, Tag.ImagePositionPatient, 3))
+                .imageOrientationPatient(encodeDoubles(attrs, Tag.ImageOrientationPatient, 6))
                 .storageKey(storageKey)
                 .transferSyntaxUid(attrs.getString(Tag.TransferSyntaxUID, UID.ExplicitVRLittleEndian))
                 .build();
@@ -210,5 +217,23 @@ public class IngestWorker {
             }
         }
         return null;
+    }
+
+    /** Encode the first {@code expectedLen} doubles of a multi-value tag as "a,b,c". */
+    private static String encodeDoubles(Attributes attrs, int tag, int expectedLen) {
+        if (!attrs.containsValue(tag)) return null;
+        try {
+            double[] arr = attrs.getDoubles(tag);
+            if (arr == null || arr.length < expectedLen) return null;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < expectedLen; i++) {
+                if (Double.isNaN(arr[i])) return null;
+                if (i > 0) sb.append(',');
+                sb.append(arr[i]);
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

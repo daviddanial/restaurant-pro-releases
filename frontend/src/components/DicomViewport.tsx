@@ -31,12 +31,23 @@ import {
 } from '@cornerstonejs/tools'
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
 import { presetsForModality } from '../wlPresets'
+import { loadAuth } from '../api'
+import {
+  buildStackPositions,
+  hasSpatialPositions,
+  nearestIndexByPosition,
+  type PlaneInstance,
+} from '../spatialSync'
 
 type CtxMenu = { clientX: number; clientY: number; annotationUID: string }
 
-export type ViewportInstance = {
+export type ViewportInstance = PlaneInstance & {
   sopUid: string
-  numberOfFrames: number
+}
+
+export type StackProgress = {
+  fraction: number
+  positionMm: number | null
 }
 
 type Props = {
@@ -48,8 +59,8 @@ type Props = {
   frameTime?: number | null
   modality?: string | null
   onInstanceChange: (idx: number) => void
-  /** Position through the stack (0–1) after a user-driven move; drives scroll sync. */
-  onProgress?: (fraction: number) => void
+  /** Position through the stack after a user-driven move; drives scroll sync. */
+  onProgress?: (progress: StackProgress) => void
   /** Only the active pane receives keyboard shortcuts. */
   active?: boolean
   /** When false, hide the embedded toolbar (inactive panes in a multi layout). */
@@ -59,6 +70,11 @@ type Props = {
 export type DicomViewportHandle = {
   /** Jump to the frame at this position through the stack, without echoing onProgress. */
   goToFraction: (fraction: number) => void
+  /**
+   * Jump to the slice nearest to this anatomical position (mm along stack normal).
+   * Returns false when this stack has no plane data (caller should use goToFraction).
+   */
+  goToPosition: (positionMm: number) => boolean
 }
 
 type Tool = 'wwwc' | 'zoom' | 'pan' | 'length'
@@ -118,6 +134,55 @@ function firstStackIndexForInstance(stack: StackEntry[], instanceIndex: number):
   return idx >= 0 ? idx : 0
 }
 
+/** Fill missing IPP/IOP from the lightweight WADO metadata endpoint (pre-V6 studies). */
+async function enrichPlaneFromMetadata(
+  instances: ViewportInstance[],
+): Promise<ViewportInstance[] | null> {
+  const token = loadAuth()?.accessToken
+  const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {}
+  const next = instances.map((i) => ({ ...i }))
+  let filled = 0
+  const concurrency = 6
+  for (let start = 0; start < next.length; start += concurrency) {
+    const chunk = next.slice(start, start + concurrency)
+    await Promise.all(chunk.map(async (inst, offset) => {
+      const i = start + offset
+      if (inst.imagePositionPatient && inst.imagePositionPatient.length >= 3) return
+      // Skip heavy multi-frame cine; spatial sync is for single-frame stacks.
+      if ((inst.numberOfFrames || 1) > 1) return
+      try {
+        const res = await fetch(`/api/dicom/instances/${encodeURIComponent(inst.sopUid)}/metadata`, {
+          headers,
+        })
+        if (!res.ok) return
+        const meta = await res.json() as {
+          ImagePositionPatient?: number[]
+          ImageOrientationPatient?: number[]
+          SliceLocation?: number
+        }
+        if (meta.ImagePositionPatient?.length && meta.ImagePositionPatient.length >= 3) {
+          next[i] = { ...next[i], imagePositionPatient: meta.ImagePositionPatient.slice(0, 3) }
+          filled++
+        }
+        if (meta.ImageOrientationPatient?.length && meta.ImageOrientationPatient.length >= 6) {
+          next[i] = {
+            ...next[i],
+            imageOrientationPatient: meta.ImageOrientationPatient.slice(0, 6),
+          }
+        }
+        if (meta.SliceLocation != null && Number.isFinite(meta.SliceLocation)
+            && !(next[i].imagePositionPatient && next[i].imagePositionPatient!.length >= 3)) {
+          next[i] = { ...next[i], sliceLocation: meta.SliceLocation }
+          filled++
+        }
+      } catch {
+        /* ignore per-SOP failures */
+      }
+    }))
+  }
+  return filled > 0 ? next : null
+}
+
 function applyWl(viewport: Types.IStackViewport, wl: WlState) {
   if (!(wl.width > 0)) return
   const voiRange = utilities.windowLevel.toLowHighRange(wl.width, wl.center)
@@ -152,12 +217,15 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const elementRef = useRef<HTMLDivElement | null>(null)
   const engineRef = useRef<RenderingEngine | null>(null)
   const stackRef = useRef<StackEntry[]>([])
+  const positionsRef = useRef<(number | null)[]>([])
   const syncingRef = useRef(false)
   const playingRef = useRef(false)
   const invertRef = useRef(false)
   // Read through a ref: the listener is bound once but the callback identity changes.
   const onProgressRef = useRef(onProgress)
   onProgressRef.current = onProgress
+  const onInstanceChangeRef = useRef(onInstanceChange)
+  onInstanceChangeRef.current = onInstanceChange
 
   const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -187,6 +255,22 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     [studyUid, seriesUid, stackKey],
   )
   stackRef.current = stack
+
+  const planeKey = useMemo(
+    () => instances.map((i) => {
+      const ipp = i.imagePositionPatient?.join(',') ?? ''
+      const iop = i.imageOrientationPatient?.join(',') ?? ''
+      return `${i.sopUid}:${ipp}:${iop}`
+    }).join('|'),
+    [instances],
+  )
+  const [enrichment, setEnrichment] = useState<{ key: string; planes: ViewportInstance[] } | null>(null)
+  const enrichedPlanes = enrichment?.key === stackKey ? enrichment.planes : null
+  const stackPositions = useMemo(
+    () => buildStackPositions(enrichedPlanes ?? instances),
+    [planeKey, enrichedPlanes, instances],
+  )
+  positionsRef.current = stackPositions
 
   const hasMultiFrame = instances.some((i) => (i.numberOfFrames || 1) > 1)
   const presets = presetsForModality(modality)
@@ -322,9 +406,11 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
           const entry = stackRef.current[idx]
           if (!entry) return
           setStackIndex(idx)
-          onInstanceChange(entry.instanceIndex)
+          onInstanceChangeRef.current(entry.instanceIndex)
           const total = stackRef.current.length
-          onProgressRef.current?.(total > 1 ? idx / (total - 1) : 0)
+          const fraction = total > 1 ? idx / (total - 1) : 0
+          const positionMm = positionsRef.current[idx] ?? null
+          onProgressRef.current?.({ fraction, positionMm })
 
           const vp = getViewport()
           if (vp) {
@@ -435,6 +521,14 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
           setWl({ center: windowCenter, width: windowWidth })
         }
         setLoading(false)
+
+        // For studies ingested before plane tags were stored, fill from WADO metadata.
+        if (!hasSpatialPositions(positionsRef.current) && instances.length > 0 && instances.length <= 256) {
+          const key = stackKey
+          void enrichPlaneFromMetadata(instances).then((next) => {
+            if (!cancelled && next) setEnrichment({ key, planes: next })
+          })
+        }
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : 'Failed to load DICOM stack')
@@ -447,7 +541,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
 
     loadStack()
     return () => { cancelled = true }
-  }, [ready, studyUid, seriesUid, stack, cineRate, frameTime, modality, getViewport])
+  }, [ready, studyUid, seriesUid, stack, stackKey, cineRate, frameTime, modality, getViewport, instances])
   // intentionally omit instanceIndex — jump handled below
 
   // Jump when parent selects a different instance (series click / external)
@@ -515,11 +609,28 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       syncingRef.current = false
       setStackIndex(target)
       const entry = stackRef.current[target]
-      if (entry) onInstanceChange(entry.instanceIndex)
+      if (entry) onInstanceChangeRef.current(entry.instanceIndex)
     })
-  }, [getViewport, onInstanceChange])
+  }, [getViewport])
 
-  useImperativeHandle(ref, () => ({ goToFraction }), [goToFraction])
+  const goToPosition = useCallback((positionMm: number) => {
+    const viewport = getViewport()
+    const positions = positionsRef.current
+    if (!viewport || !hasSpatialPositions(positions)) return false
+    const target = nearestIndexByPosition(positions, positionMm)
+    if (target == null) return false
+    if (target === viewport.getCurrentImageIdIndex()) return true
+    syncingRef.current = true
+    viewport.setImageIdIndex(target).finally(() => {
+      syncingRef.current = false
+      setStackIndex(target)
+      const entry = stackRef.current[target]
+      if (entry) onInstanceChangeRef.current(entry.instanceIndex)
+    })
+    return true
+  }, [getViewport])
+
+  useImperativeHandle(ref, () => ({ goToFraction, goToPosition }), [goToFraction, goToPosition])
 
   const zoomBy = useCallback((factor: number) => {
     const viewport = getViewport()
