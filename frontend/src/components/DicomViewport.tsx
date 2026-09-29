@@ -50,6 +50,10 @@ type Props = {
   onInstanceChange: (idx: number) => void
   /** Position through the stack (0–1) after a user-driven move; drives scroll sync. */
   onProgress?: (fraction: number) => void
+  /** Only the active pane receives keyboard shortcuts. */
+  active?: boolean
+  /** When false, hide the embedded toolbar (inactive panes in a multi layout). */
+  showToolbar?: boolean
 }
 
 export type DicomViewportHandle = {
@@ -137,6 +141,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   modality,
   onInstanceChange,
   onProgress,
+  active = true,
+  showToolbar = true,
 }: Props, ref) {
   const reactId = useId().replace(/:/g, '')
   const renderingEngineId = `telerad-re-${reactId}`
@@ -697,6 +703,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   }, [getViewport])
 
   useEffect(() => {
+    if (!active) return
     function onKey(e: KeyboardEvent) {
       const tag = (e.target as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target as HTMLElement)?.isContentEditable) {
@@ -747,6 +754,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     window.addEventListener('keydown', onKey, true)
     return () => window.removeEventListener('keydown', onKey, true)
   }, [
+    active,
     stepFrame,
     hasMultiFrame,
     resetView,
@@ -808,6 +816,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
           </button>
         </div>
       )}
+      {showToolbar && (
       <div className="viewport-tools">
         <button className={`btn secondary ${tool === 'wwwc' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('wwwc')}>W/L</button>
         <button className={`btn secondary ${tool === 'zoom' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('zoom')}>Zoom</button>
@@ -886,6 +895,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         </div>
         <span className="badge">{counterLabel}</span>
       </div>
+      )}
     </div>
   )
 })
