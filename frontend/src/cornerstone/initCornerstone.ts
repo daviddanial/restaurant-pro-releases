@@ -12,6 +12,7 @@ import {
   StackScrollTool,
   LengthTool,
   CrosshairsTool,
+  TrackballRotateTool,
 } from '@cornerstonejs/tools'
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader'
 import { loadAuth } from '../api'
@@ -63,6 +64,7 @@ export function ensureCornerstoneInit(): Promise<void> {
         addTool(StackScrollTool)
         addTool(LengthTool)
         addTool(CrosshairsTool)
+        addTool(TrackballRotateTool)
         toolsRegistered = true
       }
     })().catch((err) => {

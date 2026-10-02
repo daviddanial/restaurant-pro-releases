@@ -525,13 +525,25 @@ button, input, select, textarea {
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
 }
 .viewer-panes.layout-mpr {
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   flex: 1;
   min-height: 0;
 }
-.viewer-panes.layout-mpr .mpr-axial {
-  grid-row: 1 / -1;
+.mpr-slab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #94a3b8;
+  font-size: 0.7rem;
+}
+.mpr-slab select {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.3rem;
 }
 .mpr-root {
   display: flex;
@@ -667,9 +679,6 @@ button, input, select, textarea {
   .viewer-panes.compare {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: repeat(auto-fit, minmax(220px, 1fr));
-  }
-  .viewer-panes.layout-mpr .mpr-axial {
-    grid-row: auto;
   }
 }
 .viewer-series .muted { color: #64748b; font-size: 0.8125rem; }
