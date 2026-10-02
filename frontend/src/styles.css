@@ -29,6 +29,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Cornerstone loadImageToCanvas / renderToCanvasGPU appends temporary viewport
+ * hosts to document.body with position:absolute but no top/left. Their static
+ * position lands below the app and inflates scrollHeight (browser scrollbar +
+ * white page strip). Pin them off-layout until Cornerstone removes them.
+ */
+body > [viewport-id-for-remove] {
+  top: 0 !important;
+  left: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-strong); }
 button, input, select, textarea {
@@ -37,10 +52,14 @@ button, input, select, textarea {
 }
 
 .app-shell {
+  /* Lock shell to the window so the viewer cannot grow past 100% and create
+     a browser scrollbar that reveals the light page background underneath. */
+  height: 100%;
   min-height: 100%;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   background: var(--bg);
+  overflow: hidden;
 }
 
 .topbar {
@@ -149,6 +168,9 @@ button, input, select, textarea {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
 }
 .page.wide { max-width: none; }
 
@@ -385,7 +407,10 @@ button, input, select, textarea {
 .viewer-shell {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  height: calc(100vh - 57px);
+  /* Fill the app-shell content row (actual topbar height), not 100vh - guessed px. */
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   background: #0b1220;
 }
 .viewer-topstrip {
@@ -435,12 +460,21 @@ button, input, select, textarea {
   display: grid;
   grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
   gap: 0;
+  height: 100%;
   min-height: 0;
   background: #0b1220;
 }
 @media (max-width: 900px) {
-  .viewer-shell { height: auto; min-height: calc(100vh - 57px); }
-  .viewer-layout { grid-template-columns: 1fr; }
+  .app-shell { overflow: auto; }
+  .viewer-shell {
+    height: auto;
+    min-height: 100%;
+  }
+  .viewer-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 50vh;
+  }
 }
 
 .viewer-series {
@@ -507,6 +541,7 @@ button, input, select, textarea {
 .viewer-panes {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  height: 100%;
   min-height: 0;
   min-width: 0;
   gap: 1px;
@@ -632,6 +667,7 @@ button, input, select, textarea {
   /* Row 1 is the optional Current/Prior label; the viewport always sits in
      row 2 so a single-pane study still fills height when no label is rendered. */
   grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
   min-height: 0;
   min-width: 0;
   background: #0f172a;

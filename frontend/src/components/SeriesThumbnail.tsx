@@ -21,6 +21,9 @@ export function SeriesThumbnail({ studyUid, seriesUid, sopUid }: Props) {
     const canvas = canvasRef.current
     if (!canvas) return
     let cancelled = false
+    const imageId = buildWadoUriImageId(studyUid, seriesUid, sopUid)
+    // Matches Cornerstone renderToCanvasGPU's viewport-id-for-remove value.
+    const removeAttr = `renderGPUViewport-${imageId}`.split(':').join('-')
 
     async function render(target: HTMLCanvasElement) {
       try {
@@ -28,7 +31,7 @@ export function SeriesThumbnail({ studyUid, seriesUid, sopUid }: Props) {
         if (cancelled) return
         await utilities.loadImageToCanvas({
           canvas: target,
-          imageId: buildWadoUriImageId(studyUid, seriesUid, sopUid),
+          imageId,
           thumbnail: true,
           imageAspect: true,
         })
@@ -40,6 +43,9 @@ export function SeriesThumbnail({ studyUid, seriesUid, sopUid }: Props) {
     render(canvas)
     return () => {
       cancelled = true
+      document
+        .querySelectorAll(`[viewport-id-for-remove="${CSS.escape(removeAttr)}"]`)
+        .forEach((el) => el.remove())
     }
   }, [studyUid, seriesUid, sopUid])
 
