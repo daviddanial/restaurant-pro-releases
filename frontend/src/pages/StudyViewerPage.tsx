@@ -15,6 +15,7 @@ import {
   type LayoutMode,
   type ViewportSlot,
 } from '../viewportLayout'
+import { ViewerToolsSlotContext } from '../viewerToolsSlot'
 
 type SeriesRailProps = {
   studyUid: string
@@ -85,6 +86,7 @@ export function StudyViewerPage() {
 
   const viewportRefs = useRef<Record<string, DicomViewportHandle | null>>({})
   const priorViewport = useRef<DicomViewportHandle>(null)
+  const [toolsSlot, setToolsSlot] = useState<HTMLElement | null>(null)
 
   // Viewer is a fixed workspace: never let the document scroll (Cornerstone
   // thumbnail temp nodes and other offscreen hosts must not reveal page bg).
@@ -290,254 +292,260 @@ export function StudyViewerPage() {
   const showSync = comparing || slots.length > 1
 
   return (
-    <div className="viewer-shell">
-      <div className="viewer-topstrip">
-        <div className="viewer-topstrip-id">
-          <strong>{study.patientName || 'Unknown patient'}</strong>
-          <span className="muted">MRN {study.patientMrn || '—'}</span>
-          <span className="mono muted">{study.accessionNumber || '—'}</span>
-          <span className="muted">{study.modality || '—'}</span>
-        </div>
-        <div className="viewer-topstrip-meta">
-          <span className={`badge ${study.priority === 'STAT' ? 'stat' : ''}`}>{study.priority}</span>
-          <span className="badge">{study.status}</span>
-          {study.slaDueAt && (
-            <span className={`badge ${study.slaOverdue ? 'breached' : ''}`}>
-              {study.slaOverdue ? 'SLA Breached' : `Due ${new Date(study.slaDueAt).toLocaleString()}`}
-            </span>
-          )}
-          {detail.report?.status === 'SIGNED' && <span className="badge">Report signed</span>}
-        </div>
-
-        <div className="viewer-layout-toggle" role="group" aria-label="Viewport layout">
-          {LAYOUT_OPTIONS.map((opt) => (
-            <button
-              key={opt.id}
-              type="button"
-              className={effectiveLayout === opt.id && !comparing && !mprMode ? 'on' : undefined}
-              title={
-                mprMode
-                  ? 'Exit MPR to change layout'
-                  : comparing
-                    ? 'Turn Compare off to change layout'
-                    : opt.title
-              }
-              disabled={mprMode || (comparing && opt.id !== '1x2')}
-              aria-pressed={effectiveLayout === opt.id && !mprMode}
-              onClick={() => {
-                if (comparing || mprMode) return
-                applyLayout(opt.id)
-              }}
-            >
-              {opt.label}
-            </button>
-          ))}
-          {mprEligible && (
-            <button
-              type="button"
-              className={mprMode ? 'on' : undefined}
-              title="Multi-planar reconstruction (axial / sagittal / coronal)"
-              aria-pressed={mprMode}
-              onClick={() => (mprMode ? exitMpr() : enterMpr())}
-            >
-              MPR
-            </button>
-          )}
-        </div>
-
-        {priors.length > 0 && !mprMode && (
-          <div className="viewer-compare">
-            <label className="viewer-compare-pick">
-              <span>Compare</span>
-              <select
-                value={priorId ?? ''}
-                onChange={(e) => setPriorId(e.target.value || null)}
-              >
-                <option value="">Off</option>
-                {priors.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {formatStudyDate(p.studyDate)} · {p.modality || '—'}
-                    {p.studyDescription ? ` · ${p.studyDescription}` : ''}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        )}
-
-        {mprMode ? (
-          <label className="viewer-compare-sync">
-            <input
-              type="checkbox"
-              checked={linkViews}
-              onChange={(e) => setLinkViews(e.target.checked)}
-            />
-            Link views
-          </label>
-        ) : showSync ? (
-          <label className="viewer-compare-sync">
-            <input
-              type="checkbox"
-              checked={syncScroll}
-              onChange={(e) => setSyncScroll(e.target.checked)}
-            />
-            Sync scroll
-          </label>
-        ) : null}
-
-        <div className="viewer-topstrip-actions">
-          <Link className="btn secondary" to="/worklist">Back to worklist</Link>
-          <a
-            className="btn"
-            href={`/studies/${id}/report`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Report
-          </a>
-        </div>
-      </div>
-
-      <div className="viewer-layout">
-        <aside className="viewer-series" aria-label="Series">
-          <p className="viewer-series-label">
-            {mprMode
-              ? 'Series → MPR volume'
-              : comparing
-                ? `Current · ${formatStudyDate(study.studyDate)}`
-                : slots.length > 1
-                  ? 'Series → active pane'
-                  : 'Series'}
-          </p>
-          <SeriesRail
-            studyUid={study.studyInstanceUid}
-            series={detail.series}
-            activeIdx={mprMode ? mprSeriesIdx : comparing ? compareSeriesIdx : activeSeriesIdx}
-            onSelect={onSeriesSelect}
-          />
-          {comparing && priorDetail && priorStudy && (
-            <>
-              <p className="viewer-series-label prior">
-                Prior · {formatStudyDate(priorStudy.studyDate)}
-              </p>
-              <SeriesRail
-                studyUid={priorStudy.studyInstanceUid}
-                series={priorDetail.series}
-                activeIdx={priorSeriesIdx}
-                onSelect={(idx) => { setPriorSeriesIdx(idx); setPriorInstanceIdx(0) }}
-              />
-            </>
-          )}
-        </aside>
-
-        {mprMode && mprSeries ? (
-          <MprViewer
-            key={`${study.studyInstanceUid}:${mprSeries.seriesInstanceUid}`}
-            studyUid={study.studyInstanceUid}
-            seriesUid={mprSeries.seriesInstanceUid}
-            instances={mprSeries.instances.map((i) => ({
-              sopUid: i.sopInstanceUid,
-              numberOfFrames: i.numberOfFrames,
-              imagePositionPatient: i.imagePositionPatient,
-              imageOrientationPatient: i.imageOrientationPatient,
-            }))}
-            modality={mprSeries.modality || study.modality}
-            linkViews={linkViews}
-          />
-        ) : comparing && priorStudy ? (
-          <div className={`viewer-panes ${layoutClassName('1x2')}`}>
-            <ViewportPane
-              label={(
-                <>
-                  <span className="viewer-pane-tag current">Current</span>
-                  {formatStudyDate(study.studyDate)}
-                  {compareSeries?.seriesDescription ? ` · ${compareSeries.seriesDescription}` : ''}
-                </>
+    <ViewerToolsSlotContext.Provider value={toolsSlot}>
+      <div className="viewer-shell">
+        <div className="viewer-topstrip">
+          <div className="viewer-topstrip-row">
+            <div className="viewer-topstrip-id">
+              <strong>{study.patientName || 'Unknown patient'}</strong>
+              <span className="muted">MRN {study.patientMrn || '—'}</span>
+              <span className="mono muted">{study.accessionNumber || '—'}</span>
+              <span className="muted">{study.modality || '—'}</span>
+            </div>
+            <div className="viewer-topstrip-meta">
+              <span className={`badge ${study.priority === 'STAT' ? 'stat' : ''}`}>{study.priority}</span>
+              <span className="badge">{study.status}</span>
+              {study.slaDueAt && (
+                <span className={`badge ${study.slaOverdue ? 'breached' : ''}`}>
+                  {study.slaOverdue ? 'SLA Breached' : `Due ${new Date(study.slaDueAt).toLocaleString()}`}
+                </span>
               )}
-              active={activeSlotId === (slots[0]?.id ?? 'slot-0')}
-              onActivate={() => setActiveSlotId(slots[0]?.id ?? 'slot-0')}
-            >
-              <SlotViewport
-                detail={detail}
-                slot={slots[0] ?? { id: 'slot-0', seriesIdx: 0, instanceIdx: 0 }}
-                active={activeSlotId === (slots[0]?.id ?? 'slot-0')}
-                showToolbar={activeSlotId === (slots[0]?.id ?? 'slot-0')}
-                viewportRef={(handle) => {
-                  const sid = slots[0]?.id ?? 'slot-0'
-                  viewportRefs.current[sid] = handle
-                }}
-                onInstanceChange={(idx) => setSlotInstance(slots[0]?.id ?? 'slot-0', idx)}
-                onProgress={(progress) => onSlotProgress('current', progress)}
-              />
-            </ViewportPane>
-            <ViewportPane
-              label={(
-                <>
-                  <span className="viewer-pane-tag prior">Prior</span>
-                  {formatStudyDate(priorStudy.studyDate)}
-                  {interval ? ` · ${interval}` : ''}
-                  {priorSeries?.seriesDescription ? ` · ${priorSeries.seriesDescription}` : ''}
-                </>
-              )}
-              active={activeSlotId === 'prior'}
-              onActivate={() => setActiveSlotId('prior')}
-            >
-              {priorSeries && priorInstance ? (
-                <DicomViewport
-                  ref={priorViewport}
-                  studyUid={priorStudy.studyInstanceUid}
-                  seriesUid={priorSeries.seriesInstanceUid}
-                  instances={priorViewportInstances}
-                  instanceIndex={priorInstanceIdx}
-                  cineRate={priorInstance.cineRate}
-                  frameTime={priorInstance.frameTime}
-                  modality={priorSeries.modality || priorStudy.modality}
-                  onInstanceChange={setPriorInstanceIdx}
-                  onProgress={(progress) => onSlotProgress('prior', progress)}
-                  active={activeSlotId === 'prior'}
-                  showToolbar={activeSlotId === 'prior'}
-                />
-              ) : (
-                <div className="viewport">
-                  <div className="muted" style={{ color: '#94a3b8' }}>Loading prior…</div>
-                </div>
-              )}
-            </ViewportPane>
-          </div>
-        ) : (
-          <div className={`viewer-panes ${layoutClassName(effectiveLayout)}`}>
-            {slots.map((slot, i) => {
-              const series = detail.series[slot.seriesIdx]
-              const isActive = slot.id === activeSlotId
-              return (
-                <ViewportPane
-                  key={slot.id}
-                  label={(
-                    <>
-                      <span className="viewer-pane-tag current">View {i + 1}</span>
-                      {series?.seriesDescription
-                        || (series ? `Series ${series.seriesNumber ?? slot.seriesIdx + 1}` : 'Empty')}
-                    </>
-                  )}
-                  active={isActive}
-                  onActivate={() => setActiveSlotId(slot.id)}
+              {detail.report?.status === 'SIGNED' && <span className="badge">Report signed</span>}
+            </div>
+
+            <div className="viewer-layout-toggle" role="group" aria-label="Viewport layout">
+              {LAYOUT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={effectiveLayout === opt.id && !comparing && !mprMode ? 'on' : undefined}
+                  title={
+                    mprMode
+                      ? 'Exit MPR to change layout'
+                      : comparing
+                        ? 'Turn Compare off to change layout'
+                        : opt.title
+                  }
+                  disabled={mprMode || (comparing && opt.id !== '1x2')}
+                  aria-pressed={effectiveLayout === opt.id && !mprMode}
+                  onClick={() => {
+                    if (comparing || mprMode) return
+                    applyLayout(opt.id)
+                  }}
                 >
-                  <SlotViewport
-                    detail={detail}
-                    slot={slot}
-                    active={isActive}
-                    showToolbar={isActive}
-                    viewportRef={(handle) => { viewportRefs.current[slot.id] = handle }}
-                    onInstanceChange={(idx) => setSlotInstance(slot.id, idx)}
-                    onProgress={(progress) => onSlotProgress(slot.id, progress)}
-                  />
-                </ViewportPane>
-              )
-            })}
+                  {opt.label}
+                </button>
+              ))}
+              {mprEligible && (
+                <button
+                  type="button"
+                  className={mprMode ? 'on' : undefined}
+                  title="Multi-planar reconstruction (axial / sagittal / coronal)"
+                  aria-pressed={mprMode}
+                  onClick={() => (mprMode ? exitMpr() : enterMpr())}
+                >
+                  MPR
+                </button>
+              )}
+            </div>
+
+            {priors.length > 0 && !mprMode && (
+              <div className="viewer-compare">
+                <label className="viewer-compare-pick">
+                  <span>Compare</span>
+                  <select
+                    value={priorId ?? ''}
+                    onChange={(e) => setPriorId(e.target.value || null)}
+                  >
+                    <option value="">Off</option>
+                    {priors.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {formatStudyDate(p.studyDate)} · {p.modality || '—'}
+                        {p.studyDescription ? ` · ${p.studyDescription}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+
+            {mprMode ? (
+              <label className="viewer-compare-sync">
+                <input
+                  type="checkbox"
+                  checked={linkViews}
+                  onChange={(e) => setLinkViews(e.target.checked)}
+                />
+                Link views
+              </label>
+            ) : showSync ? (
+              <label className="viewer-compare-sync">
+                <input
+                  type="checkbox"
+                  checked={syncScroll}
+                  onChange={(e) => setSyncScroll(e.target.checked)}
+                />
+                Sync scroll
+              </label>
+            ) : null}
+
+            <div className="viewer-topstrip-actions">
+              <Link className="btn secondary" to="/worklist">Back to worklist</Link>
+              <a
+                className="btn"
+                href={`/studies/${id}/report`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Report
+              </a>
+            </div>
           </div>
-        )}
+          {/* Active stack viewport portals its tools here — never over the image. */}
+          <div ref={setToolsSlot} className="viewer-chrome-tools" />
+        </div>
+
+        <div className="viewer-layout">
+          <aside className="viewer-series" aria-label="Series">
+            <p className="viewer-series-label">
+              {mprMode
+                ? 'Series → MPR volume'
+                : comparing
+                  ? `Current · ${formatStudyDate(study.studyDate)}`
+                  : slots.length > 1
+                    ? 'Series → active pane'
+                    : 'Series'}
+            </p>
+            <SeriesRail
+              studyUid={study.studyInstanceUid}
+              series={detail.series}
+              activeIdx={mprMode ? mprSeriesIdx : comparing ? compareSeriesIdx : activeSeriesIdx}
+              onSelect={onSeriesSelect}
+            />
+            {comparing && priorDetail && priorStudy && (
+              <>
+                <p className="viewer-series-label prior">
+                  Prior · {formatStudyDate(priorStudy.studyDate)}
+                </p>
+                <SeriesRail
+                  studyUid={priorStudy.studyInstanceUid}
+                  series={priorDetail.series}
+                  activeIdx={priorSeriesIdx}
+                  onSelect={(idx) => { setPriorSeriesIdx(idx); setPriorInstanceIdx(0) }}
+                />
+              </>
+            )}
+          </aside>
+
+          {mprMode && mprSeries ? (
+            <MprViewer
+              key={`${study.studyInstanceUid}:${mprSeries.seriesInstanceUid}`}
+              studyUid={study.studyInstanceUid}
+              seriesUid={mprSeries.seriesInstanceUid}
+              instances={mprSeries.instances.map((i) => ({
+                sopUid: i.sopInstanceUid,
+                numberOfFrames: i.numberOfFrames,
+                imagePositionPatient: i.imagePositionPatient,
+                imageOrientationPatient: i.imageOrientationPatient,
+              }))}
+              modality={mprSeries.modality || study.modality}
+              linkViews={linkViews}
+            />
+          ) : comparing && priorStudy ? (
+            <div className={`viewer-panes ${layoutClassName('1x2')}`}>
+              <ViewportPane
+                label={(
+                  <>
+                    <span className="viewer-pane-tag current">Current</span>
+                    {formatStudyDate(study.studyDate)}
+                    {compareSeries?.seriesDescription ? ` · ${compareSeries.seriesDescription}` : ''}
+                  </>
+                )}
+                active={activeSlotId === (slots[0]?.id ?? 'slot-0')}
+                onActivate={() => setActiveSlotId(slots[0]?.id ?? 'slot-0')}
+              >
+                <SlotViewport
+                  detail={detail}
+                  slot={slots[0] ?? { id: 'slot-0', seriesIdx: 0, instanceIdx: 0 }}
+                  active={activeSlotId === (slots[0]?.id ?? 'slot-0')}
+                  showToolbar={activeSlotId === (slots[0]?.id ?? 'slot-0')}
+                  viewportRef={(handle) => {
+                    const sid = slots[0]?.id ?? 'slot-0'
+                    viewportRefs.current[sid] = handle
+                  }}
+                  onInstanceChange={(idx) => setSlotInstance(slots[0]?.id ?? 'slot-0', idx)}
+                  onProgress={(progress) => onSlotProgress('current', progress)}
+                />
+              </ViewportPane>
+              <ViewportPane
+                label={(
+                  <>
+                    <span className="viewer-pane-tag prior">Prior</span>
+                    {formatStudyDate(priorStudy.studyDate)}
+                    {interval ? ` · ${interval}` : ''}
+                    {priorSeries?.seriesDescription ? ` · ${priorSeries.seriesDescription}` : ''}
+                  </>
+                )}
+                active={activeSlotId === 'prior'}
+                onActivate={() => setActiveSlotId('prior')}
+              >
+                {priorSeries && priorInstance ? (
+                  <DicomViewport
+                    ref={priorViewport}
+                    studyUid={priorStudy.studyInstanceUid}
+                    seriesUid={priorSeries.seriesInstanceUid}
+                    instances={priorViewportInstances}
+                    instanceIndex={priorInstanceIdx}
+                    cineRate={priorInstance.cineRate}
+                    frameTime={priorInstance.frameTime}
+                    modality={priorSeries.modality || priorStudy.modality}
+                    onInstanceChange={setPriorInstanceIdx}
+                    onProgress={(progress) => onSlotProgress('prior', progress)}
+                    active={activeSlotId === 'prior'}
+                    showToolbar={activeSlotId === 'prior'}
+                  />
+                ) : (
+                  <div className="viewport">
+                    <div className="muted" style={{ color: '#94a3b8' }}>Loading prior…</div>
+                  </div>
+                )}
+              </ViewportPane>
+            </div>
+          ) : (
+            <div className={`viewer-panes ${layoutClassName(effectiveLayout)}`}>
+              {slots.map((slot, i) => {
+                const series = detail.series[slot.seriesIdx]
+                const isActive = slot.id === activeSlotId
+                return (
+                  <ViewportPane
+                    key={slot.id}
+                    label={(
+                      <>
+                        <span className="viewer-pane-tag current">View {i + 1}</span>
+                        {series?.seriesDescription
+                          || (series ? `Series ${series.seriesNumber ?? slot.seriesIdx + 1}` : 'Empty')}
+                      </>
+                    )}
+                    active={isActive}
+                    onActivate={() => setActiveSlotId(slot.id)}
+                  >
+                    <SlotViewport
+                      detail={detail}
+                      slot={slot}
+                      active={isActive}
+                      showToolbar={isActive}
+                      viewportRef={(handle) => { viewportRefs.current[slot.id] = handle }}
+                      onInstanceChange={(idx) => setSlotInstance(slot.id, idx)}
+                      onProgress={(progress) => onSlotProgress(slot.id, progress)}
+                    />
+                  </ViewportPane>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </ViewerToolsSlotContext.Provider>
   )
 }
 

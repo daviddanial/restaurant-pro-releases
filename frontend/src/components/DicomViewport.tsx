@@ -9,6 +9,7 @@ import {
   useState,
   type MouseEvent as ReactMouseEvent,
 } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Enums,
   RenderingEngine,
@@ -38,6 +39,7 @@ import {
   nearestIndexByPosition,
   type PlaneInstance,
 } from '../spatialSync'
+import { useViewerToolsSlot } from '../viewerToolsSlot'
 
 type CtxMenu = { clientX: number; clientY: number; annotationUID: string }
 
@@ -63,7 +65,7 @@ type Props = {
   onProgress?: (progress: StackProgress) => void
   /** Only the active pane receives keyboard shortcuts. */
   active?: boolean
-  /** When false, hide the embedded toolbar (inactive panes in a multi layout). */
+  /** When false, do not host tools in the viewer chrome (inactive panes). */
   showToolbar?: boolean
 }
 
@@ -209,6 +211,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   active = true,
   showToolbar = true,
 }: Props, ref) {
+  const toolsSlot = useViewerToolsSlot()
   const reactId = useId().replace(/:/g, '')
   const renderingEngineId = `telerad-re-${reactId}`
   const viewportId = `telerad-vp-${reactId}`
@@ -888,6 +891,87 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
 
   const activePreset = presets.find((p) => p.center === wl.center && p.width === wl.width)
 
+  const tools = showToolbar ? (
+    <div className="viewport-tools" role="toolbar" aria-label="Viewport tools">
+      <button className={`btn secondary ${tool === 'wwwc' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('wwwc')}>W/L</button>
+      <button className={`btn secondary ${tool === 'zoom' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('zoom')}>Zoom</button>
+      <button className={`btn secondary ${tool === 'pan' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('pan')}>Pan</button>
+      <button className={`btn secondary ${tool === 'length' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('length')} title="Length (L)">Length</button>
+      {selectedCount > 0 && (
+        <button
+          className="btn secondary"
+          type="button"
+          title="Delete selected measurement (Delete)"
+          onClick={() => deleteSelectedMeasurements()}
+        >
+          Delete
+        </button>
+      )}
+      <button className={`btn secondary ${invert ? 'active-tool' : ''}`} type="button" onClick={() => setInvert((v) => !v)}>Invert</button>
+      <div className="tool-group" role="group" aria-label="Zoom">
+        <button className="tool-btn" type="button" title="Zoom out (-)" aria-label="Zoom out" onClick={() => zoomBy(1 / ZOOM_STEP)}>−</button>
+        <button className="tool-btn" type="button" title="Fit to window (0)" onClick={fitToWindow}>Fit</button>
+        <button className="tool-btn" type="button" title="Zoom in (+)" aria-label="Zoom in" onClick={() => zoomBy(ZOOM_STEP)}>+</button>
+      </div>
+      <div className="tool-group" role="group" aria-label="Rotate and flip">
+        <button className="tool-btn" type="button" title="Rotate left 90° ([)" aria-label="Rotate left" onClick={() => rotateBy(-90)}>↺</button>
+        <button className="tool-btn" type="button" title="Rotate right 90° (])" aria-label="Rotate right" onClick={() => rotateBy(90)}>↻</button>
+        <button
+          className={`tool-btn ${flipped ? 'on' : ''}`}
+          type="button"
+          title="Flip horizontal"
+          aria-pressed={flipped}
+          onClick={toggleFlip}
+        >
+          ⇋
+        </button>
+      </div>
+      <button className="btn secondary" type="button" onClick={() => stepFrame(-1)}>Prev</button>
+      <button className="btn secondary" type="button" onClick={() => stepFrame(1)}>Next</button>
+      {hasMultiFrame && (
+        <>
+          <button
+            className={`btn secondary ${playing ? 'active-tool' : ''}`}
+            type="button"
+            onClick={() => setPlaying((p) => !p)}
+            title="Space"
+          >
+            {playing ? 'Pause' : 'Play'}
+          </button>
+          <label className="cine-fps" title="Frames per second">
+            <span>{Math.round(fps)} fps</span>
+            <input
+              type="range"
+              min={5}
+              max={40}
+              step={1}
+              value={Math.round(fps)}
+              onChange={(e) => setFps(Number(e.target.value))}
+            />
+          </label>
+        </>
+      )}
+      <button className="btn secondary" type="button" onClick={resetView}>Reset</button>
+      <div className="wl-presets" role="group" aria-label="Window/level presets">
+        {presets.map((p) => {
+          const on = activePreset?.label === p.label
+          return (
+            <button
+              key={p.label}
+              type="button"
+              className={`wl-preset ${on ? 'on' : ''}`}
+              aria-pressed={on}
+              onClick={() => applyPreset({ center: p.center, width: p.width })}
+            >
+              {p.label}
+            </button>
+          )
+        })}
+      </div>
+      <span className="badge">{counterLabel}</span>
+    </div>
+  ) : null
+
   return (
     <div className="viewport">
       <div
@@ -927,86 +1011,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
           </button>
         </div>
       )}
-      {showToolbar && (
-      <div className="viewport-tools">
-        <button className={`btn secondary ${tool === 'wwwc' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('wwwc')}>W/L</button>
-        <button className={`btn secondary ${tool === 'zoom' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('zoom')}>Zoom</button>
-        <button className={`btn secondary ${tool === 'pan' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('pan')}>Pan</button>
-        <button className={`btn secondary ${tool === 'length' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('length')} title="Length (L)">Length</button>
-        {selectedCount > 0 && (
-          <button
-            className="btn secondary"
-            type="button"
-            title="Delete selected measurement (Delete)"
-            onClick={() => deleteSelectedMeasurements()}
-          >
-            Delete
-          </button>
-        )}
-        <button className={`btn secondary ${invert ? 'active-tool' : ''}`} type="button" onClick={() => setInvert((v) => !v)}>Invert</button>
-        <div className="tool-group" role="group" aria-label="Zoom">
-          <button className="tool-btn" type="button" title="Zoom out (-)" aria-label="Zoom out" onClick={() => zoomBy(1 / ZOOM_STEP)}>−</button>
-          <button className="tool-btn" type="button" title="Fit to window (0)" onClick={fitToWindow}>Fit</button>
-          <button className="tool-btn" type="button" title="Zoom in (+)" aria-label="Zoom in" onClick={() => zoomBy(ZOOM_STEP)}>+</button>
-        </div>
-        <div className="tool-group" role="group" aria-label="Rotate and flip">
-          <button className="tool-btn" type="button" title="Rotate left 90° ([)" aria-label="Rotate left" onClick={() => rotateBy(-90)}>↺</button>
-          <button className="tool-btn" type="button" title="Rotate right 90° (])" aria-label="Rotate right" onClick={() => rotateBy(90)}>↻</button>
-          <button
-            className={`tool-btn ${flipped ? 'on' : ''}`}
-            type="button"
-            title="Flip horizontal"
-            aria-pressed={flipped}
-            onClick={toggleFlip}
-          >
-            ⇋
-          </button>
-        </div>
-        <button className="btn secondary" type="button" onClick={() => stepFrame(-1)}>Prev</button>
-        <button className="btn secondary" type="button" onClick={() => stepFrame(1)}>Next</button>
-        {hasMultiFrame && (
-          <>
-            <button
-              className={`btn secondary ${playing ? 'active-tool' : ''}`}
-              type="button"
-              onClick={() => setPlaying((p) => !p)}
-              title="Space"
-            >
-              {playing ? 'Pause' : 'Play'}
-            </button>
-            <label className="cine-fps" title="Frames per second">
-              <span>{Math.round(fps)} fps</span>
-              <input
-                type="range"
-                min={5}
-                max={40}
-                step={1}
-                value={Math.round(fps)}
-                onChange={(e) => setFps(Number(e.target.value))}
-              />
-            </label>
-          </>
-        )}
-        <button className="btn secondary" type="button" onClick={resetView}>Reset</button>
-        <div className="wl-presets" role="group" aria-label="Window/level presets">
-          {presets.map((p) => {
-            const on = activePreset?.label === p.label
-            return (
-              <button
-                key={p.label}
-                type="button"
-                className={`wl-preset ${on ? 'on' : ''}`}
-                aria-pressed={on}
-                onClick={() => applyPreset({ center: p.center, width: p.width })}
-              >
-                {p.label}
-              </button>
-            )
-          })}
-        </div>
-        <span className="badge">{counterLabel}</span>
-      </div>
-      )}
+      {tools && toolsSlot ? createPortal(tools, toolsSlot) : null}
     </div>
   )
 })

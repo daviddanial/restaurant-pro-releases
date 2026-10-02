@@ -415,13 +415,18 @@ button, input, select, textarea {
 }
 .viewer-topstrip {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.35rem;
   padding: 0.5rem 1rem;
   background: #111827;
   border-bottom: 1px solid #1f2937;
   color: #e2e8f0;
+}
+.viewer-topstrip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 .viewer-topstrip-id {
   display: flex;
@@ -455,6 +460,15 @@ button, input, select, textarea {
   color: #cbd5e1;
 }
 .viewer-topstrip-actions .btn.secondary:hover { background: rgba(148, 163, 184, 0.14); }
+.viewer-chrome-tools:empty { display: none; }
+.viewer-chrome-tools .viewport-tools {
+  position: static;
+  left: auto;
+  bottom: auto;
+  max-width: none;
+  padding-top: 0.15rem;
+  border-top: 1px solid #1f2937;
+}
 
 .viewer-layout {
   display: grid;
@@ -865,15 +879,10 @@ button, input, select, textarea {
   color: #fecaca;
 }
 .viewport-tools {
-  position: absolute;
-  left: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 4;
   display: flex;
   gap: 0.35rem;
   flex-wrap: wrap;
   align-items: center;
-  max-width: calc(100% - 1.5rem);
 }
 .viewport-tools .btn {
   padding: 0.35rem 0.6rem;
