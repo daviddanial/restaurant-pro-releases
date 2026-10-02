@@ -1,4 +1,8 @@
-import { init as csInit } from '@cornerstonejs/core'
+import {
+  init as csInit,
+  volumeLoader,
+  cornerstoneStreamingImageVolumeLoader,
+} from '@cornerstonejs/core'
 import {
   init as csToolsInit,
   addTool,
@@ -7,12 +11,14 @@ import {
   ZoomTool,
   StackScrollTool,
   LengthTool,
+  CrosshairsTool,
 } from '@cornerstonejs/tools'
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader'
 import { loadAuth } from '../api'
 
 let initPromise: Promise<void> | null = null
 let toolsRegistered = false
+let volumeLoaderRegistered = false
 
 /**
  * One-time Cornerstone3D + DICOM loader + tools bootstrap.
@@ -40,12 +46,23 @@ export function ensureCornerstoneInit(): Promise<void> {
         },
       })
 
+      if (!volumeLoaderRegistered) {
+        volumeLoader.registerVolumeLoader(
+          'cornerstoneStreamingImageVolume',
+          cornerstoneStreamingImageVolumeLoader as unknown as Parameters<
+            typeof volumeLoader.registerVolumeLoader
+          >[1],
+        )
+        volumeLoaderRegistered = true
+      }
+
       if (!toolsRegistered) {
         addTool(WindowLevelTool)
         addTool(PanTool)
         addTool(ZoomTool)
         addTool(StackScrollTool)
         addTool(LengthTool)
+        addTool(CrosshairsTool)
         toolsRegistered = true
       }
     })().catch((err) => {

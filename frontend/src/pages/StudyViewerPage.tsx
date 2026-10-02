@@ -2,7 +2,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type
 import { Link, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { DicomViewport, type DicomViewportHandle } from '../components/DicomViewport'
+import { MprViewer } from '../components/MprViewer'
 import { SeriesThumbnail } from '../components/SeriesThumbnail'
+import { pickDefaultMprSeriesIdx, seriesSupportsMpr } from '../mprEligibility'
 import { defaultPrior, formatInterval, formatStudyDate, matchPriorSeries } from '../priors'
 import type { SeriesDto, StudyDetail, StudyListItem } from '../types'
 import {
@@ -71,6 +73,9 @@ export function StudyViewerPage() {
   const [slots, setSlots] = useState<ViewportSlot[]>(() => buildSlots('1x1', 1))
   const [activeSlotId, setActiveSlotId] = useState('slot-0')
   const [syncScroll, setSyncScroll] = useState(true)
+  const [mprMode, setMprMode] = useState(false)
+  const [linkViews, setLinkViews] = useState(true)
+  const [mprSeriesIdx, setMprSeriesIdx] = useState(0)
 
   const [priors, setPriors] = useState<StudyListItem[]>([])
   const [priorId, setPriorId] = useState<string | null>(null)
@@ -91,6 +96,8 @@ export function StudyViewerPage() {
         setLayout('1x1')
         setSlots(next)
         setActiveSlotId(next[0]?.id ?? 'slot-0')
+        setMprMode(false)
+        setMprSeriesIdx(pickDefaultMprSeriesIdx(data.series, data.study.modality))
       })
       .catch((err) => {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load study')
@@ -140,29 +147,47 @@ export function StudyViewerPage() {
     }
   }, [priorId])
 
-  const comparing = Boolean(priorId && priorDetail)
+  const comparing = Boolean(priorId && priorDetail) && !mprMode
   // Prior compare always uses a dedicated 1×2 (current | prior). Same-study multi
-  // layouts apply only when Compare is Off.
+  // layouts apply only when Compare is Off. MPR replaces the stack grid entirely.
   const effectiveLayout: LayoutMode = comparing ? '1x2' : layout
 
-  const applyLayout = useCallback((next: LayoutMode) => {
+  const enterMpr = useCallback(() => {
     if (!detail) return
+    const preferred = slots.find((s) => s.id === activeSlotId)?.seriesIdx
+    const idx = pickDefaultMprSeriesIdx(detail.series, detail.study.modality, preferred)
+    if (idx < 0) return
+    setPriorId(null)
+    setMprSeriesIdx(idx)
+    setMprMode(true)
+  }, [detail, slots, activeSlotId])
+
+  const exitMpr = useCallback(() => {
+    setMprMode(false)
+  }, [])
+
+  const applyLayout = useCallback((next: LayoutMode) => {
+    if (!detail || mprMode) return
     setLayout(next)
     setSlots((prev) => {
       const built = buildSlots(next, detail.series.length, prev)
       setActiveSlotId((id) => clampActiveId(id, built))
       return built
     })
-  }, [detail])
+  }, [detail, mprMode])
 
   // Seed / clamp slots when series metadata arrives or shrinks.
   useEffect(() => {
-    if (!detail || comparing) return
+    if (!detail || comparing || mprMode) return
     setSlots((prev) => buildSlots(layout, detail.series.length, prev))
-  }, [detail?.series.length, layout, comparing, detail])
+  }, [detail?.series.length, layout, comparing, detail, mprMode])
 
   const activeSlot = slots.find((s) => s.id === activeSlotId) ?? slots[0]
   const activeSeriesIdx = activeSlot?.seriesIdx ?? 0
+  const mprSeries = detail?.series?.[mprSeriesIdx]
+  const mprEligible = Boolean(
+    detail && pickDefaultMprSeriesIdx(detail.series, detail.study.modality) >= 0,
+  )
 
   // Pair prior series to the series shown in the left (first) slot while comparing.
   const compareSeriesIdx = comparing ? (slots[0]?.seriesIdx ?? 0) : activeSeriesIdx
@@ -189,6 +214,11 @@ export function StudyViewerPage() {
   }, [])
 
   const onSeriesSelect = useCallback((seriesIdx: number) => {
+    if (mprMode) {
+      if (!detail || !seriesSupportsMpr(detail.series[seriesIdx], detail.study.modality)) return
+      setMprSeriesIdx(seriesIdx)
+      return
+    }
     if (comparing) {
       const leftId = slots[0]?.id ?? 'slot-0'
       setSlotSeries(leftId, seriesIdx)
@@ -199,7 +229,7 @@ export function StudyViewerPage() {
     if (!targetId) return
     setSlotSeries(targetId, seriesIdx)
     setActiveSlotId(targetId)
-  }, [comparing, activeSlot?.id, slots, setSlotSeries])
+  }, [mprMode, detail, comparing, activeSlot?.id, slots, setSlotSeries])
 
   const onSlotProgress = useCallback((sourceId: string, progress: { fraction: number; positionMm: number | null }) => {
     if (!syncScroll) return
@@ -270,21 +300,38 @@ export function StudyViewerPage() {
             <button
               key={opt.id}
               type="button"
-              className={effectiveLayout === opt.id && !comparing ? 'on' : undefined}
-              title={comparing ? 'Turn Compare off to change layout' : opt.title}
-              disabled={comparing && opt.id !== '1x2'}
-              aria-pressed={effectiveLayout === opt.id}
+              className={effectiveLayout === opt.id && !comparing && !mprMode ? 'on' : undefined}
+              title={
+                mprMode
+                  ? 'Exit MPR to change layout'
+                  : comparing
+                    ? 'Turn Compare off to change layout'
+                    : opt.title
+              }
+              disabled={mprMode || (comparing && opt.id !== '1x2')}
+              aria-pressed={effectiveLayout === opt.id && !mprMode}
               onClick={() => {
-                if (comparing) return
+                if (comparing || mprMode) return
                 applyLayout(opt.id)
               }}
             >
               {opt.label}
             </button>
           ))}
+          {mprEligible && (
+            <button
+              type="button"
+              className={mprMode ? 'on' : undefined}
+              title="Multi-planar reconstruction (axial / sagittal / coronal)"
+              aria-pressed={mprMode}
+              onClick={() => (mprMode ? exitMpr() : enterMpr())}
+            >
+              MPR
+            </button>
+          )}
         </div>
 
-        {priors.length > 0 && (
+        {priors.length > 0 && !mprMode && (
           <div className="viewer-compare">
             <label className="viewer-compare-pick">
               <span>Compare</span>
@@ -304,7 +351,16 @@ export function StudyViewerPage() {
           </div>
         )}
 
-        {showSync && (
+        {mprMode ? (
+          <label className="viewer-compare-sync">
+            <input
+              type="checkbox"
+              checked={linkViews}
+              onChange={(e) => setLinkViews(e.target.checked)}
+            />
+            Link views
+          </label>
+        ) : showSync ? (
           <label className="viewer-compare-sync">
             <input
               type="checkbox"
@@ -313,7 +369,7 @@ export function StudyViewerPage() {
             />
             Sync scroll
           </label>
-        )}
+        ) : null}
 
         <div className="viewer-topstrip-actions">
           <Link className="btn secondary" to="/worklist">Back to worklist</Link>
@@ -331,16 +387,18 @@ export function StudyViewerPage() {
       <div className="viewer-layout">
         <aside className="viewer-series" aria-label="Series">
           <p className="viewer-series-label">
-            {comparing
-              ? `Current · ${formatStudyDate(study.studyDate)}`
-              : slots.length > 1
-                ? 'Series → active pane'
-                : 'Series'}
+            {mprMode
+              ? 'Series → MPR volume'
+              : comparing
+                ? `Current · ${formatStudyDate(study.studyDate)}`
+                : slots.length > 1
+                  ? 'Series → active pane'
+                  : 'Series'}
           </p>
           <SeriesRail
             studyUid={study.studyInstanceUid}
             series={detail.series}
-            activeIdx={comparing ? compareSeriesIdx : activeSeriesIdx}
+            activeIdx={mprMode ? mprSeriesIdx : comparing ? compareSeriesIdx : activeSeriesIdx}
             onSelect={onSeriesSelect}
           />
           {comparing && priorDetail && priorStudy && (
@@ -358,7 +416,21 @@ export function StudyViewerPage() {
           )}
         </aside>
 
-        {comparing && priorStudy ? (
+        {mprMode && mprSeries ? (
+          <MprViewer
+            key={`${study.studyInstanceUid}:${mprSeries.seriesInstanceUid}`}
+            studyUid={study.studyInstanceUid}
+            seriesUid={mprSeries.seriesInstanceUid}
+            instances={mprSeries.instances.map((i) => ({
+              sopUid: i.sopInstanceUid,
+              numberOfFrames: i.numberOfFrames,
+              imagePositionPatient: i.imagePositionPatient,
+              imageOrientationPatient: i.imageOrientationPatient,
+            }))}
+            modality={mprSeries.modality || study.modality}
+            linkViews={linkViews}
+          />
+        ) : comparing && priorStudy ? (
           <div className={`viewer-panes ${layoutClassName('1x2')}`}>
             <ViewportPane
               label={(
