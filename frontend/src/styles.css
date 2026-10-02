@@ -2145,3 +2145,213 @@ a.btn-report:focus-visible {
   margin: 1rem 0 0;
   font-size: 0.8rem;
 }
+
+/* —— Viewer Export / Print —— */
+.viewer-export {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.viewer-export-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 30;
+  min-width: 11.5rem;
+  padding: 0.35rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+.viewer-export-group + .viewer-export-group {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid #1f2937;
+}
+.viewer-export-heading {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  padding: 0.2rem 0.5rem;
+}
+.viewer-export-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.viewer-export-menu button:hover:not(:disabled) {
+  background: rgba(13, 148, 136, 0.2);
+  color: #5eead4;
+}
+.viewer-export-menu button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.viewer-export-progress {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 29;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.65rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+.viewer-export-progress .linkish {
+  border: 0;
+  background: transparent;
+  color: #5eead4;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+}
+
+.print-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(15, 23, 42, 0.72);
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
+  overflow: auto;
+}
+.print-dialog {
+  background: #111827;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1rem;
+  align-self: start;
+  display: grid;
+  gap: 0.85rem;
+}
+.print-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.print-dialog-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.print-options {
+  display: grid;
+  gap: 0.55rem;
+  font-size: 0.8125rem;
+}
+.print-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.print-options select {
+  margin-left: auto;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 6px;
+  padding: 0.25rem 0.4rem;
+}
+.print-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.print-sheet {
+  background: #fff;
+  color: #0f172a;
+  border-radius: 4px;
+  padding: 1rem;
+  align-self: start;
+  min-height: 60vh;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+.print-sheet.page-a4.orient-portrait { width: min(100%, 210mm); }
+.print-sheet.page-a4.orient-landscape { width: min(100%, 297mm); }
+.print-sheet.page-letter.orient-portrait { width: min(100%, 8.5in); }
+.print-sheet.page-letter.orient-landscape { width: min(100%, 11in); }
+.print-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  font-size: 0.78rem;
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.65rem;
+  border-bottom: 1px solid #cbd5e1;
+}
+.print-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+.print-grid-1 { grid-template-columns: 1fr; }
+.print-grid-2 { grid-template-columns: 1fr 1fr; }
+.print-grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+.print-tile {
+  margin: 0;
+  background: #000;
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+}
+.print-tile figcaption {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.4rem;
+  background: #f1f5f9;
+  color: #334155;
+}
+.print-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 42vh;
+  object-fit: contain;
+  background: #000;
+}
+.print-sheet[data-measurements='0'] .print-tile img {
+  /* Measurements are baked into the captured canvas; this flag is reserved for
+     future vector overlays. Kept for FR-VW-014 option parity. */
+}
+
+@media print {
+  body * { visibility: hidden !important; }
+  .print-overlay,
+  .print-overlay * { visibility: visible !important; }
+  .print-overlay {
+    position: static !important;
+    display: block !important;
+    background: #fff !important;
+    padding: 0 !important;
+    inset: auto !important;
+  }
+  .no-print { display: none !important; }
+  .print-sheet {
+    box-shadow: none !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+  .print-tile img { max-height: none; }
+  @page {
+    margin: 12mm;
+  }
+}

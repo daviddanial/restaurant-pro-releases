@@ -390,6 +390,8 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 | **FR-VW-010** | Sync scroll shall link multi-viewport / prior panes by anatomical position (ImagePositionPatient along the stack normal, or SliceLocation). When plane tags are missing, fall back to proportional index. | P1 | P1 | **Done** |
 | **FR-VW-011** | MPR: for volumetric CT/MR series the user may open linked axial / sagittal / coronal orthographic views from one volume, with crosshair linking (Link views) and series selection into the MPR volume. | P1 | P1 | **Done** |
 | **FR-VW-012** | MPR 2×2 fourth pane: toggle MIP (thick slab centered on the linked crosshair) and VR (3D volume rendering orbiting the crosshair center); RadiAnt-style Axial \| Sagittal / Coronal \| 4th layout. | P1 | P1 | **Done** |
+| **FR-VW-013** | Export menu: Current viewport → PNG/JPEG; Current layout → PNG; Current image / Series / Study → DICOM. Large DICOM exports run asynchronously with progress. DICOM export streams original stored objects (tenant/study/series/SOP hierarchy) without rewriting metadata, and is audited. | P1 | P1 | **Done** |
+| **FR-VW-014** | Print preview: dedicated dialog showing patient/study header and the current layout panes; options for patient info, orientation HUD, measurements (as rendered), page size, and portrait/landscape; Cancel / Print. | P1 | P1 | **Done** |
 
 **Acceptance (VW-002–003):** Opening a READY CT study renders first frame &lt; NFR frame budget under normal load. Zoom in/out/fit and rotate ±90°/flip are available as discrete toolbar buttons (and `+` / `-` / `0` / `[` / `]` keys), independent of the drag-tool selection; the HUD reports the current zoom percentage and rotation angle. Finished length measurements can be selected and removed with Delete/Backspace, right-click → Delete, or the contextual toolbar Delete control; Esc cancels an unfinished length draw.  
 **Acceptance (VW-006):** Viewer toolbar shows modality presets as buttons (CT: Soft tissue, Lung, Bone, Brain); click applies W/L immediately.  
@@ -398,7 +400,9 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 **Acceptance (VW-009):** Layout buttons switch 1×1 / 1×2 / 2×2 for the current study; panes auto-seed consecutive series; clicking a pane marks it active (highlight) and only that pane shows tools / receives shortcuts; clicking a series loads it into the active pane. With Compare on, layout is forced to 1×2 (current | prior) and layout buttons for other grids are disabled.  
 **Acceptance (VW-010):** With Sync scroll on and two series that share orientation but differ in slice count/spacing, scrolling one pane jumps the other to the nearest ImagePositionPatient along the stack normal (not the same index fraction). US/cine or series without plane tags still sync by fraction.  
 **Acceptance (VW-011):** An **MPR** control appears when the study has a volumetric CT/MR series (≥8 single-frame slices). Entering MPR shows linked Axial / Sagittal / Coronal orthographic views of one series; **Link views** enables crosshairs so a click/drag in one plane updates the others; the series rail loads eligible series into the MPR volume; exiting MPR restores the previous stack layout.  
-**Acceptance (VW-012):** MPR uses a RadiAnt-style **2×2** grid (Axial, Sagittal, Coronal, 4th). The 4th pane defaults to **MIP** with selectable slab thickness and follows the linked crosshair center; the user may switch it to **VR** (CT presets Bone / Soft-Tissue / Lung) which orbits around that center via trackball rotate.
+**Acceptance (VW-012):** MPR uses a RadiAnt-style **2×2** grid (Axial, Sagittal, Coronal, 4th). The 4th pane defaults to **MIP** with selectable slab thickness and follows the linked crosshair center; the user may switch it to **VR** (CT presets Bone / Soft-Tissue / Lung) which orbits around that center via trackball rotate.  
+**Acceptance (VW-013):** Viewer **Export** menu offers viewport PNG/JPEG, layout PNG, and DICOM for image/series/study. Series/study DICOM create a job (`POST /api/studies/{id}/export`) with pollable progress and a zip of original `.dcm` objects; download is audited.  
+**Acceptance (VW-014):** **Print** opens a preview with patient/study header and current layout tiles; toggles control header/HUD; Print uses the selected page size and orientation.
 ---
 
 ### 6.7 Reporting — `FR-RPT`
@@ -695,5 +699,6 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | 1.9 | 2026-09-29 | Engineering | FR-VW-010 Done: sync scroll by ImagePositionPatient / SliceLocation with proportional-index fallback. |
 | 1.10 | 2026-10-01 | Engineering | FR-VW-011 Done: MPR axial/sagittal/coronal orthographic views with crosshair Link views. |
 | 1.11 | 2026-10-02 | Engineering | FR-VW-012 Done: RadiAnt 2×2 MPR with MIP/VR 4th pane linked to the crosshair center. |
+| 1.12 | 2026-10-02 | Engineering | FR-VW-013/014 Done: Export menu (PNG/JPEG + async DICOM) and Print preview with layout options. |
 
 **End of TeleRad Requirements Source of Truth**

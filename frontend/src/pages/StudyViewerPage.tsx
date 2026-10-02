@@ -3,7 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { DicomViewport, type DicomViewportHandle } from '../components/DicomViewport'
 import { MprViewer } from '../components/MprViewer'
+import { PrintPreviewModal } from '../components/PrintPreviewModal'
 import { SeriesThumbnail } from '../components/SeriesThumbnail'
+import { ViewerExportMenu } from '../components/ViewerExportMenu'
 import { pickDefaultMprSeriesIdx, seriesSupportsMpr } from '../mprEligibility'
 import { defaultPrior, formatInterval, formatStudyDate, matchPriorSeries } from '../priors'
 import type { SeriesDto, StudyDetail, StudyListItem } from '../types'
@@ -77,6 +79,7 @@ export function StudyViewerPage() {
   const [mprMode, setMprMode] = useState(false)
   const [linkViews, setLinkViews] = useState(true)
   const [mprSeriesIdx, setMprSeriesIdx] = useState(0)
+  const [printOpen, setPrintOpen] = useState(false)
 
   const [priors, setPriors] = useState<StudyListItem[]>([])
   const [priorId, setPriorId] = useState<string | null>(null)
@@ -291,6 +294,19 @@ export function StudyViewerPage() {
 
   const showSync = comparing || slots.length > 1
 
+  const exportSeries = mprMode
+    ? mprSeries
+    : comparing
+      ? (activeSlotId === 'prior' ? priorSeries : compareSeries)
+      : detail.series[activeSeriesIdx]
+  const exportInstance = exportSeries?.instances?.[
+    mprMode
+      ? 0
+      : comparing && activeSlotId === 'prior'
+        ? priorInstanceIdx
+        : (activeSlot?.instanceIdx ?? 0)
+  ] ?? exportSeries?.instances?.[0]
+
   return (
     <ViewerToolsSlotContext.Provider value={toolsSlot}>
       <div className="viewer-shell">
@@ -390,6 +406,15 @@ export function StudyViewerPage() {
             ) : null}
 
             <div className="viewer-topstrip-actions">
+              <ViewerExportMenu
+                studyId={study.id}
+                patientLabel={study.patientName || study.accessionNumber || study.id}
+                seriesInstanceUid={exportSeries?.seriesInstanceUid ?? null}
+                sopInstanceUid={exportInstance?.sopInstanceUid ?? null}
+              />
+              <button type="button" className="btn secondary" onClick={() => setPrintOpen(true)}>
+                Print
+              </button>
               <Link className="btn secondary" to="/worklist">Back to worklist</Link>
               <a
                 className="btn"
@@ -545,6 +570,11 @@ export function StudyViewerPage() {
           )}
         </div>
       </div>
+      <PrintPreviewModal
+        open={printOpen}
+        onClose={() => setPrintOpen(false)}
+        study={study}
+      />
     </ViewerToolsSlotContext.Provider>
   )
 }
