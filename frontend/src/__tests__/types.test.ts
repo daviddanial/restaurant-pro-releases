@@ -27,6 +27,11 @@ describe('types smoke', () => {
       slaDueAt: null,
       slaBreachedAt: null,
       slaOverdue: false,
+      suggestedRadiologistId: null,
+      externalOrderId: 'FEYA-1-123',
+      referringPhysician: 'Dr. Feya',
+      feedbackMessage: null,
+      feedbackAt: null,
     }
     expect(item.priority).toBe('STAT')
 

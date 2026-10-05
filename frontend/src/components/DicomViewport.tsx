@@ -291,13 +291,17 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
 
           const vp = getViewport()
           if (vp) {
-            const props = vp.getProperties()
-            if (props.voiRange) {
-              const { windowWidth, windowCenter } = utilities.windowLevel.toWindowLevel(
-                props.voiRange.lower,
-                props.voiRange.upper,
-              )
-              setWl({ center: windowCenter, width: windowWidth })
+            try {
+              const props = vp.getProperties()
+              if (props?.voiRange) {
+                const { windowWidth, windowCenter } = utilities.windowLevel.toWindowLevel(
+                  props.voiRange.lower,
+                  props.voiRange.upper,
+                )
+                setWl({ center: windowCenter, width: windowWidth })
+              }
+            } catch {
+              /* a bad/zero-width VOI range must never abort rendering */
             }
           }
         }

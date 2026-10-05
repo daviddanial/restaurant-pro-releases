@@ -35,6 +35,20 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/actuator/health", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
+                // Without an explicit entry point Spring answers 403 for anonymous/expired
+                // requests, which clients cannot distinguish from a real permission error.
+                // Return 401 + JSON for unauthenticated, 403 + JSON for insufficient rights.
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((req, res, e) -> {
+                            res.setStatus(401);
+                            res.setContentType("application/json");
+                            res.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"Authentication required or session expired\"}");
+                        })
+                        .accessDeniedHandler((req, res, e) -> {
+                            res.setStatus(403);
+                            res.setContentType("application/json");
+                            res.getWriter().write("{\"error\":\"Forbidden\",\"message\":\"Insufficient permissions\"}");
+                        }))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -47,8 +61,22 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Patterns without credentials — allowCredentials(true)+wildcard is invalid CORS
-        config.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
+        // Patterns without credentials — allowCredentials(true)+wildcard is invalid CORS.
+        // localhost stays for dev; the deployed hosts are allowed via the sslip.io wildcard
+        // plus any extra hosts listed in TELERAD_CORS_ORIGINS (comma-separated).
+        List<String> allowedOrigins = new java.util.ArrayList<>(List.of(
+                "http://localhost:*", "http://127.0.0.1:*",
+                "https://*.sslip.io"));
+        String extraOrigins = System.getenv("TELERAD_CORS_ORIGINS");
+        if (extraOrigins != null && !extraOrigins.isBlank()) {
+            for (String origin : extraOrigins.split(",")) {
+                String trimmed = origin.trim();
+                if (!trimmed.isEmpty() && !allowedOrigins.contains(trimmed)) {
+                    allowedOrigins.add(trimmed);
+                }
+            }
+        }
+        config.setAllowedOriginPatterns(allowedOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

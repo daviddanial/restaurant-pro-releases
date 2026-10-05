@@ -1,16 +1,20 @@
 package com.telerad.auth;
 
-import com.telerad.common.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Ensures seed users authenticate with password "password" even if the Flyway hash differs.
+ * DISABLED for production deployment.
+ *
+ * This runner used to force every user's password back to the demo value
+ * ("password") on each application start, which silently defeats any password
+ * rotation performed in the database. Kept as a compile-safe no-op so existing
+ * wiring and history stay intact; administer accounts via /api/admin/users or
+ * a direct DB update instead.
  */
 @Component
 @RequiredArgsConstructor
@@ -20,14 +24,7 @@ public class PasswordSeedFixer implements ApplicationRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
-        String hash = passwordEncoder.encode("password");
-        userRepository.findAll().forEach(u -> {
-            if (!passwordEncoder.matches("password", u.getPasswordHash())) {
-                u.setPasswordHash(hash);
-                log.info("Reset demo password for {}", u.getEmail());
-            }
-        });
+        log.info("PasswordSeedFixer disabled — demo password reset skipped.");
     }
 }

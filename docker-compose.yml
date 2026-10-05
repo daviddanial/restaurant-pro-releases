@@ -1,3 +1,6 @@
+# UniRIS / TeleRad — project name pinned to "tele2" (the live stack + volumes).
+name: tele2
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -77,9 +80,12 @@ services:
       TELERAD_S3_SECRET_KEY: minioadmin
       TELERAD_S3_BUCKET: telerad
       TELERAD_JWT_SECRET: change-me-in-production-use-a-long-secret-key-32chars
+      TELERAD_SERVICE_TOKEN: ${TELERAD_SERVICE_TOKEN:-dev-service-token}
       TELERAD_SCP_ENABLED: "false"
       TELERAD_NOTIFY_EMAIL_ENABLED: "true"
       TELERAD_NOTIFY_WEBHOOK_ENABLED: "true"
+      TELERAD_NOTIFY_WEBHOOK_URL: ${TELERAD_EHR_WEBHOOK_URL:-http://host.docker.internal:5000/api/teleradiology/webhooks/report-ready}
+      TELERAD_EHR_WEBHOOK_SECRET: ${TELERAD_EHR_WEBHOOK_SECRET:-dev-hmac-secret}
       TELERAD_SLA_ENABLED: "true"
     ports:
       - "18080:8080"
@@ -108,6 +114,7 @@ services:
       TELERAD_S3_SECRET_KEY: minioadmin
       TELERAD_S3_BUCKET: telerad
       TELERAD_JWT_SECRET: change-me-in-production-use-a-long-secret-key-32chars
+      TELERAD_SERVICE_TOKEN: ${TELERAD_SERVICE_TOKEN:-dev-service-token}
       TELERAD_SCP_ENABLED: "true"
       TELERAD_SCP_AE_TITLE: TELERAD_SCP
       TELERAD_SCP_PORT: "11112"

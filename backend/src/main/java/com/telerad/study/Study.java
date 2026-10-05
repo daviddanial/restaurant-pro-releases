@@ -56,6 +56,27 @@ public class Study {
     @Column(name = "assigned_to")
     private UUID assignedTo;
 
+    @Column(name = "suggested_radiologist_id")
+    private UUID suggestedRadiologistId;
+
+    @Column(name = "external_order_id", length = 128)
+    private String externalOrderId;
+
+    @Column(name = "referring_physician", length = 255)
+    private String referringPhysician;
+
+    @Column(name = "order_notes", length = 2000)
+    private String orderNotes;
+
+    @Column(name = "feedback_message", length = 2000)
+    private String feedbackMessage;
+
+    @Column(name = "feedback_by")
+    private UUID feedbackBy;
+
+    @Column(name = "feedback_at")
+    private Instant feedbackAt;
+
     @Column(name = "claimed_at")
     private Instant claimedAt;
 

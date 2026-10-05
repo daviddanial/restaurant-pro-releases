@@ -5,6 +5,8 @@ import com.telerad.auth.UserAccount;
 import com.telerad.auth.UserAccountRepository;
 import com.telerad.auth.UserPrincipal;
 import com.telerad.common.Role;
+import com.telerad.common.StudyPriority;
+import com.telerad.common.StudySource;
 import com.telerad.common.StudyStatus;
 import com.telerad.report.Report;
 import com.telerad.report.ReportRepository;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -74,8 +77,8 @@ public class StudyService {
     }
 
     /**
-     * Earlier studies for the same patient, for side-by-side comparison. Body part is not
-     * modelled, so same-modality studies are ranked first as the closest available proxy.
+     * Earlier studies for the same patient, for side-by-side comparison (merged from upstream).
+     * Body part is not modelled, so same-modality studies are ranked first as the closest proxy.
      */
     @Transactional(readOnly = true)
     public List<StudyListItem> priors(UUID id) {
@@ -101,6 +104,12 @@ public class StudyService {
             return candidateDate.isBefore(currentDate);
         }
         return candidate.getCreatedAt().isBefore(current.getCreatedAt());
+    }
+
+    @Transactional(readOnly = true)
+    public Study findByExternalOrderId(String externalOrderId) {
+        return studyRepository.findByExternalOrderId(externalOrderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
     }
 
     @Transactional
@@ -134,11 +143,143 @@ public class StudyService {
         }
         return userAccountRepository.findByRole(Role.RADIOLOGIST).stream()
                 .filter(UserAccount::isActive)
-                .map(u -> new RadiologistOption(
-                        u.getId(),
-                        u.getFullName(),
-                        (int) studyRepository.countByAssignedToAndStatus(u.getId(), StudyStatus.IN_PROGRESS)))
+                .map(this::toRadiologistOption)
                 .toList();
+    }
+
+    /**
+     * Physician order — creates the study BEFORE any DICOM exists.
+     * The patient is upserted by external MRN (Feya passes "FEYA-<patient_id>").
+     */
+    @Transactional
+    public StudyListItem order(UUID hospitalId, OrderRequest req) {
+        UserPrincipal user = UserPrincipal.current();
+        assertHospitalAccess(user, hospitalId);
+        if (req == null || req.mrn() == null || req.mrn().isBlank()
+                || req.modality() == null || req.modality().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "mrn and modality are required");
+        }
+        Tenant tenant = tenantRepository.findById(hospitalId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hospital not found"));
+        if (tenant == null || !tenant.isActive()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Hospital not found or inactive");
+        }
+        if (req.suggestedRadiologistId() != null) {
+            validateRadiologist(req.suggestedRadiologistId());
+        }
+        Patient patient = patientRepository.findByTenantIdAndPatientId(hospitalId, req.mrn())
+                .orElseGet(() -> patientRepository.save(Patient.builder()
+                        .tenantId(hospitalId)
+                        .patientId(req.mrn())
+                        .patientName(req.patientName())
+                        .birthDate(req.birthDate())
+                        .sex(req.sex())
+                        .build()));
+        Study study = Study.builder()
+                .tenantId(hospitalId)
+                .patientId(patient.getId())
+                .studyInstanceUid(generateStudyUid())
+                .accessionNumber(req.accessionNumber())
+                .studyDescription(req.studyDescription())
+                .modality(req.modality())
+                .studyDate(LocalDate.now())
+                .priority(req.priority() == null ? StudyPriority.ROUTINE : req.priority())
+                .status(StudyStatus.ORDERED)
+                .source(StudySource.ORDER)
+                .suggestedRadiologistId(req.suggestedRadiologistId())
+                .externalOrderId(req.externalOrderId())
+                .referringPhysician(req.referringPhysician())
+                .orderNotes(req.orderNotes())
+                .build();
+        Study saved = studyRepository.save(study);
+        auditService.record(hospitalId, user.getId(), "ORDER", "Study", saved.getId().toString(),
+                "modality=" + req.modality(), req.externalOrderId());
+        return toListItem(saved);
+    }
+
+    /** Nurse compliance: the order has been performed — mark the study ready for the worklist. */
+    @Transactional
+    public StudyListItem comply(UUID studyId) {
+        UserPrincipal user = UserPrincipal.current();
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
+        assertHospitalAccess(user, study.getTenantId());
+        if (study.getStatus() != StudyStatus.ORDERED && study.getStatus() != StudyStatus.RECEIVED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Study is not in an executable state");
+        }
+        study.setStatus(StudyStatus.READY);
+        if (study.getReadyAt() == null) study.setReadyAt(Instant.now());
+        studyRepository.save(study);
+        auditService.record(study.getTenantId(), user.getId(), "COMPLY", "Study", studyId.toString(),
+                "nurse confirmed order performed", null);
+        return toListItem(study);
+    }
+
+    /** Nurse feedback: e.g. "recommended radiologist not available" — returned to the physician. */
+    @Transactional
+    public StudyListItem feedback(UUID studyId, String message) {
+        UserPrincipal user = UserPrincipal.current();
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
+        assertHospitalAccess(user, study.getTenantId());
+        if (message == null || message.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "message is required");
+        }
+        study.setFeedbackMessage(message.trim());
+        study.setFeedbackBy(user.getId());
+        study.setFeedbackAt(Instant.now());
+        studyRepository.save(study);
+        auditService.record(study.getTenantId(), user.getId(), "FEEDBACK", "Study", studyId.toString(),
+                message.trim(), null);
+        return toListItem(study);
+    }
+
+    /** Hybrid availability: manual override (null = clear override, fall back to workload). */
+    @Transactional
+    public RadiologistOption setAvailability(UUID radiologistId, Boolean override) {
+        UserPrincipal user = UserPrincipal.current();
+        boolean isSelf = user.getId().equals(radiologistId);
+        if (user.getRole() != Role.ADMIN && user.getRole() != Role.HOSPITAL_USER && !isSelf) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Only radiologists or hospital staff can set availability");
+        }
+        UserAccount rad = userAccountRepository.findById(radiologistId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Unknown radiologist"));
+        if (rad.getRole() != Role.RADIOLOGIST) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not a radiologist");
+        }
+        rad.setAvailabilityOverride(override);
+        rad = userAccountRepository.save(rad);
+        auditService.record(rad.getTenant() == null ? null : rad.getTenant().getId(), user.getId(),
+                "AVAILABILITY", "User", radiologistId.toString(), String.valueOf(override), null);
+        return toRadiologistOption(rad);
+    }
+
+    private UserAccount requireActiveRadiologist(UUID id) {
+        UserAccount rad = userAccountRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown radiologist"));
+        if (rad.getRole() != Role.RADIOLOGIST || !rad.isActive()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not an active radiologist");
+        }
+        return rad;
+    }
+
+    private void validateRadiologist(UUID id) {
+        requireActiveRadiologist(id);
+    }
+
+    private RadiologistOption toRadiologistOption(UserAccount u) {
+        int busyCount = (int) studyRepository.findByAssignedToAndStatusIn(u.getId(),
+                        List.of(StudyStatus.RECEIVED, StudyStatus.READY, StudyStatus.IN_PROGRESS)).size();
+        boolean available = u.getAvailabilityOverride() != null
+                ? u.getAvailabilityOverride()
+                : busyCount == 0;
+        return new RadiologistOption(u.getId(), u.getFullName(), busyCount, available, u.getAvailabilityOverride());
+    }
+
+    public static String generateStudyUid() {
+        return "1.2.826.0.1.3680043.8.498." + System.currentTimeMillis() + "."
+                + UUID.randomUUID().toString().replace("-", "").substring(0, 12);
     }
 
     @Transactional
@@ -206,7 +347,9 @@ public class StudyService {
                 s.getAssignedTo(), s.getInstanceCount(), s.getSource(), patientName, patientMrn,
                 patientSex, patientBirthDate,
                 s.getReadyAt(), s.getReportedAt(), hasSigned,
-                s.getSlaDueAt(), s.getSlaBreachedAt(), overdue
+                s.getSlaDueAt(), s.getSlaBreachedAt(), overdue,
+                s.getSuggestedRadiologistId(), s.getExternalOrderId(), s.getReferringPhysician(),
+                s.getFeedbackMessage(), s.getFeedbackAt()
         );
     }
 
@@ -234,7 +377,17 @@ public class StudyService {
         return v == null || v.isBlank() ? null : v;
     }
 
-    public record RadiologistOption(UUID id, String fullName, int pendingCount) {}
+    public record RadiologistOption(UUID id, String fullName, int pendingCount,
+                                    boolean available, Boolean availabilityOverride) {}
+
+    public record OrderRequest(String mrn, String patientName, String sex, java.time.LocalDate birthDate,
+                               String accessionNumber, String studyDescription, String modality,
+                               StudyPriority priority, UUID suggestedRadiologistId,
+                               String externalOrderId, String referringPhysician, String orderNotes) {}
+
+    public record FeedbackRequest(String message) {}
+
+    public record AvailabilityRequest(Boolean available) {}
 
     public record StudyListItem(
             UUID id, UUID tenantId, String hospitalName, String studyInstanceUid, String accessionNumber,
@@ -243,7 +396,9 @@ public class StudyService {
             int instanceCount, com.telerad.common.StudySource source, String patientName, String patientMrn,
             String patientSex, java.time.LocalDate patientBirthDate,
             Instant readyAt, Instant reportedAt, boolean hasSignedReport,
-            Instant slaDueAt, Instant slaBreachedAt, boolean slaOverdue
+            Instant slaDueAt, Instant slaBreachedAt, boolean slaOverdue,
+            UUID suggestedRadiologistId, String externalOrderId, String referringPhysician,
+            String feedbackMessage, Instant feedbackAt
     ) {}
 
     public record SeriesDto(UUID id, String seriesInstanceUid, String modality, Integer seriesNumber,

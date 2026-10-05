@@ -42,6 +42,7 @@ telerad:
   jwt:
     secret: ${TELERAD_JWT_SECRET:change-me-in-production-use-a-long-secret-key-32chars}
     access-token-minutes: 480
+  service-token: ${TELERAD_SERVICE_TOKEN:}
   s3:
     endpoint: ${TELERAD_S3_ENDPOINT:http://localhost:9000}
     access-key: ${TELERAD_S3_ACCESS_KEY:minioadmin}
@@ -61,6 +62,7 @@ telerad:
     webhook-enabled: ${TELERAD_NOTIFY_WEBHOOK_ENABLED:true}
     fallback-email: ${TELERAD_NOTIFY_FALLBACK_EMAIL:ops@telerad.local}
     default-webhook-url: ${TELERAD_NOTIFY_WEBHOOK_URL:}
+    ehr-webhook-secret: ${TELERAD_EHR_WEBHOOK_SECRET:}
   sla:
     enabled: ${TELERAD_SLA_ENABLED:true}
     stat-minutes: ${TELERAD_SLA_STAT_MINUTES:60}

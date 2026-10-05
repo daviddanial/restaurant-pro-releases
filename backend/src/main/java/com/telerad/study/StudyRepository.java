@@ -11,6 +11,10 @@ import java.util.UUID;
 public interface StudyRepository extends JpaRepository<Study, UUID> {
     Optional<Study> findByTenantIdAndStudyInstanceUid(UUID tenantId, String studyInstanceUid);
 
+    Optional<Study> findByTenantIdAndAccessionNumber(UUID tenantId, String accessionNumber);
+
+    Optional<Study> findByExternalOrderId(String externalOrderId);
+
     Optional<Study> findByStudyInstanceUid(String studyInstanceUid);
 
     List<Study> findByTenantIdOrderByCreatedAtDesc(UUID tenantId);

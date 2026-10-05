@@ -77,13 +77,29 @@ public class IngestWorker {
 
         Patient patient = upsertPatient(tenantId, attrs);
 
+        // Prefer an existing study (same StudyInstanceUID). If the DICOM arrives cold,
+        // try to bind it to a physician-ordered study (status ORDERED) via accession number —
+        // this is how a Feya order becomes the study once the facility uploads the images.
         Study study = studyRepository.findByTenantIdAndStudyInstanceUid(tenantId, studyUid)
-                .orElseGet(() -> Study.builder()
-                        .tenantId(tenantId)
-                        .studyInstanceUid(studyUid)
-                        .source(source)
-                        .status(StudyStatus.RECEIVED)
-                        .build());
+                .orElseGet(() -> {
+                    String accession = attrs.getString(Tag.AccessionNumber);
+                    if (accession != null) {
+                        Study ordered = studyRepository
+                                .findByTenantIdAndAccessionNumber(tenantId, accession)
+                                .filter(s -> s.getStatus() == StudyStatus.ORDERED)
+                                .orElse(null);
+                        if (ordered != null) {
+                            ordered.setStudyInstanceUid(studyUid);
+                            return ordered;
+                        }
+                    }
+                    return Study.builder()
+                            .tenantId(tenantId)
+                            .studyInstanceUid(studyUid)
+                            .source(source)
+                            .status(StudyStatus.RECEIVED)
+                            .build();
+                });
 
         if (study.getStatus() == StudyStatus.REPORTED || study.getStatus() == StudyStatus.DELIVERED) {
             // do not regress; still store instance under existing study

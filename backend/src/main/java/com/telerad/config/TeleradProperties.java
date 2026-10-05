@@ -49,6 +49,8 @@ public class TeleradProperties {
         private String fallbackEmail = "ops@telerad.local";
         /** Optional platform-wide webhook when tenant has none. */
         private String defaultWebhookUrl = "";
+        /** Shared secret for HMAC-SHA256 signing of outbound webhooks (EHR integration). */
+        private String ehrWebhookSecret = "";
     }
 
     @Data

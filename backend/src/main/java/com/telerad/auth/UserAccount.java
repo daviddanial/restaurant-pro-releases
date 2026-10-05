@@ -38,6 +38,9 @@ public class UserAccount {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "availability_override")
+    private Boolean availabilityOverride;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

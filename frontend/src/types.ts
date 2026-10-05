@@ -11,7 +11,7 @@ export interface AuthUser {
   tenantName: string | null
 }
 
-export type StudyStatus = 'RECEIVED' | 'READY' | 'IN_PROGRESS' | 'REPORTED' | 'DELIVERED'
+export type StudyStatus = 'ORDERED' | 'RECEIVED' | 'READY' | 'IN_PROGRESS' | 'REPORTED' | 'DELIVERED'
 export type StudyPriority = 'STAT' | 'URGENT' | 'ROUTINE'
 
 export interface StudyListItem {
@@ -38,12 +38,19 @@ export interface StudyListItem {
   slaDueAt: string | null
   slaBreachedAt: string | null
   slaOverdue: boolean
+  suggestedRadiologistId: string | null
+  externalOrderId: string | null
+  referringPhysician: string | null
+  feedbackMessage: string | null
+  feedbackAt: string | null
 }
 
 export interface RadiologistOption {
   id: string
   fullName: string
   pendingCount: number
+  available: boolean
+  availabilityOverride: boolean | null
 }
 
 export interface InstanceDto {

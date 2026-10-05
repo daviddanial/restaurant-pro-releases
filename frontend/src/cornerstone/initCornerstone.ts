@@ -1,4 +1,4 @@
-import { init as csInit } from '@cornerstonejs/core'
+import { init as csInit, metaData } from '@cornerstonejs/core'
 import {
   init as csToolsInit,
   addTool,
@@ -39,6 +39,15 @@ export function ensureCornerstoneInit(): Promise<void> {
           }
         },
       })
+
+      // FALLBACK metadata provider (low priority => consulted only when the loader
+      // providers return nothing). Fixes "Invalid VOI LUT function" / black viewport
+      // on studies whose DICOM metadata omits the VOI LUT function (window values).
+      metaData.addProvider((type: string) => {
+        const t = (type || '').toLowerCase()
+        if (t === 'voilutfunction' || t === 'voi_lut_function') return 'LINEAR'
+        return undefined
+      }, 10000)
 
       if (!toolsRegistered) {
         addTool(WindowLevelTool)

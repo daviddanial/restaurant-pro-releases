@@ -37,9 +37,17 @@ export async function api<T>(
     let message = res.statusText
     try {
       const body = await res.json()
-      message = body.error || message
+      message = body.error || body.message || message
     } catch {
       /* ignore */
+    }
+    // Expired/missing session (401, or 403 when no stored user) must not look like a
+    // broken page: drop the stale token and send the user to the login screen.
+    if (res.status === 401 || (res.status === 403 && !loadAuth())) {
+      clearAuth()
+      if (!location.pathname.startsWith('/login')) {
+        location.href = '/login?expired=1'
+      }
     }
     throw new Error(message)
   }

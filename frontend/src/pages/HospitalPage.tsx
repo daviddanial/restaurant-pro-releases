@@ -136,6 +136,36 @@ export function HospitalPage() {
     }
   }
 
+  // Nurse actions (also available in Feya): comply (performed) or return feedback
+  async function comply(studyId: string) {
+    setError(null)
+    setMessage(null)
+    try {
+      const updated = await api<StudyListItem>(`/api/studies/${studyId}/comply`, { method: 'POST' })
+      setStudies((prev) => prev.map((s) => (s.id === updated.id ? updated : s)))
+      setMessage(`Study complied → ${updated.status}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Comply failed')
+    }
+  }
+
+  async function feedback(studyId: string) {
+    const msg = window.prompt('Feedback to the physician (e.g. "recommended radiologist not available"):')
+    if (!msg) return
+    setError(null)
+    setMessage(null)
+    try {
+      const updated = await api<StudyListItem>(`/api/studies/${studyId}/feedback`, {
+        method: 'POST',
+        body: JSON.stringify({ message: msg }),
+      })
+      setStudies((prev) => prev.map((s) => (s.id === updated.id ? updated : s)))
+      setMessage('Feedback returned to the physician')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Feedback failed')
+    }
+  }
+
   const reportByStudy = useMemo(() => {
     const map = new Map<string, HospitalReportItem>()
     reports.forEach((r) => map.set(r.studyId, r))
@@ -304,6 +334,7 @@ export function HospitalPage() {
               <th>Modality</th>
               <th>Date Created</th>
               <th>Progress</th>
+              <th>Nurse</th>
               <th className="col-report">Report</th>
             </tr>
           </thead>
@@ -336,6 +367,25 @@ export function HospitalPage() {
                       </div>
                       <div className="progress-caption">{slaCaption(s)}</div>
                     </div>
+                  </td>
+                  <td className="nurse-cell">
+                    {s.status === 'ORDERED' ? (
+                      <div className="nurse-actions">
+                        <button type="button" className="btn-comply" onClick={() => comply(s.id)}>
+                          ✓ Comply
+                        </button>
+                        <button type="button" className="btn-feedback" onClick={() => feedback(s.id)}>
+                          ⚠ Feedback
+                        </button>
+                        {s.feedbackMessage && (
+                          <div className="nurse-feedback" title={s.feedbackMessage}>↩ {s.feedbackMessage}</div>
+                        )}
+                      </div>
+                    ) : s.feedbackMessage ? (
+                      <div className="nurse-feedback" title={s.feedbackMessage}>↩ {s.feedbackMessage}</div>
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td className="col-report">
                     {report ? (

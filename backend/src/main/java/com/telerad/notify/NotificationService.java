@@ -113,6 +113,7 @@ public class NotificationService {
         body.put("accessionNumber", study.getAccessionNumber());
         body.put("modality", study.getModality());
         body.put("status", study.getStatus() == null ? null : study.getStatus().name());
+        body.put("externalOrderId", study.getExternalOrderId()); // Feya correlation key
         body.put("tenantId", study.getTenantId().toString());
         body.put("tenantCode", tenant == null ? null : tenant.getCode());
         body.put("tenantName", tenant == null ? null : tenant.getName());
@@ -147,15 +148,28 @@ public class NotificationService {
             return;
         }
         try {
+            // HMAC-SHA256 signing for EHR callbacks (Feya) — shared secret from config.
+            String payload = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(body);
+            String signature = null;
+            String secret = properties.getNotify().getEhrWebhookSecret();
+            if (secret != null && !secret.isBlank()) {
+                javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+                mac.init(new javax.crypto.spec.SecretKeySpec(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
+                signature = java.util.HexFormat.of().formatHex(
+                        mac.doFinal(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+            }
             RestClient client = restClientBuilder.build();
-            client.post()
+            var req = client.post()
                     .uri(url)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(body)
-                    .retrieve()
-                    .toBodilessEntity();
-            log.info("[NOTIFY:WEBHOOK] event={} study={} url={} OK", type, study.getId(), url);
-            persist(type, study, tenant, "WEBHOOK", url, body.toString(), "SENT", null);
+                    .header("X-Telerad-Event", type.name())
+                    .body(payload);
+            if (signature != null) {
+                req.header("X-Telerad-Signature", "sha256=" + signature);
+            }
+            req.retrieve().toBodilessEntity();
+            log.info("[NOTIFY:WEBHOOK] event={} study={} url={} OK (hmac={})", type, study.getId(), url, signature != null);
+            persist(type, study, tenant, "WEBHOOK", url, payload, "SENT", null);
         } catch (Exception e) {
             // Stub still "fires": we attempted delivery and recorded the outcome.
             log.warn("[NOTIFY:WEBHOOK] event={} study={} url={} failed: {}", type, study.getId(), url, e.getMessage());

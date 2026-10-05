@@ -67,6 +67,21 @@ export function DispatchPage() {
   const statUnassigned = pending.filter((s) => s.priority === 'STAT').length
   const closeDrawer = useCallback(() => setSelectedId(null), [])
 
+  // Hybrid availability: no override → set explicit opposite; override → clear (back to auto-from-workload)
+  async function toggleAvailability(r: RadiologistOption) {
+    setError(null)
+    try {
+      const next = r.availabilityOverride == null ? !r.available : null
+      const updated = await api<RadiologistOption>(`/api/radiologists/${r.id}/availability`, {
+        method: 'POST',
+        body: JSON.stringify({ available: next }),
+      })
+      setRadiologists((prev) => prev.map((x) => (x.id === updated.id ? updated : x)))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Availability update failed')
+    }
+  }
+
   async function assign(studyId: string, radiologistId: string) {
     if (!radiologistId) return
     setAssigningId(studyId)
@@ -130,6 +145,21 @@ export function DispatchPage() {
 
       {error && <div className="error">{error}</div>}
 
+      <div className="panel radiologist-availability">
+        <div className="panel-title">Radiologist availability (auto from workload, manual override possible)</div>
+        <div className="rad-list">
+          {radiologists.map((r) => (
+            <div key={r.id} className={`rad-chip ${r.available ? 'rad-avail' : 'rad-busy'}`}>
+              <span className="rad-name">{r.fullName}</span>
+              <span className="rad-state">{r.available ? 'Available' : 'Busy'} · {r.pendingCount} pending</span>
+              <button type="button" className="rad-toggle" onClick={() => toggleAvailability(r)}>
+                {r.availabilityOverride == null ? 'Override' : 'Clear override'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="panel table-card">
         <table className="table">
           <thead>
@@ -168,7 +198,7 @@ export function DispatchPage() {
                       <option value="">Assign Radiologist</option>
                       {radiologists.map((r) => (
                         <option key={r.id} value={r.id}>
-                          {r.fullName} — {r.pendingCount} pending
+                          {r.fullName} — {r.pendingCount} pending{r.available ? ' (available)' : ' (busy)'}
                         </option>
                       ))}
                     </select>
