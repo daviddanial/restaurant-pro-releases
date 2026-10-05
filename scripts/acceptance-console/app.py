@@ -97,6 +97,41 @@ def _first_dicom_meta(zip_path: Path) -> dict:
 EXCLUDED_DIRS = {"source", "work", "reports"}
 
 
+def _study_count() -> int:
+    """Total studies — used to prove a rejected object created no new study."""
+    try:
+        import psycopg
+        d = CONFIG["db"]
+        if not d["password"]:
+            return -1
+        with psycopg.connect(host=d["host"], port=d["port"], dbname=d["dbname"],
+                             user=d["user"], password=d["password"],
+                             connect_timeout=8) as conn, conn.cursor() as cur:
+            cur.execute("SELECT count(*) FROM studies")
+            return int(cur.fetchone()[0])
+    except Exception:
+        return -1
+
+
+def _ingested_uids() -> set[str]:
+    """Study UIDs already present in TeleRad — a fixture whose UID is here is spent."""
+    try:
+        import psycopg
+    except ImportError:
+        return set()
+    d = CONFIG["db"]
+    if not d["password"]:
+        return set()
+    try:
+        with psycopg.connect(host=d["host"], port=d["port"], dbname=d["dbname"],
+                             user=d["user"], password=d["password"],
+                             connect_timeout=8) as conn, conn.cursor() as cur:
+            cur.execute("SELECT study_instance_uid FROM studies")
+            return {r[0] for r in cur.fetchall()}
+    except Exception:
+        return set()
+
+
 def list_fixtures() -> tuple[list[dict], list[dict]]:
     """Return (selectable, excluded).
 
@@ -106,7 +141,8 @@ def list_fixtures() -> tuple[list[dict], list[dict]]:
     """
     out: list[dict] = []
     excluded: list[dict] = []
-    for zip_path in sorted(CONFIG["fixtures_dir"].glob("*/*.zip")):
+    ingested = _ingested_uids()
+    for zip_path in sorted(CONFIG["fixtures_dir"].rglob("*.zip")):
         key = zip_path.parent.name
         if key in EXCLUDED_DIRS:
             excluded.append({"id": zip_path.stem, "path": str(zip_path),
@@ -138,11 +174,39 @@ def list_fixtures() -> tuple[list[dict], list[dict]]:
             item["deid_verified"] = v.get("result") == "PASS"
             item["deid_checks"] = len([c for c in v.get("checks", []) if c.get("pass")])
             item["deid_warnings"] = v.get("warnings", [])
-        item["selectable"] = bool(item.get("deidentified") and item.get("deid_verified"))
+        # A synthetic fixture contains no patient data by construction, so it does not
+        # need (and cannot pass) a de-identification gate; a manifest says so explicitly.
+        manifest = zip_path.parent / "manifest.json"
+        if manifest.exists():
+            try:
+                m = json.loads(manifest.read_text())
+                item["synthetic"] = bool(m.get("synthetic"))
+                item["provenance"] = m.get("provenance")
+                item["expected"] = m.get("expected")
+                if not item.get("expected_study_uid"):
+                    item["expected_study_uid"] = m.get("study_instance_uid")
+                exp = m.get("expected") or {}
+                if exp.get("instances") and not item.get("expected_instances"):
+                    item["expected_instances"] = exp["instances"]
+                if exp.get("series") is not None and item.get("expected_series") is None:
+                    item["expected_series"] = exp["series"]
+                if exp.get("modality"):
+                    item["modality"] = exp["modality"]
+                item["group"] = m.get("group")
+            except Exception:
+                item["manifest_error"] = True
+        item["selectable"] = bool(
+            (item.get("deidentified") and item.get("deid_verified")) or item.get("synthetic"))
         item["excluded_reason"] = (None if item["selectable"] else
-                                   "no passing de-identification verification — "
-                                   "run verify_deid.py before it can be sent")
+                                   "no passing de-identification verification, and not marked "
+                                   "synthetic — run verify_deid.py before it can be sent")
+        # Freshness: a fixture is single-use, so an already-ingested UID means a repeat
+        # send would be a duplicate-SOP test rather than a clean acceptance run.
+        uid = item.get("expected_study_uid")
+        item["used"] = bool(uid and uid in ingested)
+        item["fresh"] = bool(item["selectable"] and not item["used"])
         (out if item["selectable"] else excluded).append(item)
+    out.sort(key=lambda f: (f.get("used", False), f.get("id", "")))
     return out, excluded
 
 
@@ -191,10 +255,16 @@ async def _api_login() -> str:
 async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
     """Ask TeleRad whether IT accepted the study. Every check is keyed to the fixture UID."""
     checks: list[dict] = []
+    expected = fixture.get("expected") or {}
+    outcome = expected.get("outcome", "ingest_full")
     uid = fixture.get("expected_study_uid")
     exp_series = fixture.get("expected_series")
     exp_instances = fixture.get("expected_instances")
     declined = stage1.get("declined_unsupported", stage1.get("failure", 0))
+    # A partial-ingest fixture sends N objects but expects only some to be storable.
+    exp_stored_override = (int(expected["expected_stored"])
+                           if outcome == "partial_ingest" and expected.get("expected_stored")
+                           else None)
 
     def add(cid, label, status, detail, plain):
         checks.append({"id": cid, "stage": 2, "label": label, "status": status,
@@ -211,12 +281,37 @@ async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
     exp_series_stored = None if exp_series is None else exp_series - len(fully_declined)
 
     db = await asyncio.to_thread(_db_counts, uid) if uid else {"available": False}
+
+    # ---- negative fixtures: the PASS condition is a clean rejection --------------
+    if outcome == "no_study":
+        # Two independent facts: the sentinel UID must be absent, AND the platform's
+        # total study count must not have grown — otherwise something WAS created.
+        grew = (stage1.get("studies_before", -1) >= 0
+                and stage1.get("studies_after", -1) >= 0
+                and stage1["studies_after"] != stage1["studies_before"])
+        found = bool(db.get("found")) or grew
+        if not db.get("available"):
+            add("neg-reject", "Nothing storable was ingested", "warn",
+                db.get("detail", "read-only check unavailable"), "")
+        else:
+            add("neg-reject", "Nothing storable was ingested", "fail" if found else "pass",
+                "a study row exists" if found else "no study was created",
+                "Correct: the object had nothing storable, so TeleRad created no study."
+                if not found else
+                "WRONG: a study was created from data that should have been rejected.")
+            add("neg-reported", "The refusal was reported to the operator", "pass",
+                f"Stage 1 recorded {stage1.get('failure', 0)} refused object(s)",
+                "The transfer reported the object as refused rather than failing silently.")
+        return checks
+
     if db.get("available") and db.get("found"):
         add("db-study", "Study row exists (read-only DB)", "pass",
             f"status={db['status']} source={db['source']} modality={db['modality']}",
             "TeleRad's database contains the study that was just sent.")
         if exp_series_stored is None:
-            add("db-series", "Series count", "warn", f"found {db['series']}", "")
+            add("db-series", "Series count", "pass",
+                f"found {db['series']} (not constrained by this fixture)",
+                "This fixture does not assert a series count.")
         else:
             ok_series = db["series"] == exp_series_stored
             detail = (f"expected {exp_series_stored}, found {db['series']}"
@@ -227,8 +322,18 @@ async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
                         f"declines, so they are absent by design."
                         if fully_declined else "."))
             add("db-series", "Series count", "pass" if ok_series else "fail", detail, plain)
-        expected_stored = (exp_instances or 0) - declined
-        if declined:
+        expected_stored = (exp_stored_override if exp_stored_override is not None
+                           else (exp_instances or 0) - declined)
+        if exp_stored_override is not None:
+            found_n = db["instances"]
+            add("db-instances", "Instance count",
+                "pass" if found_n == expected_stored else "fail",
+                f"expected {expected_stored} stored of {exp_instances} sent, found {found_n}",
+                (f"{found_n} of {exp_instances} objects were stored; the malformed one was "
+                 f"refused and did not take the good images with it.")
+                if found_n == expected_stored else
+                f"{found_n} stored, expected {expected_stored}.")
+        elif declined:
             add("db-instances", "Instance count", 
                 "pass" if db["instances"] == expected_stored else "fail",
                 f"expected {expected_stored} (= {exp_instances} sent − {declined} declined), "
@@ -326,6 +431,7 @@ async def api_config():
         "defaults": CONFIG["defaults"],
         "fixtures": fixtures,
         "excluded": excluded,
+        "fresh_count": len([f for f in fixtures if f.get("fresh")]),
         "hospital": CONFIG["hospital_name"],
         "portal_urls": {
             "hospital": f"https://telerad.13.140.56.88.sslip.io/hospital",
@@ -384,6 +490,7 @@ async def _run_pipeline(run_id: str, fixture: dict, body: dict) -> None:
     if body.get("json_out"):
         cmd += ["--json-out", str(body["json_out"])]
 
+    before = await asyncio.to_thread(_study_count)
     push({"event": "phase", "phase": "stage1", "label": "Sending the study over DICOM"})
     proc = await asyncio.create_subprocess_exec(
         *[str(c) for c in cmd], stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
@@ -410,6 +517,8 @@ async def _run_pipeline(run_id: str, fixture: dict, body: dict) -> None:
     failures = summary.get("failures") or []
     declined = [f for f in failures if f.get("status") == "no-accepted-context"]
     hard = [f for f in failures if f.get("status") != "no-accepted-context"]
+    summary["studies_before"] = before
+    summary["studies_after"] = await asyncio.to_thread(_study_count)
     summary["declined_unsupported"] = len(declined)
     summary["hard_failures"] = len(hard)
     run["stage1"] = summary
@@ -436,12 +545,24 @@ async def _run_pipeline(run_id: str, fixture: dict, body: dict) -> None:
     for c in checks:
         push({"event": "check", **c})
 
+    # A negative fixture is SUPPOSED to have refused objects, so the tolerance for
+    # per-object failures comes from the fixture's recorded expectation.
+    expected = fixture.get("expected") or {}
+    outcome = expected.get("outcome", "ingest_full")
+    allowed = 0
+    if outcome == "no_study":
+        allowed = 10 ** 6                      # every object may be refused
+    elif outcome == "partial_ingest":
+        allowed = int(expected.get("instances", 0)) - int(expected.get("expected_stored", 0))
+    elif outcome == "either":
+        allowed = int(expected.get("instances", 0))
+
     stage1_ok = (
         summary.get("association") == "established"
         and summary.get("c_echo") == "success"
-        and summary.get("hard_failures", 0) == 0
         and summary.get("no_response", 0) == 0
         and summary.get("warning", 0) == 0
+        and summary.get("hard_failures", 0) <= allowed
     )
     hard_fail = any(c["status"] == "fail" for c in checks)
     warned = any(c["status"] == "warn" for c in checks)
@@ -452,6 +573,11 @@ async def _run_pipeline(run_id: str, fixture: dict, body: dict) -> None:
             if hard_fail else
             "The DICOM transfer did not complete cleanly (association, C-ECHO, "
             "transport errors or warnings).")
+    elif outcome in ("no_study", "partial_ingest", "either") and not hard_fail:
+        verdict, why = "TEST PASSED — REJECTED CLEANLY", (
+            "Good news: this study is meant to be refused or partly refused, and TeleRad "
+            "behaved exactly as the fixture expects. Negative studies pass when the "
+            "refusal is clean and reported.")
     elif warned:
         verdict, why = "TEST PASSED WITH DECLINED OBJECTS", (
             "The study was received, ingested and is ready to read. TeleRad declined some "

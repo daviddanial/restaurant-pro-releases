@@ -106,6 +106,9 @@
     <h2>2 · Select study</h2>
     <div class="grid g3" id="fixtures"></div>
     <div class="hint" id="fixtureNote"></div>
+    <div class="hint">Fixtures are single-use: each has its own Study/Series/SOP UIDs, so a
+      fixture already ingested cannot produce a clean acceptance run. Prefer a card marked
+      <strong>FRESH</strong>.</div>
   </div>
 
   <div class="panel">
@@ -210,10 +213,15 @@ async function boot(){
     <div class="study" data-id="${f.id}">
       <div class="t">${f.label}</div>
       <div class="m">
-        <span class="pill ${f.deidentified?"ok":"no"}">${f.deidentified?"de-identified":"NOT de-identified"}</span>
-        <span class="pill ${f.deid_verified?"ok":"no"}">${f.deid_verified?"verified":"unverified"}</span>
+        <span class="pill ${f.used?"no":"ok"}">${f.used?"ALREADY INGESTED":"FRESH"}</span>
+        ${f.synthetic
+          ? '<span class="pill ok">synthetic · no patient data</span>'
+          : `<span class="pill ${f.deidentified?"ok":"no"}">${f.deidentified?"de-identified":"NOT de-identified"}</span>
+             <span class="pill ${f.deid_verified?"ok":"no"}">${f.deid_verified?"verified":"unverified"}</span>`}
       </div>
       <div class="m">${f.modality} · ${f.instances} images · ${f.expected_series??"?"} series · ${f.size_mb} MB</div>
+      ${f.used?`<div class="m" style="color:var(--warn)">Re-sending this is a duplicate-SOP test, not a clean run.</div>`:""}
+      ${f.expected?`<div class="m"><strong>expects:</strong> ${f.expected.plain || f.expected.outcome}</div>`:""}
       ${f.burned_in?`<div class="m">burned-in annotation: ${Object.entries(f.burned_in).map(([k,v])=>k+"="+v).join(", ")}</div>`:""}
     </div>`).join("");
   document.querySelectorAll(".study").forEach(el => el.onclick = () => {
