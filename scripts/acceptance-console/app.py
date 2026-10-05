@@ -53,6 +53,12 @@ CONFIG = {
     "browserless_token": os.environ.get("BROWSERLESS_TOKEN", ""),
     "admin_email": os.environ.get("TELERAD_ADMIN_EMAIL", "admin@telerad.local"),
     "admin_password": os.environ.get("TELERAD_ADMIN_PASSWORD", "password"),
+    # Accounts for the Stage-3 clinical workflow (P2): dispatch assigns to the
+    # radiologist, and the hospital side reads back the delivered report + PDF.
+    "radiologist_email": os.environ.get("TELERAD_RADIOLOGIST_EMAIL", "rad@telerad.local"),
+    "radiologist_password": os.environ.get("TELERAD_RADIOLOGIST_PASSWORD", "password"),
+    "hospital_user_email": os.environ.get("TELERAD_HOSPITAL_USER_EMAIL", "staff@demohosp.local"),
+    "hospital_user_password": os.environ.get("TELERAD_HOSPITAL_USER_PASSWORD", "password"),
     "hospital_id": os.environ.get("TELERAD_HOSPITAL_ID", "11111111-1111-1111-1111-111111111111"),
     "hospital_name": os.environ.get("TELERAD_HOSPITAL_NAME", "Demo General Hospital"),
     "db": {
@@ -88,6 +94,15 @@ def _load_viewer_render():
         sys.path.insert(0, here)
     import viewer_render  # noqa: PLC0415 — lazy so a missing optional path never breaks boot
     return viewer_render
+
+
+def _load_workflow():
+    """Import the sibling workflow module (P2) regardless of the console's cwd."""
+    here = str(Path(__file__).resolve().parent)
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import workflow  # noqa: PLC0415 — lazy so a missing optional path never breaks boot
+    return workflow
 
 
 def _first_dicom_meta(zip_path: Path) -> dict:
@@ -503,7 +518,10 @@ async def api_config():
             "dispatch": f"https://telerad.13.140.56.88.sslip.io/dispatch",
             "worklist": f"https://telerad.13.140.56.88.sslip.io/worklist",
         },
-        "credentials": {"admin": CONFIG["admin_email"], "password_hint": "password"},
+        "credentials": {"admin": CONFIG["admin_email"],
+                        "radiologist": CONFIG["radiologist_email"],
+                        "hospital_user": CONFIG["hospital_user_email"],
+                        "password_hint": "password"},
     }
 
 
@@ -610,6 +628,43 @@ async def _run_pipeline(run_id: str, fixture: dict, body: dict) -> None:
     for c in checks:
         push({"event": "check", **c})
 
+    # ---- Stage 3 (P2): close the loop — assign → claim → report → sign → deliver
+    # Only on a full run (the smoke uses a limit and must not mutate a study), and
+    # only when stage 2 actually found THIS study. run_workflow resolves the study
+    # by its StudyInstanceUID and returns no checks when it is absent.
+    stage3: list[dict] = []
+    study_found = any(c["id"] in ("api-hospital", "db-study") and c["status"] == "pass"
+                      for c in checks)
+    if not limit and study_found:
+        push({"event": "phase", "phase": "stage3",
+              "label": "Running the clinical workflow — assign → claim → report → sign → deliver"})
+        try:
+            wf = _load_workflow()
+            stage3 = await asyncio.to_thread(
+                wf.run_workflow,
+                CONFIG["api_base"],
+                fixture.get("expected_study_uid"),
+                CONFIG["hospital_id"],
+                {"email": CONFIG["radiologist_email"], "password": CONFIG["radiologist_password"]},
+                {"email": CONFIG["hospital_user_email"],
+                 "password": CONFIG["hospital_user_password"]},
+                _reports_dir(),
+                {"email": CONFIG["admin_email"], "password": CONFIG["admin_password"]},
+            )
+        except Exception as exc:
+            detail = f"{type(exc).__name__}: {exc}"[:200]
+            for _secret in (CONFIG["radiologist_password"], CONFIG["hospital_user_password"],
+                            CONFIG["admin_password"]):
+                if _secret:
+                    detail = detail.replace(_secret, "<redacted>")
+            stage3 = [{"id": "wf-module", "stage": 3,
+                       "label": "Clinical workflow module",
+                       "status": "fail", "detail": detail,
+                       "plain": "The clinical workflow could not be started."}]
+        run["stage3"] = stage3
+        for c in stage3:
+            push({"event": "check", **c})
+
     # A negative fixture is SUPPOSED to have refused objects, so the tolerance for
     # per-object failures comes from the fixture's recorded expectation.
     expected = fixture.get("expected") or {}
@@ -652,8 +707,24 @@ async def _run_pipeline(run_id: str, fixture: dict, body: dict) -> None:
             "The study was sent over DICOM and TeleRad independently confirmed it is "
             "ingested, assigned to the right hospital and ready to read.")
 
+    # Stage 3 is the acceptance criterion of P2: a study that only "reaches dispatch"
+    # is not a finished report. A failed workflow step turns the run red and names it;
+    # a completed one says the loop closed.
+    wf_fail = next((c for c in stage3 if c["status"] == "fail"), None)
+    if wf_fail and verdict != "TEST FAILED":
+        verdict = "TEST FAILED"
+        why = (f"The clinical workflow did not complete — “{wf_fail['label']}” failed. "
+               "The study was received and is readable, but the loop did not close.")
+    elif stage3 and not wf_fail:
+        if verdict == "TEST PASSED":
+            why += (" The clinical loop also closed: the report was signed and the signed PDF "
+                    "was delivered back to the hospital.")
+        elif verdict == "TEST PASSED WITH DECLINED OBJECTS":
+            why += (" The clinical workflow (stage 3) also completed: the report was signed and "
+                    "the signed PDF was delivered back to the hospital.")
+
     final = {"event": "final", "verdict": verdict, "why": why,
-             "stage1": summary, "stage2": checks}
+             "stage1": summary, "stage2": checks, "stage3": stage3}
     run["final"] = final
     push(final)
     push({"event": "end"})
@@ -696,7 +767,8 @@ async def api_run_state(run_id: str):
     run = RUNS.get(run_id)
     if not run:
         raise HTTPException(404, "unknown run")
-    return {"final": run.get("final"), "stage1": run.get("stage1"), "stage2": run.get("stage2")}
+    return {"final": run.get("final"), "stage1": run.get("stage1"),
+            "stage2": run.get("stage2"), "stage3": run.get("stage3")}
 
 
 @app.get("/api/reports/{name}")

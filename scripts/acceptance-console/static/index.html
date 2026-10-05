@@ -140,6 +140,9 @@
     <div id="stage1"></div>
     <div class="stage-h">Stage 2 — TeleRad confirms it accepted the study</div>
     <div id="stage2"><div class="hint">Not started. Stage 2 runs after the transfer finishes.</div></div>
+    <div class="stage-h">Stage 3 — clinical workflow &amp; delivery</div>
+    <div id="stage3"><div class="hint">Not started. Stage 3 assigns, claims, reports, signs and
+      delivers the study (full run only).</div></div>
   </div>
 
   <div class="panel">
@@ -151,13 +154,16 @@
   </div>
 
   <div class="panel">
-    <h2>6 · Continue the workflow by hand</h2>
+    <h2>6 · Explore the workflow by hand</h2>
     <div class="links" id="links"></div>
     <div class="hint">
-      Sign in with <strong id="credHint">admin@telerad.local</strong> / password.
-      In <em>Dispatch</em> assign the new study to a radiologist; in the <em>Worklist</em> claim it,
-      write and sign a report, then download it from the hospital portal.
-      Automated dispatch→report→delivery checks are the next phase (P2).
+      The clinical loop is <strong>automated in Stage 3</strong> above
+      (assign → claim → report → sign → deliver). These links are for exploring it manually.
+      Sign in with <strong id="credHint">admin@telerad.local</strong> / password
+      (radiologist <span id="radHint">rad@telerad.local</span>,
+      hospital <span id="hospHint">staff@demohosp.local</span>).
+      In <em>Dispatch</em> assign the study to a radiologist; in the <em>Worklist</em> claim it,
+      write and sign a report, then download the signed PDF from the hospital portal.
     </div>
   </div>
 </div>
@@ -201,6 +207,8 @@ async function boot(){
   $("health").className = "pill ok"; $("health").textContent = "console ready";
   Object.entries(cfg.defaults).forEach(([k,v]) => { if($(k)) $(k).value = v; });
   $("credHint").textContent = cfg.credentials.admin;
+  if(cfg.credentials.radiologist) $("radHint").textContent = cfg.credentials.radiologist;
+  if(cfg.credentials.hospital_user) $("hospHint").textContent = cfg.credentials.hospital_user;
   $("links").innerHTML = Object.entries(cfg.portal_urls)
     .map(([k,u]) => `<a href="${u}" target="_blank" rel="noopener">Open ${k} ↗</a>`).join("");
   fixtures = cfg.fixtures;
@@ -250,6 +258,9 @@ function resetRun(){
   $("bar").style.width = "0%"; $("err").style.display = "none";
   $("progressWrap").style.display = "block";
   $("stage1").innerHTML = ""; $("stage2").innerHTML = '<div class="hint">Waiting for the transfer to finish…</div>';
+  $("stage2")._items = [];
+  $("stage3").innerHTML = '<div class="hint">Waiting for the clinical workflow to start…</div>';
+  $("stage3")._items = [];
   $("banner").className = "banner"; $("verdict").textContent = "Running…"; $("why").textContent = "";
   S1.forEach(c => c.status = "idle");
 }
@@ -325,9 +336,10 @@ function handle(ev){
     case "phase":
       $("phase").textContent = ev.label + "…";
       if(ev.phase==="stage2") $("stage2").innerHTML = '<div class="hint">Querying TeleRad…</div>';
+      if(ev.phase==="stage3") $("stage3").innerHTML = '<div class="hint">Running the clinical workflow…</div>';
       break;
     case "check": {
-      const box = $("stage2");
+      const box = ev.stage === 3 ? $("stage3") : $("stage2");
       if(box.querySelector(".hint")) box.innerHTML = "";
       const list = box._items || (box._items = []);
       list.push({id:ev.id, label:ev.label, status:ev.status, detail:ev.detail, plain:ev.plain});
