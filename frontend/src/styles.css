@@ -29,6 +29,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Cornerstone loadImageToCanvas / renderToCanvasGPU appends temporary viewport
+ * hosts to document.body with position:absolute but no top/left. Their static
+ * position lands below the app and inflates scrollHeight (browser scrollbar +
+ * white page strip). Pin them off-layout until Cornerstone removes them.
+ */
+body > [viewport-id-for-remove] {
+  top: 0 !important;
+  left: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-strong); }
 button, input, select, textarea {
@@ -37,10 +52,14 @@ button, input, select, textarea {
 }
 
 .app-shell {
+  /* Lock shell to the window so the viewer cannot grow past 100% and create
+     a browser scrollbar that reveals the light page background underneath. */
+  height: 100%;
   min-height: 100%;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
   background: var(--bg);
+  overflow: hidden;
 }
 
 .topbar {
@@ -149,6 +168,9 @@ button, input, select, textarea {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+  height: 100%;
+  overflow: auto;
+  box-sizing: border-box;
 }
 .page.wide { max-width: none; }
 
@@ -385,18 +407,26 @@ button, input, select, textarea {
 .viewer-shell {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  height: calc(100vh - 57px);
+  /* Fill the app-shell content row (actual topbar height), not 100vh - guessed px. */
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   background: #0b1220;
 }
 .viewer-topstrip {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.35rem;
   padding: 0.5rem 1rem;
   background: #111827;
   border-bottom: 1px solid #1f2937;
   color: #e2e8f0;
+}
+.viewer-topstrip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 .viewer-topstrip-id {
   display: flex;
@@ -430,19 +460,35 @@ button, input, select, textarea {
   color: #cbd5e1;
 }
 .viewer-topstrip-actions .btn.secondary:hover { background: rgba(148, 163, 184, 0.14); }
+.viewer-chrome-tools:empty { display: none; }
+.viewer-chrome-tools .viewport-tools {
+  position: static;
+  left: auto;
+  bottom: auto;
+  max-width: none;
+  padding-top: 0.15rem;
+  border-top: 1px solid #1f2937;
+}
 
 .viewer-layout {
   display: grid;
   grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
   gap: 0;
-  /* Definite height: without it the pane's minmax(0,1fr) row collapses to 0 in
-     single-pane mode → 0-height canvas, invisible image and hidden toolbar. */
-  min-height: 70vh;
+  height: 100%;
+  min-height: 0;
   background: #0b1220;
 }
 @media (max-width: 900px) {
-  .viewer-shell { height: auto; min-height: calc(100vh - 57px); }
-  .viewer-layout { grid-template-columns: 1fr; }
+  .app-shell { overflow: auto; }
+  .viewer-shell {
+    height: auto;
+    min-height: 100%;
+  }
+  .viewer-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 50vh;
+  }
 }
 
 .viewer-series {
@@ -509,20 +555,146 @@ button, input, select, textarea {
 .viewer-panes {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  height: 100%;
   min-height: 0;
   min-width: 0;
-}
-.viewer-panes.compare {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1px;
   background: #1f2937;
 }
+.viewer-panes.layout-1x1 {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+.viewer-panes.layout-1x2 {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+.viewer-panes.layout-2x2 {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+}
+.viewer-panes.layout-mpr {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+.mpr-slab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #94a3b8;
+  font-size: 0.7rem;
+}
+.mpr-slab select {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.3rem;
+}
+.mpr-root {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  background: #0b1220;
+}
+.mpr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.35rem 0.65rem;
+  border-bottom: 1px solid #1f2937;
+  color: #cbd5e1;
+  font-size: 0.75rem;
+}
+.mpr-toolbar-title {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #e2e8f0;
+}
+.mpr-presets {
+  display: inline-flex;
+  gap: 0.2rem;
+}
+.mpr-presets button {
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.mpr-presets button:hover { color: #e2e8f0; }
+.mpr-presets button.on {
+  background: rgba(13, 148, 136, 0.28);
+  color: #5eead4;
+  border-color: rgba(13, 148, 136, 0.5);
+}
+.mpr-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.viewer-panes.compare {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.viewer-layout-toggle {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.15rem;
+  background: #0b1220;
+  border: 1px solid #334155;
+  border-radius: 8px;
+}
+.viewer-layout-toggle button {
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.25rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.viewer-layout-toggle button:hover:not(:disabled) {
+  color: #e2e8f0;
+  background: rgba(148, 163, 184, 0.12);
+}
+.viewer-layout-toggle button.on {
+  background: rgba(13, 148, 136, 0.28);
+  color: #5eead4;
+}
+.viewer-layout-toggle button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 .viewer-pane {
   display: grid;
+  /* Row 1 is the optional Current/Prior label; the viewport always sits in
+     row 2 so a single-pane study still fills height when no label is rendered. */
   grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
   min-height: 0;
   min-width: 0;
   background: #0f172a;
+  outline: 1px solid transparent;
+}
+.viewer-pane.active {
+  outline-color: var(--accent);
+  z-index: 1;
+}
+.viewer-pane .viewport {
+  grid-row: 2;
+  min-height: 0;
+  height: 100%;
 }
 .viewer-pane .viewport { min-height: 360px; } /* was 0 — collapsed the canvas */
 .viewer-pane-label {
@@ -538,6 +710,9 @@ button, input, select, textarea {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.viewer-pane.active .viewer-pane-label {
+  color: #e2e8f0;
+}
 .viewer-pane-tag {
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -549,7 +724,13 @@ button, input, select, textarea {
 .viewer-pane-tag.current { background: rgba(13, 148, 136, 0.25); color: #5eead4; }
 .viewer-pane-tag.prior { background: rgba(139, 92, 246, 0.22); color: #c4b5fd; }
 @media (max-width: 1100px) {
-  .viewer-panes.compare { grid-template-columns: minmax(0, 1fr); grid-template-rows: 1fr 1fr; }
+  .viewer-panes.layout-1x2,
+  .viewer-panes.layout-2x2,
+  .viewer-panes.layout-mpr,
+  .viewer-panes.compare {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: repeat(auto-fit, minmax(220px, 1fr));
+  }
 }
 .viewer-series .muted { color: #64748b; font-size: 0.8125rem; }
 
@@ -634,6 +815,7 @@ button, input, select, textarea {
   height: 100%;
   cursor: crosshair;
   touch-action: none;
+  outline: none;
 }
 .viewport-canvas.cs-viewport {
   position: absolute;
@@ -671,16 +853,37 @@ button, input, select, textarea {
   object-fit: contain;
   user-select: none;
 }
+.viewport-ctx-menu {
+  position: fixed;
+  z-index: 40;
+  min-width: 9rem;
+  padding: 0.25rem;
+  background: #111827;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+.viewport-ctx-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.viewport-ctx-menu button:hover {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+}
 .viewport-tools {
-  position: absolute;
-  left: 0.75rem;
-  bottom: 0.75rem;
-  z-index: 4;
   display: flex;
   gap: 0.35rem;
   flex-wrap: wrap;
   align-items: center;
-  max-width: calc(100% - 1.5rem);
 }
 .viewport-tools .btn {
   padding: 0.35rem 0.6rem;
@@ -1956,3 +2159,212 @@ a.btn-report:focus-visible {
 .btn-comply { padding: 4px 10px; border-radius: 6px; border: 1px solid #1a7f3d; color: #1a7f3d; background: #e7f6ec; font-size: 12px; cursor: pointer; }
 .btn-feedback { padding: 4px 10px; border-radius: 6px; border: 1px solid #b45309; color: #b45309; background: #fef3c7; font-size: 12px; cursor: pointer; }
 .nurse-feedback { font-size: 11px; color: #b45309; word-break: break-word; max-width: 220px; }
+/* —— Viewer Export / Print —— */
+.viewer-export {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.viewer-export-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 30;
+  min-width: 11.5rem;
+  padding: 0.35rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+.viewer-export-group + .viewer-export-group {
+  margin-top: 0.35rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid #1f2937;
+}
+.viewer-export-heading {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  padding: 0.2rem 0.5rem;
+}
+.viewer-export-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.viewer-export-menu button:hover:not(:disabled) {
+  background: rgba(13, 148, 136, 0.2);
+  color: #5eead4;
+}
+.viewer-export-menu button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.viewer-export-progress {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 29;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.65rem;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+.viewer-export-progress .linkish {
+  border: 0;
+  background: transparent;
+  color: #5eead4;
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+}
+
+.print-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(15, 23, 42, 0.72);
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
+  overflow: auto;
+}
+.print-dialog {
+  background: #111827;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1rem;
+  align-self: start;
+  display: grid;
+  gap: 0.85rem;
+}
+.print-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.print-dialog-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.print-options {
+  display: grid;
+  gap: 0.55rem;
+  font-size: 0.8125rem;
+}
+.print-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+.print-options select {
+  margin-left: auto;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 6px;
+  padding: 0.25rem 0.4rem;
+}
+.print-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.print-sheet {
+  background: #fff;
+  color: #0f172a;
+  border-radius: 4px;
+  padding: 1rem;
+  align-self: start;
+  min-height: 60vh;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+.print-sheet.page-a4.orient-portrait { width: min(100%, 210mm); }
+.print-sheet.page-a4.orient-landscape { width: min(100%, 297mm); }
+.print-sheet.page-letter.orient-portrait { width: min(100%, 8.5in); }
+.print-sheet.page-letter.orient-landscape { width: min(100%, 11in); }
+.print-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  font-size: 0.78rem;
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.65rem;
+  border-bottom: 1px solid #cbd5e1;
+}
+.print-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+.print-grid-1 { grid-template-columns: 1fr; }
+.print-grid-2 { grid-template-columns: 1fr 1fr; }
+.print-grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+.print-tile {
+  margin: 0;
+  background: #000;
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+}
+.print-tile figcaption {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.4rem;
+  background: #f1f5f9;
+  color: #334155;
+}
+.print-tile img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 42vh;
+  object-fit: contain;
+  background: #000;
+}
+.print-sheet[data-measurements='0'] .print-tile img {
+  /* Measurements are baked into the captured canvas; this flag is reserved for
+     future vector overlays. Kept for FR-VW-014 option parity. */
+}
+
+@media print {
+  body * { visibility: hidden !important; }
+  .print-overlay,
+  .print-overlay * { visibility: visible !important; }
+  .print-overlay {
+    position: static !important;
+    display: block !important;
+    background: #fff !important;
+    padding: 0 !important;
+    inset: auto !important;
+  }
+  .no-print { display: none !important; }
+  .print-sheet {
+    box-shadow: none !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+  .print-tile img { max-height: none; }
+  @page {
+    margin: 12mm;
+  }
+}

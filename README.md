@@ -24,22 +24,10 @@ java -jar backend/target/telerad-backend-0.1.0-SNAPSHOT.jar \
   --telerad.s3.secret-key=minioadmin \
   --telerad.scp.enabled=false
 
-# Optional DICOM SCP (separate process)
-java -jar backend/target/telerad-backend-0.1.0-SNAPSHOT.jar \
-  --spring.profiles.active=scp \
-  --server.port=18081 \
-  --spring.datasource.url=jdbc:postgresql://localhost:5433/telerad \
-  --spring.datasource.username=telerad \
-  --spring.datasource.password=telerad \
-  --spring.rabbitmq.host=localhost \
-  --spring.rabbitmq.username=telerad \
-  --spring.rabbitmq.password=telerad \
-  --telerad.s3.endpoint=http://localhost:9000 \
-  --telerad.s3.access-key=minioadmin \
-  --telerad.s3.secret-key=minioadmin \
-  --telerad.scp.enabled=true \
-  --telerad.scp.port=11112 \
-  --telerad.scp.ae-title=TELERAD_SCP
+# Optional DICOM SCP (separate process) — facility / modality receive path
+./scripts/start-scp.sh
+# equivalent: java -jar … --spring.profiles.active=scp --telerad.scp.enabled=true
+#             --telerad.scp.port=11112 --telerad.scp.ae-title=TELERAD_SCP --server.port=18081
 
 # 3) Frontend (proxies /api → :18080)
 cd frontend && npm install && npm run dev
@@ -77,7 +65,7 @@ Password for all: `password`
 python3 scripts/generate_sample_dicom.py -o /tmp/sample.dcm
 ```
 
-Upload via hospital portal or:
+Upload via hospital portal (backup path) or:
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:18080/api/auth/login \
@@ -86,6 +74,40 @@ TOKEN=$(curl -s -X POST http://localhost:18080/api/auth/login \
 curl -X POST "http://localhost:18080/api/hospitals/11111111-1111-1111-1111-111111111111/studies/upload?priority=STAT" \
   -H "Authorization: Bearer $TOKEN" -F "files=@/tmp/sample.dcm"
 ```
+
+## Modality / PACS simulator (preferred ingest path)
+
+TeleRad listens as **SCP** (`TELERAD_SCP` / port **11112**). A scanner or hospital gateway is the **SCU** and C-STOREs finished studies. The lab simulator pretends to be that sender.
+
+**Prereqs:** API+worker on `:18080`, infra up, then SCP in a second terminal:
+
+```bash
+./scripts/start-scp.sh
+```
+
+**Deps** (once): `pip3 install -r scripts/requirements-dicom.txt`
+
+**Send like a modality** (Calling AE `DEMOHOSP_PACS` → Demo Hospital):
+
+```bash
+./scripts/modality_send.sh --sample                 # generate 1 CT + C-ECHO + C-STORE
+./scripts/modality_send.sh /path/to/study_dir       # all .dcm under a folder
+./scripts/modality_send.sh ANON.zip -v              # ZIP of DICOM
+```
+
+Same send with parameters set explicitly (host/IP only — not an `http://` URL):
+
+```bash
+./scripts/modality_send.sh --sample \
+  --host 127.0.0.1 \
+  --port 11112 \
+  --called-ae TELERAD_SCP \
+  --calling-ae DEMOHOSP_PACS
+```
+
+Options: `--host`, `--port`, `--calling-ae`, `--called-ae`. Unknown Calling AEs are rejected (FR-PAC-002).
+
+**Expect:** C-ECHO OK → C-STORE ok → study on radiologist worklist as `READY` with `source=CSTORE` → open in viewer.
 
 ### Working with real studies
 
@@ -119,7 +141,7 @@ Registered Calling AEs (seed): `DEMOHOSP_PACS`, `CITYMED_PACS`
 ```
 backend/     Spring Boot API + ingest worker + optional DICOM SCP
 frontend/    React (Vite) hospital / radiologist / admin portals
-scripts/     Sample DICOM generator, anonymizer, prior-study builder, study reset
+scripts/     Sample DICOM, modality C-STORE simulator, anonymizer, prior builder, SCP start
 docs/        Product requirements (source of truth)
 PLAN.md      Architecture & milestones
 docker-compose.yml

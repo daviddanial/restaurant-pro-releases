@@ -361,7 +361,9 @@ public class StudyService {
                     .stream()
                     .map(i -> new InstanceDto(i.getId(), i.getSopInstanceUid(), i.getInstanceNumber(),
                             i.getRows(), i.getColumns(), i.getNumberOfFrames(),
-                            i.getCineRate(), i.getFrameTime()))
+                            i.getCineRate(), i.getFrameTime(),
+                            parseDoubles(i.getImagePositionPatient()),
+                            parseDoubles(i.getImageOrientationPatient())))
                     .toList();
             seriesDtos.add(new SeriesDto(ser.getId(), ser.getSeriesInstanceUid(), ser.getModality(),
                     ser.getSeriesNumber(), ser.getSeriesDescription(), ser.getInstanceCount(), instances));
@@ -375,6 +377,21 @@ public class StudyService {
 
     private String emptyToNull(String v) {
         return v == null || v.isBlank() ? null : v;
+    }
+
+    /** Parse "x,y,z" (or longer) into a double array; null if blank/invalid. */
+    private static double[] parseDoubles(String raw) {
+        if (raw == null || raw.isBlank()) return null;
+        String[] parts = raw.split(",");
+        double[] out = new double[parts.length];
+        try {
+            for (int i = 0; i < parts.length; i++) {
+                out[i] = Double.parseDouble(parts[i].trim());
+            }
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return out;
     }
 
     public record RadiologistOption(UUID id, String fullName, int pendingCount,
@@ -406,7 +423,8 @@ public class StudyService {
 
     public record InstanceDto(UUID id, String sopInstanceUid, Integer instanceNumber,
                               Integer rows, Integer columns, int numberOfFrames,
-                              Double cineRate, Double frameTime) {}
+                              Double cineRate, Double frameTime,
+                              double[] imagePositionPatient, double[] imageOrientationPatient) {}
 
     public record ReportSummary(UUID id, com.telerad.common.ReportStatus status, String findings,
                                 String impression, boolean critical, Instant signedAt, boolean hasPdf) {}
