@@ -91,8 +91,9 @@ agents read **this same skill** (it is installed in the Hermes catalog *and* in 
 P1 **done** — `viewer-render` check + two-state selftest · P2 **done** — stage-3 workflow automation
 (`workflow.py`: assign→claim→report→sign→deliver; runs on every full console run) · P3 **done** —
 negative suite (`negative_suite.py`: nine refusal cases judged against their own expected outcome;
-console panel 6; `make_sr_fixture.py` for the unsupported-SR fixture) · P4 portability pack for a
-real PACS. Acceptance criteria: the handoff brief, section 4.
+console panel 6; `make_sr_fixture.py` for the unsupported-SR fixture) · P4 **done** — portability pack
+(`profile.example.env`, `RUNBOOK.md`, `MIGRATION.md`, `scripts/portability/mock_scp.py` +
+`portability_check.sh`). Acceptance criteria: the handoff brief, section 4.
 
 ## Prove the negative suite (P3)
 
