@@ -1,7 +1,7 @@
 ---
 name: telerad-acceptance
 description: "Run and extend the TeleRad DICOM acceptance-test suite (PACS simulator, two-stage console, fixtures) on this VPS."
-version: 1.2.0
+version: 1.3.0
 author: Hermes Agent
 license: MIT
 platforms: [linux]
@@ -94,6 +94,32 @@ negative suite (`negative_suite.py`: nine refusal cases judged against their own
 console panel 6; `make_sr_fixture.py` for the unsupported-SR fixture) · P4 **done** — portability pack
 (`profile.example.env`, `RUNBOOK.md`, `MIGRATION.md`, `scripts/portability/mock_scp.py` +
 `portability_check.sh`). Acceptance criteria: the handoff brief, section 4.
+
+## Findings → developer cards (F1–F5, P3)
+
+Six findings (F1–F5 and the truncated-object case P3) were turned into **self-contained developer
+cards** for people who do NOT have this suite: `/home/hermes/telerad-acceptance/findings-cards/`
+(master doc + `cards/` per finding + `toolkit/` scripts + zip). Each card is independently
+reproducible with DCMTK, pydicom, curl and openssl only — every quoted command/output was executed
+on 2026-10-05 before delivery.
+
+Reusable repro toolkit (copies in that folder):
+* `toolkit/make_synth_study.py` — synthetic study; flags `--with-sr`, `--site-abbrev`, `--burned-in`.
+* `toolkit/truncate_dicom.py` — `--keep-pct` / `--drop-tail` / `--cut-before-pixels`.
+
+Lessons worth keeping:
+* **DCMTK `storescu` refuses mid-element-truncated files client-side** ("I/O suspension or premature
+  end of stream") — the reproducible *silently stored* case is the **boundary cut**
+  (`--cut-before-pixels`): accepted by C-STORE *and* by the portal upload; study goes READY, frame
+  render HTTP 500, nothing flagged. Mid-element cuts are refused by the upload path too
+  (`errors: ["<file>: null"]`).
+* The de-identification tool's KNOWN LIMITS leave study/series descriptions untouched — free-text
+  site abbreviations survive (F3); the de-id report carries `burned_in_annotation` counts (F4).
+* Root-cause refs used in the cards: `DicomScpServer.java` :145–162 (SOP class list) :118–122
+  (registration) :96–104 (parse-only validation) :44–58 (no TLS); `IngestWorker.java` :117–118
+  (study modality last-write-wins) :132–147 (no pixel validation); `UploadService.java` :92–115;
+  `TeleradProperties.java` :32–36; `verify_deid.py` :84/:115.
+* Quote values containing spaces in `.telerad-acceptance.env` (unquoted values break `source`).
 
 ## Prove the negative suite (P3)
 
