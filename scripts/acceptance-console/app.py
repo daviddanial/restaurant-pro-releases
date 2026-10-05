@@ -31,6 +31,7 @@ import asyncio
 import json
 import os
 import re
+import sys
 import time
 import uuid
 import zipfile
@@ -45,6 +46,11 @@ CONFIG = {
     "sender": os.environ.get("SENDER", "/home/hermes/telerad-repo/scripts/pacs-simulator/send-study.py"),
     "fixtures_dir": Path(os.environ.get("FIXTURES_DIR", "/home/hermes/dicom-fixtures")),
     "api_base": os.environ.get("TELERAD_API", "http://127.0.0.1:18080"),
+    # Headless browser used to prove the viewer actually renders (P1). Browserless
+    # caps a single request at 60 s; the render check stays well under it.
+    "app_url": os.environ.get("TELERAD_APP_URL", "https://telerad.13.140.56.88.sslip.io"),
+    "browserless_url": os.environ.get("BROWSERLESS_URL", "http://127.0.0.1:3000"),
+    "browserless_token": os.environ.get("BROWSERLESS_TOKEN", ""),
     "admin_email": os.environ.get("TELERAD_ADMIN_EMAIL", "admin@telerad.local"),
     "admin_password": os.environ.get("TELERAD_ADMIN_PASSWORD", "password"),
     "hospital_id": os.environ.get("TELERAD_HOSPITAL_ID", "11111111-1111-1111-1111-111111111111"),
@@ -73,6 +79,15 @@ SSE_HEADERS = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connecti
 # ----------------------------------------------------------------------------- helpers
 def _reports_dir() -> Path:
     return CONFIG["fixtures_dir"] / "reports"
+
+
+def _load_viewer_render():
+    """Import the sibling viewer_render module regardless of the console's cwd."""
+    here = str(Path(__file__).resolve().parent)
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import viewer_render  # noqa: PLC0415 — lazy so a missing optional path never breaks boot
+    return viewer_render
 
 
 def _first_dicom_meta(zip_path: Path) -> dict:
@@ -243,13 +258,20 @@ def _db_counts(study_uid: str) -> dict:
         return {"available": False, "detail": str(exc)[:160]}
 
 
-async def _api_login() -> str:
+async def _api_login_json() -> dict:
+    """The FULL login response — the frontend stores this verbatim under
+    localStorage['telerad_auth'], so the render check needs all of it, not just
+    the access token."""
     async with httpx.AsyncClient(timeout=15) as c:
         r = await c.post(f"{CONFIG['api_base']}/api/auth/login",
                          json={"email": CONFIG["admin_email"],
                                "password": CONFIG["admin_password"]})
         r.raise_for_status()
-        return r.json()["accessToken"]
+        return r.json()
+
+
+async def _api_login() -> str:
+    return (await _api_login_json())["accessToken"]
 
 
 async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
@@ -366,7 +388,8 @@ async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
 
     # --- independently, through TeleRad's own API ----------------------------
     try:
-        token = await _api_login()
+        login = await _api_login_json()
+        token = login["accessToken"]
         hdr = {"Authorization": f"Bearer {token}"}
         async with httpx.AsyncClient(timeout=25) as c:
             r = await c.get(f"{CONFIG['api_base']}/api/hospitals/{CONFIG['hospital_id']}/studies",
@@ -415,6 +438,48 @@ async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
                 except Exception as exc:
                     add("api-viewer", "Viewer can load image pixels", "warn",
                         str(exc)[:140], "Could not check the viewer path automatically.")
+
+                # render path: fetching pixels is not the same as drawing them. A broken
+                # frontend bundle leaves the API healthy and the screen blank, so open the
+                # study route in real headless Chrome, with the full auth object injected
+                # before the app scripts run, and assert the DOM actually rendered.
+                try:
+                    vr = _load_viewer_render()
+                    res = await asyncio.to_thread(
+                        vr.check_viewer_render,
+                        CONFIG["app_url"], st.get("id"), login,
+                        CONFIG["browserless_url"], CONFIG["browserless_token"],
+                        _reports_dir(),
+                    )
+                    shot = Path(res["screenshot"]).name if res.get("screenshot") else None
+                    shot_html = (f' · screenshot <a href="/api/reports/{shot}">{shot}</a>'
+                                 if shot else "")
+                    shot_note = (f" · screenshot not saved: {res['screenshotError']}"
+                                 if res.get("screenshotError") else "")
+                    base = (f"#root children {res['rootChildren']}, "
+                            f"canvas {res['canvasCount']}, "
+                            f"JS errors {len(res['pageErrors'])} · {res['seconds']}s"
+                            f"{shot_note}")
+                    if not res.get("ran"):
+                        add("viewer-render", "Viewer renders in a real browser", "warn",
+                            f"could not run: {res.get('reason', 'unknown')}{shot_html}",
+                            "The on-screen check did not run just now, so it is NOT a pass — "
+                            "the viewer may still be fine. Re-run when the browser service is up.")
+                    elif res["ok"]:
+                        add("viewer-render", "Viewer renders in a real browser", "pass",
+                            f"{base}{shot_html}",
+                            "A real browser opened the study and drew the images on screen.")
+                    else:
+                        add("viewer-render", "Viewer renders in a real browser", "fail",
+                            f"{base} — {res.get('reason', 'did not render')}{shot_html}",
+                            "The viewer page opened but did not draw the study. That is a broken "
+                            "frontend or display fault, not a missing study — report it as a "
+                            "product defect.")
+                except Exception as exc:
+                    add("viewer-render", "Viewer renders in a real browser", "warn",
+                        f"check error: {str(exc)[:140]}",
+                        "The console could not complete the on-screen render check, so it is "
+                        "not counted as a pass.")
     except Exception as exc:
         add("api-hospital", "Belongs to the right hospital", "fail",
             f"API query failed: {str(exc)[:140]}",
@@ -632,6 +697,24 @@ async def api_run_state(run_id: str):
     if not run:
         raise HTTPException(404, "unknown run")
     return {"final": run.get("final"), "stage1": run.get("stage1"), "stage2": run.get("stage2")}
+
+
+@app.get("/api/reports/{name}")
+async def api_report(name: str):
+    """Serve a report/evidence file from the reports directory.
+
+    Guarded against path traversal: the resolved target must stay inside the
+    reports directory, so ``../`` or an absolute name can never escape it.
+    """
+    reports = _reports_dir().resolve()
+    try:
+        target = (reports / name).resolve()
+        target.relative_to(reports)
+    except (ValueError, OSError):
+        raise HTTPException(404, "report not found")
+    if not target.is_file():
+        raise HTTPException(404, "report not found")
+    return FileResponse(target)
 
 
 @app.get("/")

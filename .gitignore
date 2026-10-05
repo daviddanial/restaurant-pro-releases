@@ -71,5 +71,8 @@ temp/
 __pycache__/
 *.pyc
 
+# P1 viewer-render selftest evidence (screenshots + per-step JSON)
+scripts/acceptance-console/selftest-evidence/
+
 # machine-local simulator defaults
 scripts/pacs-simulator/config.env
