@@ -70,3 +70,6 @@ temp/
 # Python bytecode from local tooling checks
 __pycache__/
 *.pyc
+
+# machine-local simulator defaults
+scripts/pacs-simulator/config.env

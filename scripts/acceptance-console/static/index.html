@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeleRad Acceptance Test</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#243449; --line:#334155;
+    --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8;
+    --pass:#22c55e; --fail:#ef4444; --warn:#f59e0b; --idle:#475569;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:20px}
+  header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:22px;margin:0}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+         padding:18px;margin-bottom:16px}
+  .panel h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;
+            color:var(--muted);margin:0 0 14px}
+  .grid{display:grid;gap:12px}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);
+               background:var(--panel2);color:var(--text);font-size:15px}
+  button{padding:12px 20px;border-radius:9px;border:0;font-size:15px;font-weight:600;
+         cursor:pointer;background:var(--accent);color:#04212f}
+  button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .rowbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .study{cursor:pointer;border:2px solid var(--line);border-radius:10px;padding:14px;
+         background:var(--panel2);transition:.15s}
+  .study:hover{border-color:#475569}
+  .study.sel{border-color:var(--accent);background:#173246}
+  .study .t{font-weight:700;margin-bottom:6px}
+  .study .m{color:var(--muted);font-size:13px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;
+        font-weight:600;margin-right:6px}
+  .pill.ok{background:#064e3b;color:#6ee7b7}
+  .pill.no{background:#7f1d1d;color:#fecaca}
+  .bar{height:22px;background:var(--panel2);border-radius:999px;overflow:hidden;
+       border:1px solid var(--line)}
+  .bar > div{height:100%;width:0%;background:linear-gradient(90deg,#0ea5e9,#22c55e);
+             transition:width .3s}
+  .counters{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+            gap:10px;margin-top:14px}
+  .counter{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:10px}
+  .counter .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .counter .v{font-size:20px;font-weight:700;margin-top:2px}
+  .check{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #263449}
+  .check:last-child{border-bottom:0}
+  .ico{width:22px;height:22px;border-radius:50%;flex:0 0 22px;display:grid;place-items:center;
+       font-size:13px;font-weight:700;background:var(--idle);color:#cbd5e1}
+  .ico.pass{background:var(--pass);color:#04210f}
+  .ico.fail{background:var(--fail);color:#2b0505}
+  .ico.warn{background:var(--warn);color:#2b1a02}
+  .ico.run{background:var(--accent);color:#04212f}
+  .check .txt{flex:1}
+  .check .lbl{font-weight:600}
+  .check .det{color:var(--muted);font-size:13px;margin-top:1px}
+  .check .plain{font-size:14px;margin-top:3px}
+  .banner{border-radius:14px;padding:22px;text-align:center;border:2px solid var(--line);
+          background:var(--panel2)}
+  .banner.pass{border-color:var(--pass);background:#062f1c}
+  .banner.fail{border-color:var(--fail);background:#331111}
+  .banner.warn{border-color:var(--warn);background:#332308}
+  .banner .v{font-size:30px;font-weight:800;letter-spacing:.02em}
+  .banner .w{margin-top:8px;font-size:15px;color:#e7eef7}
+  .links a{display:inline-block;margin:6px 10px 0 0;color:var(--accent);
+           text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:9px 14px}
+  .links a:hover{border-color:var(--accent)}
+  .hint{color:var(--muted);font-size:13px;margin-top:10px}
+  .err{color:#fecaca;background:#7f1d1d;border-radius:8px;padding:10px;margin-top:10px;display:none}
+  .stage-h{font-size:13px;color:var(--muted);margin:16px 0 4px;text-transform:uppercase;
+           letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>TeleRad Acceptance Test</h1>
+    <span id="health" class="pill no">checking…</span>
+  </header>
+  <p class="sub">Sends a real CT study to TeleRad over DICOM, then asks TeleRad itself whether
+     it accepted the study. Transport success alone never counts as a pass.</p>
+
+  <div class="panel">
+    <h2>1 · Destination</h2>
+    <div class="grid g4">
+      <div><label>PACS host</label><input id="host" value="127.0.0.1"></div>
+      <div><label>Port</label><input id="port" value="11112"></div>
+      <div><label>Called AE title (TeleRad)</label><input id="called_ae" value="TELERAD"></div>
+      <div><label>Calling AE title (hospital PACS)</label><input id="calling_ae" value="DEMOHOSP_PACS"></div>
+    </div>
+    <div class="rowbtns">
+      <button class="secondary" id="btnTest">Test PACS connection</button>
+      <span id="testResult" class="hint"></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>2 · Select study</h2>
+    <div class="grid g3" id="fixtures"></div>
+    <div class="hint" id="fixtureNote"></div>
+  </div>
+
+  <div class="panel">
+    <h2>3 · Run the acceptance test</h2>
+    <div class="rowbtns">
+      <button id="btnRun" disabled>Send study &amp; verify</button>
+      <button class="secondary" id="btnSmoke" disabled>Quick check (20 images)</button>
+    </div>
+    <div id="progressWrap" style="margin-top:16px;display:none">
+      <div class="bar"><div id="bar"></div></div>
+      <div class="hint" id="phase">starting…</div>
+      <div class="counters">
+        <div class="counter"><div class="k">Sent</div><div class="v" id="cSent">0</div></div>
+        <div class="counter"><div class="k">of total</div><div class="v" id="cTotal">0</div></div>
+        <div class="counter"><div class="k">Accepted</div><div class="v" id="cOk" style="color:var(--pass)">0</div></div>
+        <div class="counter"><div class="k">Declined</div><div class="v" id="cBad" style="color:var(--fail)">0</div></div>
+        <div class="counter"><div class="k">Warnings</div><div class="v" id="cWarn" style="color:var(--warn)">0</div></div>
+        <div class="counter"><div class="k">Speed</div><div class="v" id="cSpeed">–</div></div>
+        <div class="counter"><div class="k">Elapsed</div><div class="v" id="cElapsed">–</div></div>
+        <div class="counter"><div class="k">Remaining</div><div class="v" id="cEta">–</div></div>
+      </div>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="panel">
+    <h2>4 · Verification checklist</h2>
+    <div class="stage-h">Stage 1 — DICOM transport</div>
+    <div id="stage1"></div>
+    <div class="stage-h">Stage 2 — TeleRad confirms it accepted the study</div>
+    <div id="stage2"><div class="hint">Not started. Stage 2 runs after the transfer finishes.</div></div>
+  </div>
+
+  <div class="panel">
+    <h2>5 · Result</h2>
+    <div class="banner" id="banner">
+      <div class="v" id="verdict">Not run yet</div>
+      <div class="w" id="why">Choose a study and press “Send study &amp; verify”.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>6 · Continue the workflow by hand</h2>
+    <div class="links" id="links"></div>
+    <div class="hint">
+      Sign in with <strong id="credHint">admin@telerad.local</strong> / password.
+      In <em>Dispatch</em> assign the new study to a radiologist; in the <em>Worklist</em> claim it,
+      write and sign a report, then download it from the hospital portal.
+      Automated dispatch→report→delivery checks are the next phase (P2).
+    </div>
+  </div>
+</div>
+
+<script>
+const S1 = [
+  { id:"st1-assoc", label:"Connection accepted by TeleRad" },
+  { id:"st1-echo",  label:"TeleRad answered the DICOM verification (C-ECHO)" },
+  { id:"st1-send",  label:"Every image transmitted" },
+  { id:"st1-store", label:"Every C-STORE response successful" },
+];
+let fixtures = [], selected = null, runId = null, total = 0, sent = 0, ok = 0, bad = 0, warn = 0;
+let t0 = 0, declinedUnsupported = 0, badOther = 0;
+
+const $ = id => document.getElementById(id);
+const fmt = s => s==null ? "–" : (s<60 ? Math.round(s)+"s" : Math.floor(s/60)+"m "+Math.round(s%60)+"s");
+
+function icon(state){ return {pass:"✓", fail:"✕", warn:"!", run:"…", idle:"·"}[state] || "·"; }
+
+function renderChecklist(container, items){
+  container.innerHTML = items.map(c => `
+    <div class="check" id="chk-${c.id}">
+      <div class="ico ${c.status||'idle'}" id="ico-${c.id}">${icon(c.status)}</div>
+      <div class="txt">
+        <div class="lbl">${c.label}</div>
+        ${c.detail?`<div class="det">${c.detail}</div>`:""}
+        ${c.plain?`<div class="plain">${c.plain}</div>`:""}
+      </div>
+    </div>`).join("");
+}
+function setCheck(container, items, id, status, detail, plain){
+  const it = items.find(x=>x.id===id);
+  if(!it) return;
+  it.status = status; if(detail!==undefined) it.detail = detail; if(plain!==undefined) it.plain = plain;
+  renderChecklist(container, items);
+}
+
+async function boot(){
+  const r = await fetch("/api/config");
+  const cfg = await r.json();
+  $("health").className = "pill ok"; $("health").textContent = "console ready";
+  Object.entries(cfg.defaults).forEach(([k,v]) => { if($(k)) $(k).value = v; });
+  $("credHint").textContent = cfg.credentials.admin;
+  $("links").innerHTML = Object.entries(cfg.portal_urls)
+    .map(([k,u]) => `<a href="${u}" target="_blank" rel="noopener">Open ${k} ↗</a>`).join("");
+  fixtures = cfg.fixtures;
+  const ex = cfg.excluded || [];
+  $("fixtureNote").innerHTML = ex.length
+    ? "<strong>Deliberately not selectable:</strong> " + ex.map(e =>
+        `<code>${e.id}</code> — ${e.reason}`).join(" · ")
+    : "";
+  $("fixtures").innerHTML = fixtures.map(f => `
+    <div class="study" data-id="${f.id}">
+      <div class="t">${f.label}</div>
+      <div class="m">
+        <span class="pill ${f.deidentified?"ok":"no"}">${f.deidentified?"de-identified":"NOT de-identified"}</span>
+        <span class="pill ${f.deid_verified?"ok":"no"}">${f.deid_verified?"verified":"unverified"}</span>
+      </div>
+      <div class="m">${f.modality} · ${f.instances} images · ${f.expected_series??"?"} series · ${f.size_mb} MB</div>
+      ${f.burned_in?`<div class="m">burned-in annotation: ${Object.entries(f.burned_in).map(([k,v])=>k+"="+v).join(", ")}</div>`:""}
+    </div>`).join("");
+  document.querySelectorAll(".study").forEach(el => el.onclick = () => {
+    document.querySelectorAll(".study").forEach(x=>x.classList.remove("sel"));
+    el.classList.add("sel");
+    selected = fixtures.find(f=>f.id===el.dataset.id);
+    $("btnRun").disabled = false; $("btnSmoke").disabled = false;
+    $("fixtureNote").innerHTML = `<strong>Selected.</strong> Expecting ${selected.expected_instances} images in ${selected.expected_series} series under ${cfg.hospital}.`;
+  });
+}
+
+$("btnTest").onclick = async () => {
+  $("testResult").textContent = "testing…";
+  const r = await fetch("/api/test-connection", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({host:$("host").value, port:+$("port").value,
+                          called_ae:$("called_ae").value, calling_ae:$("calling_ae").value})});
+  const d = await r.json();
+  $("testResult").innerHTML = (d.ok ? "✅ " : "❌ ") + d.plain +
+    ` <span style="color:var(--muted)">(association: ${d.association}, C-ECHO: ${d.echo})</span>`;
+};
+
+function resetRun(){
+  sent = ok = bad = warn = 0; total = 0; t0 = Date.now(); declinedUnsupported = 0; badOther = 0;
+  ["cSent","cOk","cBad","cWarn","cTotal"].forEach(i => $(i).textContent = "0");
+  $("cSpeed").textContent = $("cElapsed").textContent = $("cEta").textContent = "–";
+  $("bar").style.width = "0%"; $("err").style.display = "none";
+  $("progressWrap").style.display = "block";
+  $("stage1").innerHTML = ""; $("stage2").innerHTML = '<div class="hint">Waiting for the transfer to finish…</div>';
+  $("banner").className = "banner"; $("verdict").textContent = "Running…"; $("why").textContent = "";
+  S1.forEach(c => c.status = "idle");
+}
+
+async function startRun(limit){
+  if(!selected) return;
+  resetRun();
+  $("btnRun").disabled = $("btnSmoke").disabled = true;
+  const r = await fetch("/api/run", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({fixture_id:selected.id, limit,
+      host:$("host").value, port:+$("port").value,
+      called_ae:$("called_ae").value, calling_ae:$("calling_ae").value})});
+  const d = await r.json();
+  runId = d.run_id;
+  const es = new EventSource(`/api/stream/${runId}`);
+  es.onmessage = e => handle(JSON.parse(e.data));
+  es.onerror = () => es.close();
+}
+
+function handle(ev){
+  switch(ev.event){
+    case "start":
+      total = ev.selected; $("cTotal").textContent = total;
+      $("phase").textContent = `Sending ${total} images…`;
+      setCheck($("stage1"), S1, "st1-send", "run", `0 of ${total}`);
+      break;
+    case "associating":
+      $("phase").textContent = `Connecting to ${ev.called_ae}@${ev.host}:${ev.port}…`;
+      setCheck($("stage1"), S1, "st1-assoc", "run", "connecting…");
+      break;
+    case "association":
+      setCheck($("stage1"), S1, "st1-assoc", ev.status==="established"?"pass":"fail",
+        ev.status + ` (${ev.seconds}s)`,
+        ev.status==="established" ? "TeleRad accepted the DICOM connection."
+                                  : "TeleRad refused the connection. Check the called AE title and port.");
+      break;
+    case "echo":
+      setCheck($("stage1"), S1, "st1-echo", ev.verdict==="success"?"pass":"fail", ev.code,
+        ev.verdict==="success" ? "TeleRad's DICOM service is alive and responding."
+                               : "TeleRad did not answer the verification request.");
+      break;
+    case "progress": {
+      sent = ev.done;
+      if(ev.verdict==="success") ok++;
+      else if(ev.verdict==="warning") warn++;
+      else { bad++; if(ev.code==="no-accepted-context") declinedUnsupported++; else badOther++; }
+      $("cSent").textContent = sent; $("cOk").textContent = ok;
+      $("cBad").textContent = bad; $("cWarn").textContent = warn;
+      const pct = total ? (sent/total*100) : 0;
+      $("bar").style.width = pct.toFixed(1) + "%";
+      const el = (Date.now()-t0)/1000;
+      $("cElapsed").textContent = fmt(el);
+      if(sent>0 && el>0){
+        const rate = sent/el;
+        $("cSpeed").textContent = rate.toFixed(1) + "/s";
+        $("cEta").textContent = fmt(Math.max(0,(total-sent)/rate));
+      }
+      setCheck($("stage1"), S1, "st1-send", sent>=total?"pass":"run", `${sent} of ${total}`);
+      if(sent>=total){
+        const state = badOther>0 ? "fail" : (declinedUnsupported>0 || warn>0 ? "warn" : "pass");
+        setCheck($("stage1"), S1, "st1-store", state,
+          `accepted ${ok}, declined ${declinedUnsupported} (unsupported types)`
+          + (badOther?`, errors ${badOther}`:"") + (warn?`, warnings ${warn}`:""),
+          badOther>0
+            ? `${badOther} object(s) failed to transfer — this is a transport problem.`
+            : declinedUnsupported>0
+              ? `All ${ok} images transferred. TeleRad declined ${declinedUnsupported} object(s) `
+                + `whose type it does not accept (e.g. dose reports) — nothing was lost in transit.`
+              : "Every object was accepted by TeleRad.");
+      }
+      break;
+    }
+    case "phase":
+      $("phase").textContent = ev.label + "…";
+      if(ev.phase==="stage2") $("stage2").innerHTML = '<div class="hint">Querying TeleRad…</div>';
+      break;
+    case "check": {
+      const box = $("stage2");
+      if(box.querySelector(".hint")) box.innerHTML = "";
+      const list = box._items || (box._items = []);
+      list.push({id:ev.id, label:ev.label, status:ev.status, detail:ev.detail, plain:ev.plain});
+      renderChecklist(box, list);
+      break;
+    }
+    case "final": {
+      $("phase").textContent = "finished";
+      $("banner").className = "banner " + (ev.verdict==="TEST PASSED"?"pass":
+                                             ev.verdict==="TEST FAILED"?"fail":"warn");
+      $("verdict").textContent = ev.verdict;
+      $("why").textContent = ev.why;
+      const s = ev.stage1 || {};
+      $("cOk").textContent = s.success ?? ok; $("cBad").textContent = s.failure ?? bad;
+      $("cWarn").textContent = s.warning ?? warn;
+      $("btnRun").disabled = $("btnSmoke").disabled = false;
+      break;
+    }
+    case "end":
+      $("btnRun").disabled = $("btnSmoke").disabled = false;
+      break;
+  }
+}
+
+$("btnRun").onclick = () => startRun(0);
+$("btnSmoke").onclick = () => startRun(20);
+boot().catch(e => { $("health").textContent = "console error"; $("health").className="pill no"; });
+</script>
+</body>
+</html>
