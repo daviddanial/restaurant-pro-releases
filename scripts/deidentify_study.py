@@ -47,7 +47,7 @@ import shutil
 import sys
 import tempfile
 import zipfile
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 try:
@@ -68,11 +68,11 @@ FILE_META_PRESERVE = {"TransferSyntaxUID", "ImplementationClassUID",
 
 BIRTH_DATE = Tag(0x0010, 0x0030)
 
-# Replace with the supplied fixture identity.
+# Replace with the supplied fixture identity. Values are argparse dest names.
 REPLACED_TAGS = {
-    Tag(0x0010, 0x0010): "name",          # PatientName
-    Tag(0x0010, 0x0020): "patient_id",    # PatientID
-    Tag(0x0008, 0x0080): "institution",   # InstitutionName
+    Tag(0x0010, 0x0010): "name",          # PatientName   <- --name
+    Tag(0x0010, 0x0020): "id",            # PatientID     <- --id
+    Tag(0x0008, 0x0080): "institution",   # InstitutionName <- --institution
 }
 
 # Blanked outright: nothing downstream reads them, and they are direct identifiers.
@@ -320,7 +320,7 @@ def main() -> int:
             "identity": {"PatientName": args.name, "PatientID": args.id,
                          "InstitutionName": args.institution},
             "study_instance_uid_new": stats.study_uid,
-            "exported_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+            "exported_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }
         if args.report:
             Path(args.report).write_text(json.dumps(report, indent=2))

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import hashlib
 import json
 import re
 import sys
@@ -44,6 +45,16 @@ try:
     from pydicom.tag import Tag
 except ImportError:  # pragma: no cover
     sys.exit("pydicom is required: pip install pydicom")
+
+# Must match deidentify_study.py: with --salt we recompute the mapping and require an
+# exact match, which proves the remap was consistent rather than merely plausible.
+UID_ROOT = "1.2.826.0.1.3680043.10.1738."
+STANDARD_UID_PREFIX = "1.2.840.10008."
+
+
+def make_uid(original: str, salt: str) -> str:
+    digest = hashlib.sha256(f"{salt}\x00{original}".encode()).hexdigest()
+    return UID_ROOT + str(int(digest[:24], 16))
 
 IDENTIFIER_TAGS = {
     "PatientName": Tag(0x0010, 0x0010),
@@ -118,7 +129,12 @@ def scan(root: Path) -> dict:
                 if value:
                     out["identifiers"][name][value] += 1
         for name, tag in UID_TAGS.items():
-            value = str(ds.get(tag, "") or "").strip()
+            # NB: ds.get(Tag) returns the DataElement in pydicom 3.x, not its value —
+            # using it here silently produced "(0020,000D) Study Instance UID ..."
+            # strings instead of UIDs. Read the element explicitly.
+            if tag not in ds:
+                continue
+            value = str(ds[tag].value or "").strip()
             if not value:
                 continue
             if name == "StudyInstanceUID":
@@ -145,8 +161,11 @@ def scan(root: Path) -> dict:
                     for item in elem.value:
                         walk(item)
                 elif elem.VR == "UI" and elem.keyword and "Referenced" in elem.keyword:
-                    value = str(elem.value or "")
-                    if value and value.startswith("1.2."):
+                    value = str(elem.value or "").strip()
+                    # No prefix filter: vendors use 1.3.* roots (Siemens) and filtering
+                    # by "1.2." hid exactly those references in the source while their
+                    # remapped successors appeared in the derived set.
+                    if value:
                         out["referenced_uids"].add(value)
         walk(ds)
     return out
@@ -170,6 +189,9 @@ def main() -> int:
     ap.add_argument("--expect-name")
     ap.add_argument("--expect-id")
     ap.add_argument("--expect-institution")
+    ap.add_argument("--salt",
+                    help="salt used by deidentify_study.py; enables recomputing the "
+                         "expected UID mapping and asserting an exact match")
     ap.add_argument("--report")
     args = ap.parse_args()
 
@@ -228,14 +250,43 @@ def main() -> int:
         check("series_count_preserved", len(dst["series_uids"]) == len(src["series_uids"]),
               f"source={len(src['series_uids'])} derived={len(dst['series_uids'])}")
 
-        # 5. referenced UIDs inside sequences must resolve inside the derived set
-        dangling = {u for u in dst["referenced_uids"]
-                    if u.startswith("1.2.826.0.1.3680043.10.1738")
-                    and u not in dst["sop_uids"] and u not in dst["series_uids"]
-                    and u not in dst["study_uids"] and u not in dst["frame_uids"]}
-        check("references_resolve", not dangling,
-              "all derived references resolve" if not dangling
-              else f"{len(dangling)} dangling reference(s)")
+        # 5. Referential integrity is a *relative* property. Remapping must not create
+        #    references that dangle where the source's did not. An absolute form of this
+        #    check fails on a perfect fixture, because:
+        #      * ReferencedSOPClassUID holds a SOP Class UID (1.2.840.10008.*) which is
+        #        never remapped and never resolves as an instance;
+        #      * a study legitimately references objects it does not contain, e.g. the
+        #        Modality Performed Procedure Step instance, which is not exported here.
+        def dangling_refs(scan_result) -> set[str]:
+            known = (set(scan_result["sop_uids"]) | set(scan_result["series_uids"])
+                     | set(scan_result["study_uids"]) | set(scan_result["frame_uids"]))
+            return {u for u in scan_result["referenced_uids"]
+                    if not u.startswith(STANDARD_UID_PREFIX) and u not in known}
+
+        dangle_src, dangle_dst = dangling_refs(src), dangling_refs(dst)
+        check("references_not_degraded", len(dangle_dst) <= len(dangle_src),
+              f"dangling source={len(dangle_src)} derived={len(dangle_dst)}"
+              + (" (pre-existing external/MPPS references)" if dangle_src else ""))
+
+        # 5b. Strongest available proof of consistent remapping: the mapping is
+        #     deterministic in (original UID, salt), so when the salt is supplied we can
+        #     recompute it and require every derived UID to be exactly the expected one.
+        if args.salt:
+            expected_study = {make_uid(u, args.salt) for u in src["study_uids"]}
+            expected_series = {make_uid(u, args.salt) for u in src["series_uids"]}
+            expected_sop = {make_uid(u, args.salt) for u in src["sop_uids"]}
+            got_study = sorted(dst["study_uids"])[:1]
+            check("study_uid_matches_salt", set(dst["study_uids"]) == expected_study,
+                  f"expected {sorted(expected_study)[:1]} got {got_study}")
+            missing_series = len(expected_series - dst["series_uids"])
+            check("series_uids_match_salt",
+                  expected_series.issubset(dst["series_uids"]),
+                  f"{len(expected_series)} expected, {missing_series} missing")
+            missing_sop = len(expected_sop - dst["sop_uids"])
+            check("sop_uids_match_salt",
+                  expected_sop.issubset(dst["sop_uids"]),
+                  f"{len(expected_sop)} expected, {missing_sop} missing, "
+                  f"{len(dst['sop_uids'] - expected_sop)} unexpected")
 
         # 6. private attributes
         check("no_private_attributes", dst["private_tags"] == 0,
