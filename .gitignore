@@ -66,3 +66,7 @@ rabbitmq_data/
 dist/
 tmp/
 temp/
+
+# Python bytecode from local tooling checks
+__pycache__/
+*.pyc
