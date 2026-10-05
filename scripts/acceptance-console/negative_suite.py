@@ -51,7 +51,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
-ENV_FILE = Path("/home/hermes/.telerad-acceptance.env")
+# One profile file per site; overridable so the pack can live anywhere.
+ENV_FILE = Path(os.environ.get("TELERAD_ACCEPTANCE_ENV",
+                               "/home/hermes/.telerad-acceptance.env"))
 DEFAULT_EVIDENCE = HERE / "negative-evidence"
 DEFAULT_SR_FIXTURE = HERE / "negative-fixtures" / "sr-unsupported" / "sr-unsupported.zip"
 
@@ -785,7 +787,7 @@ def case_unsupported_sop(cfg: dict, spec: dict) -> dict:
     if not fixture:
         return _result(spec, "warn", "SR fixture not generated",
                        "run: /opt/dicom-tools/bin/python scripts/make_sr_fixture.py "
-                       "--out-root /home/hermes/dicom-fixtures",
+                       f"--out-root {cfg['fixtures_dir']}",
                        "The SR fixture is not present. Generate it with make_sr_fixture.py, "
                        "then re-run this case.")
     meta = fixture_meta(fixture, cfg)

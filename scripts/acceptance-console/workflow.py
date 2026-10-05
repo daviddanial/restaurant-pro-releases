@@ -507,9 +507,11 @@ def run_workflow(
 
 
 # ------------------------------------------------------------------ standalone
-def _load_env_file(path: str = "/home/hermes/.telerad-acceptance.env") -> None:
+def _load_env_file(path: str | None = None) -> None:
     """Load KEY=VALUE lines without shell-evaluating them; real env wins."""
     import os
+    path = path or os.environ.get("TELERAD_ACCEPTANCE_ENV",
+                                  "/home/hermes/.telerad-acceptance.env")
     p = Path(path)
     if not p.is_file():
         return

@@ -223,8 +223,35 @@ absent.
 Stage 2 corroborates through `telerad_test_ro`, which has SELECT on the study tables only
 and no write privileges at all — deliberately not the application's credentials.
 
+## Portability (P4) — point the suite at another site by configuration alone
+
+The suite is site-agnostic. A new site edits **one profile file** and changes nothing else;
+the console's `portal_urls` (and every other site value) are derived from that profile rather
+than baked into `app.py`.
+
+| Artifact | What it is |
+|---|---|
+| `profile.example.env` | The single profile surface: API/app URLs, PACS host/port/AE titles, DB, accounts, Browserless, paths. Every variable is documented inline. Copy it and edit. |
+| `RUNBOOK.md` | Step-by-step for a site operator: prerequisites, required reachability, start the console, create + verify a fixture, connection test, full run, how to read verdicts, common failure meanings. |
+| `MIGRATION.md` | The checklist of what **changes** (hostnames/ports/AE titles/node rows/credentials/TLS/browserless) vs what **must not** (two-stage principle, UID-keyed Stage-2, single-use fixtures, no app-code edits, decline ≠ fail, never a silent green). |
+| `../portability/mock_scp.py` | A throwaway pynetdicom storage SCP that enforces the called AE and the allowed calling AE, so a site can validate its config end-to-end **before** the real PACS. Not a PACS, never for a clinical decision. |
+| `../portability/portability_check.sh` | Runs the Stage-1 check (association + C-ECHO dry run, then an optional limited send) against whichever endpoint the profile names. The command is identical for the mock and the real endpoint — only `--profile` differs. |
+
+```bash
+cd /home/hermes/telerad-repo
+# validate config against the mock first
+/opt/dicom-tools/bin/python scripts/portability/mock_scp.py --port 11113 \
+    --ae-title MOCKPACS --allow-calling-ae DEMOHOSP_PACS --max-stores 5
+scripts/portability/portability_check.sh --profile scripts/portability/mock.env
+# then the real endpoint: connection only, stores nothing (never spend a fresh fixture)
+scripts/portability/portability_check.sh --profile /home/hermes/.telerad-acceptance.env --dry-run-only
+```
+
+Site values in the profile examples are **documented defaults** for the demo deployment, not
+hidden hardcodes; active paths read them from the profile.
+
 ## What is not automated yet
 
-Portability to a real hospital PACS (config-only profile, runbook, migration checklist) is
-phase P4. Negative-path coverage (wrong/unknown AE, corrupt or non-DICOM objects, interrupted
+Negative-path coverage (wrong/unknown AE, corrupt or non-DICOM objects, interrupted
 transfers, duplicate SOP UIDs, unsupported SOP classes) is the P3 suite above.
+

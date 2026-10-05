@@ -43,7 +43,8 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
 CONFIG = {
     "python": os.environ.get("PYTHON", "/opt/dicom-tools/bin/python"),
-    "sender": os.environ.get("SENDER", "/home/hermes/telerad-repo/scripts/pacs-simulator/send-study.py"),
+    "sender": os.environ.get("SENDER", str(Path(__file__).resolve().parent.parent /
+                                          "pacs-simulator" / "send-study.py")),
     "fixtures_dir": Path(os.environ.get("FIXTURES_DIR", "/home/hermes/dicom-fixtures")),
     "api_base": os.environ.get("TELERAD_API", "http://127.0.0.1:18080"),
     # Headless browser used to prove the viewer actually renders (P1). Browserless
@@ -61,6 +62,9 @@ CONFIG = {
     "hospital_user_password": os.environ.get("TELERAD_HOSPITAL_USER_PASSWORD", "password"),
     "hospital_id": os.environ.get("TELERAD_HOSPITAL_ID", "11111111-1111-1111-1111-111111111111"),
     "hospital_name": os.environ.get("TELERAD_HOSPITAL_NAME", "Demo General Hospital"),
+    # Fixture whose header is read for the Stage-1 connection test (dry-run only,
+    # nothing is stored). Any readable study archive works; site-overridable.
+    "connection_fixture": os.environ.get("TELERAD_CONNECTION_FIXTURE", "B/pacs-B.zip"),
     "db": {
         "host": os.environ.get("DB_HOST", "127.0.0.1"),
         "port": int(os.environ.get("DB_PORT", "5433")),
@@ -525,6 +529,10 @@ async def verify_stage2(fixture: dict, stage1: dict) -> list[dict]:
 @app.get("/api/config")
 async def api_config():
     fixtures, excluded = await asyncio.to_thread(list_fixtures)
+    # Portal deep-links are derived from the ONE configured app origin, never from a
+    # hostname baked into this file. Point TELERAD_APP_URL at another deployment and
+    # every link follows it.
+    app_url = str(CONFIG["app_url"]).rstrip("/")
     return {
         "defaults": CONFIG["defaults"],
         "fixtures": fixtures,
@@ -532,9 +540,9 @@ async def api_config():
         "fresh_count": len([f for f in fixtures if f.get("fresh")]),
         "hospital": CONFIG["hospital_name"],
         "portal_urls": {
-            "hospital": f"https://telerad.13.140.56.88.sslip.io/hospital",
-            "dispatch": f"https://telerad.13.140.56.88.sslip.io/dispatch",
-            "worklist": f"https://telerad.13.140.56.88.sslip.io/worklist",
+            "hospital": f"{app_url}/hospital",
+            "dispatch": f"{app_url}/dispatch",
+            "worklist": f"{app_url}/worklist",
         },
         "credentials": {"admin": CONFIG["admin_email"],
                         "radiologist": CONFIG["radiologist_email"],
@@ -546,7 +554,7 @@ async def api_config():
 @app.post("/api/test-connection")
 async def test_connection(body: dict):
     """Stage-1 only: can we associate and does C-ECHO answer? Stores nothing."""
-    cmd = [CONFIG["python"], CONFIG["sender"], CONFIG["fixtures_dir"] / "B" / "pacs-B.zip",
+    cmd = [CONFIG["python"], CONFIG["sender"], CONFIG["fixtures_dir"] / CONFIG["connection_fixture"],
            "--dry-run", "--progress-json",
            "--host", str(body.get("host", CONFIG["defaults"]["host"])),
            "--port", str(body.get("port", CONFIG["defaults"]["port"])),
@@ -803,7 +811,8 @@ async def api_negative_cases():
     return {
         "cases": ns.list_cases(),
         "sr_fixture": str(sr) if sr else None,
-        "sr_fixture_command": ("scripts/make_sr_fixture.py --out-root /home/hermes/dicom-fixtures"),
+        "sr_fixture_command": ("scripts/make_sr_fixture.py --out-root "
+                               f"{CONFIG['fixtures_dir']}"),
         "used_fixture": str(used) if used else None,
     }
 

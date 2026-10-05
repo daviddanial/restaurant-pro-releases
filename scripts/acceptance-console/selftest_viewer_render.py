@@ -40,7 +40,8 @@ import viewer_render
 
 HERE = Path(__file__).resolve().parent
 EVIDENCE_DIR = HERE / "selftest-evidence"
-ENV_FILE = Path("/home/hermes/.telerad-acceptance.env")
+ENV_FILE = Path(os.environ.get("TELERAD_ACCEPTANCE_ENV",
+                               "/home/hermes/.telerad-acceptance.env"))
 FRONTEND_CONTAINER = "tele2-frontend-1"
 ASSETS = "/usr/share/nginx/html/assets"
 ASSETS_BAK = "/usr/share/nginx/html/assets.bak"
