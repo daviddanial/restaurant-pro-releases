@@ -88,6 +88,20 @@ agents read **this same skill** (it is installed in the Hermes catalog *and* in 
 
 ## Phase queue
 
-P1 viewer-render checks in the UI · P2 automate dispatch→claim→report→sign→deliver · P3 negative
-suite (a clean rejection is a PASS) · P4 portability pack for a real PACS. Acceptance criteria: the
-handoff brief, section 4.
+P1 **done** — `viewer-render` check + two-state selftest live in `scripts/acceptance-console/` · P2
+automate dispatch→claim→report→sign→deliver · P3 negative suite (a clean rejection is a PASS) · P4
+portability pack for a real PACS. Acceptance criteria: the handoff brief, section 4.
+
+## Prove the viewer-render check (P1)
+
+Stage-2 `viewer-render` drives headless Chrome (Browserless) to `/studies/<id>` with the full login
+object injected into `localStorage["telerad_auth"]` before app scripts run; passes on `#root` children
++ a canvas + zero uncaught JS errors, saves a screenshot served via `/api/reports/<file>`, and warns
+(never silent-passes) when Browserless is unreachable. Prove it in both states — run on the HOST; the
+broken-state step needs docker, which a sandboxed dsh cannot reach:
+
+    cd /home/hermes/telerad-repo/scripts/acceptance-console
+    /opt/dicom-tools/bin/python selftest_viewer_render.py
+
+healthy → PASS, frontend assets moved aside → FAIL, restored → PASS; exit 0 = all three expectations
+held. Evidence lands in `selftest-evidence/` (gitignored).
