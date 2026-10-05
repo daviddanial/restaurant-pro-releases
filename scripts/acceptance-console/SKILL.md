@@ -88,9 +88,10 @@ agents read **this same skill** (it is installed in the Hermes catalog *and* in 
 
 ## Phase queue
 
-P1 **done** — `viewer-render` check + two-state selftest live in `scripts/acceptance-console/` · P2
-automate dispatch→claim→report→sign→deliver · P3 negative suite (a clean rejection is a PASS) · P4
-portability pack for a real PACS. Acceptance criteria: the handoff brief, section 4.
+P1 **done** — `viewer-render` check + two-state selftest · P2 **done** — stage-3 workflow automation
+(`workflow.py`: assign→claim→report→sign→deliver; runs on every full console run) · P3 negative
+suite (a clean rejection is a PASS) · P4 portability pack for a real PACS. Acceptance criteria: the
+handoff brief, section 4.
 
 ## Prove the viewer-render check (P1)
 
