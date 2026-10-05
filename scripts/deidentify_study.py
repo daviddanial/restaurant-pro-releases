@@ -239,7 +239,12 @@ def process_file(path: Path, dest: Path, args, stats: Stats) -> bool:
         ds.file_meta.MediaStorageSOPClassUID = ds.SOPClassUID
 
     dest.parent.mkdir(parents=True, exist_ok=True)
-    ds.save_as(str(dest), enforce_file_format=True)
+    try:
+        # pydicom >= 3 only. Installing scripts/requirements-dicom.txt can downgrade
+        # pydicom to 2.x, where this kwarg does not exist.
+        ds.save_as(str(dest), enforce_file_format=True)
+    except TypeError:
+        ds.save_as(str(dest))
     return True
 
 

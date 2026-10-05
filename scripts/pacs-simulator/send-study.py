@@ -223,7 +223,24 @@ def main() -> int:
             print(f"Storing {len(datasets)} instance(s) ...")
             t0 = time.time()
             for path, ds in datasets:
-                status = assoc.send_c_store(ds)
+                try:
+                    status = assoc.send_c_store(ds)
+                except Exception as exc:
+                    # The peer can decline a presentation context for a SOP class it does
+                    # not support; pynetdicom raises instead of returning a status. That
+                    # is a per-instance failure, not a reason to abort the whole study.
+                    result["failure"] += 1
+                    result["failures"].append({
+                        "file": path.name,
+                        "sop_instance_uid": str(getattr(ds, "SOPInstanceUID", "")),
+                        "sop_class_uid": str(getattr(ds, "SOPClassUID", "")),
+                        "status": "no-accepted-context",
+                        "verdict": "failure",
+                        "detail": str(exc)[:200],
+                    })
+                    print(f"  FAIL {path.name} — no accepted presentation context "
+                          f"for SOP class {getattr(ds, 'SOPClassUID', '?')}", file=sys.stderr)
+                    continue
                 verdict = classify(status)
                 code = status_code(status)
                 if verdict == "success":
