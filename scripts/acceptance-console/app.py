@@ -80,6 +80,9 @@ app = FastAPI(title="TeleRad Acceptance Console")
 
 RUNS: dict[str, dict] = {}
 SSE_HEADERS = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"}
+# Negative cases touch the SCP and the database; serialise them so a second click
+# cannot interleave with a running case and corrupt the before/after counts.
+NEG_LOCK = asyncio.Lock()
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -103,6 +106,21 @@ def _load_workflow():
         sys.path.insert(0, here)
     import workflow  # noqa: PLC0415 — lazy so a missing optional path never breaks boot
     return workflow
+
+
+def _load_negative_suite():
+    """Import the sibling negative_suite module (P3) regardless of the console's cwd."""
+    here = str(Path(__file__).resolve().parent)
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import negative_suite  # noqa: PLC0415 — lazy so a missing optional path never breaks boot
+    return negative_suite
+
+
+def _negative_config(ns):
+    """Point the suite at the console's own configured sender, fixtures and read-only DB."""
+    return ns.build_config(fixtures_dir=CONFIG["fixtures_dir"], python=CONFIG["python"],
+                           sender=CONFIG["sender"], db=CONFIG["db"])
 
 
 def _first_dicom_meta(zip_path: Path) -> dict:
@@ -769,6 +787,50 @@ async def api_run_state(run_id: str):
         raise HTTPException(404, "unknown run")
     return {"final": run.get("final"), "stage1": run.get("stage1"),
             "stage2": run.get("stage2"), "stage3": run.get("stage3")}
+
+
+@app.get("/api/negative/cases")
+async def api_negative_cases():
+    """The P3 case matrix: each case with the outcome it is SUPPOSED to produce.
+
+    Nothing is sent by this endpoint; the panel can show the expected rejections
+    (so they are visibly expected) before the operator runs anything.
+    """
+    ns = _load_negative_suite()
+    cfg = _negative_config(ns)
+    sr = ns.sr_fixture(cfg)
+    used = ns.used_fixture(cfg)
+    return {
+        "cases": ns.list_cases(),
+        "sr_fixture": str(sr) if sr else None,
+        "sr_fixture_command": ("scripts/make_sr_fixture.py --out-root /home/hermes/dicom-fixtures"),
+        "used_fixture": str(used) if used else None,
+    }
+
+
+@app.post("/api/negative/run")
+async def api_negative_run(body: dict):
+    """Run ONE negative case and judge it against its own expected outcome."""
+    ns = _load_negative_suite()
+    case_id = str(body.get("case_id") or "")
+    if case_id not in {c["id"] for c in ns.CASES}:
+        raise HTTPException(404, "unknown negative case")
+    cfg = _negative_config(ns)
+    async with NEG_LOCK:
+        result = await asyncio.to_thread(ns.run_case, case_id, cfg)
+    return {"result": result}
+
+
+@app.post("/api/negative/run-all")
+async def api_negative_run_all(body: dict | None = None):
+    """Run the whole negative suite sequentially (it is deliberately not parallel:
+    each case measures the platform's study count before and after)."""
+    ns = _load_negative_suite()
+    cfg = _negative_config(ns)
+    ids = ((body or {}).get("case_ids") or None)
+    async with NEG_LOCK:
+        out = await asyncio.to_thread(ns.run_all, cfg, ids)
+    return out
 
 
 @app.get("/api/reports/{name}")

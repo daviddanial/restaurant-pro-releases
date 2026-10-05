@@ -23,6 +23,10 @@ Verdicts: `TEST PASSED`, `TEST PASSED WITH DECLINED OBJECTS` (usable study, some
 refused by TeleRad), `TEST FAILED` (a hard check failed; the failing stage is named). A
 failed stage-3 step names the workflow step; a completed one says the loop closed.
 
+A separate **negative suite** (P3, below) covers the cases where TeleRad is *supposed* to
+refuse something. Each negative case is judged against **its own expected outcome**, so an
+expected rejection is a PASS and is never misreported as a failure.
+
 ## Run
 
 ```bash
@@ -137,6 +141,83 @@ assets cannot be restored it prints a loud `NEEDS ATTENTION` line and exits non-
 Evidence (per-step JSON + screenshots) goes to `selftest-evidence/`. Exit `0` only when
 all three expectations held; `2` means a state could not run (e.g. docker unreachable).
 
+## Negative suite (P3) — a clean rejection is a PASS
+
+`negative_suite.py` (pure module, no FastAPI imports) runs nine cases where the platform is
+**supposed** to refuse. Each result is `{id, label, expected, observed, status, detail,
+plain}` and the verdict is always against that case's **own expectation**, never the
+happy-path one. Every assertion is behavioural: the simulator's per-object C-STORE verdicts
+plus TeleRad's read-only database keyed to the fixture's StudyInstanceUID and the platform's
+total study count. Nothing is inferred from "a study appeared".
+
+| case id | how it runs | expected outcome | status when correct |
+|---|---|---|---|
+| `neg-non-dicom` | fixture `bad-non-dicom` | payload refused; no study created; clear message | pass (green) |
+| `neg-zero-byte` | fixture `bad-zero-byte` | nothing stored; no study created | pass (green) |
+| `neg-truncated` | fixture `bad-truncated` | clear error; store-or-refuse both acceptable (`either`) | pass if refused, **warn** if silently stored |
+| `neg-partial` | fixture `bad-one-of-six` | 5 good stored, corrupt one reported, not fatal; study usable | pass (green) |
+| `neg-wrong-called-ae` | simulator `--called-ae WRONG_AE --limit 2` on a spent fixture | association refused cleanly; nothing stored | pass (green) |
+| `neg-unknown-calling-ae` | simulator `--calling-ae GHOST_PACS --limit 2` on a spent fixture | association forms, every C-STORE refused `NotAuthorized` (`0x0124`); nothing stored | pass (green) |
+| `neg-duplicate` | re-send a spent fixture (same SOP UIDs) | no second study; duplicate absorbed cleanly | pass (green) |
+| `neg-interrupted` | kill the sender mid-transfer | platform consistent, no crash, reported as interrupted | pass; **warn** if the kill missed and the send completed |
+| `neg-unsupported-sop` | generated CT+SR fixture | SR objects declined (no accepted presentation context); CT stored; study usable | **warn (amber, finding F1)** |
+
+A `warn` is deliberately not a silent green: `neg-truncated` stored silently (no error was
+surfaced) and `neg-unsupported-sop` is the known F1 limitation, so both are amber. Junk that
+gets stored when it should not is red. Connection, duplicate and interrupted cases reuse an
+**already-ingested** fixture (discovered from the read-only DB) so a first ingest cannot
+pollute the before/after counts.
+
+### Endpoints
+
+| method | path | purpose |
+|---|---|---|
+| `GET` | `/api/negative/cases` | list the case matrix with each expected outcome (sends nothing) |
+| `POST` | `/api/negative/run` | run one case: `{"case_id": "neg-duplicate"}` → one result |
+| `POST` | `/api/negative/run-all` | run the whole suite sequentially → `{results, summary}` |
+
+The console panel **6 · Negative suite (P3)** lists every case with its expected outcome and
+renders each result green/amber/red with the observed text, so the operator never has to read
+a log to know whether an expected rejection behaved correctly. Runs are serialised with an
+async lock because each case measures the study count before and after.
+
+### Run it directly (no console restart needed)
+
+```bash
+cd scripts/acceptance-console
+/opt/dicom-tools/bin/python negative_suite.py                 # all nine cases, JSON on stdout
+/opt/dicom-tools/bin/python negative_suite.py --case neg-duplicate
+/opt/dicom-tools/bin/python negative_suite.py --list
+```
+
+It loads `/home/hermes/.telerad-acceptance.env` itself (a plain `KEY=VALUE` parser — never
+`source`, which the unquoted `TELERAD_HOSPITAL_NAME` would break), so it never prints a
+password. Raw evidence (simulator JSON + before/after DB snapshots) lands in
+`negative-evidence/` (gitignored).
+
+### SR material generator (`neg-unsupported-sop`)
+
+`scripts/make_sr_fixture.py` derives a small fixture containing a few CT images plus ≥1
+unsupported SR object (X-Ray Radiation Dose SR and/or Enhanced SR) from the already
+de-identified fixture `F/f-full.zip`, preserving the SR SOP classes and assigning fresh
+Study/Series/SOP UIDs. The output root is a parameter:
+
+```bash
+# host-side: into the standard fixture tree (Hermes runs this)
+/opt/dicom-tools/bin/python scripts/make_sr_fixture.py \
+    --out-root /home/hermes/dicom-fixtures
+
+# sandboxed: repo-local proof
+/opt/dicom-tools/bin/python scripts/make_sr_fixture.py \
+    --out-root scripts/acceptance-console/negative-fixtures
+```
+
+It writes `<out-root>/sr-unsupported/{sr-unsupported.zip,manifest.json}`; the manifest marks
+it synthetic (`partial_ingest`, 3 CT stored, 2 SR declined) so the console can select it
+without a new de-identification gate. The case resolves the fixture from the repo-local dir
+first, then `<fixtures_dir>/V/sr-unsupported/`, and warns with this exact command if it is
+absent.
+
 ## Read-only database role
 
 Stage 2 corroborates through `telerad_test_ro`, which has SELECT on the study tables only
@@ -144,6 +225,6 @@ and no write privileges at all — deliberately not the application's credential
 
 ## What is not automated yet
 
-Negative-path coverage (wrong/unknown AE, corrupt or non-DICOM objects, interrupted
-transfers, duplicate SOP UIDs, unsupported SOP classes) is phase P3; portability to a
-real hospital PACS is phase P4.
+Portability to a real hospital PACS (config-only profile, runbook, migration checklist) is
+phase P4. Negative-path coverage (wrong/unknown AE, corrupt or non-DICOM objects, interrupted
+transfers, duplicate SOP UIDs, unsupported SOP classes) is the P3 suite above.

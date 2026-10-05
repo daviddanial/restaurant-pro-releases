@@ -42,6 +42,15 @@
         font-weight:600;margin-right:6px}
   .pill.ok{background:#064e3b;color:#6ee7b7}
   .pill.no{background:#7f1d1d;color:#fecaca}
+  .pill.warn{background:#78350f;color:#fcd34d}
+  .negcard{border:2px solid var(--line);border-radius:10px;padding:12px;background:var(--panel2)}
+  .negcard.pass{border-color:var(--pass)}
+  .negcard.fail{border-color:var(--fail)}
+  .negcard.warn{border-color:var(--warn)}
+  .negcard .t{font-weight:700}
+  .negcard .m{color:var(--muted);font-size:13px;margin-top:4px}
+  .negcard .plain{font-size:14px;margin-top:6px}
+  .negcard button{margin-top:10px;padding:7px 14px;font-size:13px}
   .bar{height:22px;background:var(--panel2);border-radius:999px;overflow:hidden;
        border:1px solid var(--line)}
   .bar > div{height:100%;width:0%;background:linear-gradient(90deg,#0ea5e9,#22c55e);
@@ -154,7 +163,21 @@
   </div>
 
   <div class="panel">
-    <h2>6 · Explore the workflow by hand</h2>
+    <h2>6 · Negative suite (P3) — a clean rejection is a PASS</h2>
+    <p class="hint">Nine cases where TeleRad is <strong>supposed</strong> to refuse something.
+      Each is judged against its own expected outcome, never the happy-path verdict: an expected
+      rejection shows green, an unsupported-SOP decline is amber (finding F1), and junk that gets
+      stored is red. Nothing is sent until you press Run.</p>
+    <div class="rowbtns">
+      <button id="btnNegAll">Run all cases (sequential)</button>
+      <button class="secondary" id="btnNegReload">Reload list</button>
+      <span id="negSummary" class="hint"></span>
+    </div>
+    <div id="negList" class="grid" style="margin-top:14px"></div>
+  </div>
+
+  <div class="panel">
+    <h2>7 · Explore the workflow by hand</h2>
     <div class="links" id="links"></div>
     <div class="hint">
       The clinical loop is <strong>automated in Stage 3</strong> above
@@ -239,6 +262,7 @@ async function boot(){
     $("btnRun").disabled = false; $("btnSmoke").disabled = false;
     $("fixtureNote").innerHTML = `<strong>Selected.</strong> Expecting ${selected.expected_instances} images in ${selected.expected_series} series under ${cfg.hospital}.`;
   });
+  loadNegative().catch(() => {});
 }
 
 $("btnTest").onclick = async () => {
@@ -249,6 +273,75 @@ $("btnTest").onclick = async () => {
   const d = await r.json();
   $("testResult").innerHTML = (d.ok ? "✅ " : "❌ ") + d.plain +
     ` <span style="color:var(--muted)">(association: ${d.association}, C-ECHO: ${d.echo})</span>`;
+};
+
+// ---- P3 negative suite -------------------------------------------------------
+let negCases = [];
+const esc = s => String(s ?? "").replace(/[&<>"]/g,
+  c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function negPill(status){
+  if(status === "pass") return "ok";
+  if(status === "fail") return "no";
+  if(status === "warn") return "warn";
+  return "";
+}
+function renderNegative(){
+  $("negList").innerHTML = negCases.map(c => {
+    const r = c._result;
+    return `<div class="negcard ${r ? r.status : ""}">
+      <div class="t"><span class="pill ${negPill(r && r.status)}">${r ? r.status.toUpperCase() : "NOT RUN"}</span> ${esc(c.label)}</div>
+      <div class="m"><strong>expects:</strong> ${esc(c.expected)}</div>
+      ${r ? `<div class="m"><strong>observed:</strong> ${esc(r.observed)}</div>` : ""}
+      ${r && r.plain ? `<div class="plain">${esc(r.plain)}</div>` : ""}
+      ${r && r.detail ? `<div class="m">${esc(r.detail)}</div>` : ""}
+      <button class="secondary neg-run" data-case="${esc(c.id)}">Run</button>
+    </div>`;
+  }).join("");
+}
+async function loadNegative(){
+  const r = await fetch("/api/negative/cases");
+  const d = await r.json();
+  negCases = (d.cases || []).map(c => ({...c}));
+  if(!d.sr_fixture){
+    $("negSummary").textContent = "SR fixture not generated yet — run make_sr_fixture.py";
+  }
+  renderNegative();
+}
+$("btnNegReload").onclick = () => loadNegative().catch(() => {});
+$("negList").addEventListener("click", async e => {
+  const b = e.target.closest(".neg-run");
+  if(!b) return;
+  const id = b.dataset.case;
+  b.disabled = true; b.textContent = "running…";
+  try{
+    const r = await fetch("/api/negative/run", {method:"POST",
+      headers:{"Content-Type":"application/json"}, body: JSON.stringify({case_id:id})});
+    const d = await r.json();
+    const c = negCases.find(x => x.id === id);
+    if(c) c._result = d.result;
+    renderNegative();
+  }catch(err){ b.disabled = false; b.textContent = "Run"; }
+});
+$("btnNegAll").onclick = async () => {
+  document.querySelectorAll("#negList .neg-run, #btnNegAll, #btnNegReload")
+    .forEach(b => b.disabled = true);
+  $("negSummary").textContent = "running all cases sequentially…";
+  try{
+    const r = await fetch("/api/negative/run-all", {method:"POST",
+      headers:{"Content-Type":"application/json"}, body:"{}"});
+    const d = await r.json();
+    (d.results || []).forEach(res => {
+      const c = negCases.find(x => x.id === res.id);
+      if(c) c._result = res;
+    });
+    const s = d.summary || {};
+    $("negSummary").textContent = `${s.pass} pass · ${s.warn} warn · ${s.fail} fail`;
+    renderNegative();
+  }catch(err){
+    $("negSummary").textContent = "run-all failed: " + err;
+  }finally{
+    $("btnNegAll").disabled = false; $("btnNegReload").disabled = false;
+  }
 };
 
 function resetRun(){

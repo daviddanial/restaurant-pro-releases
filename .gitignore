@@ -74,5 +74,9 @@ __pycache__/
 # P1 viewer-render selftest evidence (screenshots + per-step JSON)
 scripts/acceptance-console/selftest-evidence/
 
+# P3 negative-suite evidence + repo-local generated SR fixture (regenerable)
+scripts/acceptance-console/negative-evidence/
+scripts/acceptance-console/negative-fixtures/
+
 # machine-local simulator defaults
 scripts/pacs-simulator/config.env

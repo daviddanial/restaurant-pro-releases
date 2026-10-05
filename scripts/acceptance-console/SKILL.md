@@ -1,7 +1,7 @@
 ---
 name: telerad-acceptance
 description: "Run and extend the TeleRad DICOM acceptance-test suite (PACS simulator, two-stage console, fixtures) on this VPS."
-version: 1.1.0
+version: 1.2.0
 author: Hermes Agent
 license: MIT
 platforms: [linux]
@@ -89,9 +89,33 @@ agents read **this same skill** (it is installed in the Hermes catalog *and* in 
 ## Phase queue
 
 P1 **done** — `viewer-render` check + two-state selftest · P2 **done** — stage-3 workflow automation
-(`workflow.py`: assign→claim→report→sign→deliver; runs on every full console run) · P3 negative
-suite (a clean rejection is a PASS) · P4 portability pack for a real PACS. Acceptance criteria: the
-handoff brief, section 4.
+(`workflow.py`: assign→claim→report→sign→deliver; runs on every full console run) · P3 **done** —
+negative suite (`negative_suite.py`: nine refusal cases judged against their own expected outcome;
+console panel 6; `make_sr_fixture.py` for the unsupported-SR fixture) · P4 portability pack for a
+real PACS. Acceptance criteria: the handoff brief, section 4.
+
+## Prove the negative suite (P3)
+
+`negative_suite.py` runs the nine refusal cases (`neg-non-dicom`, `neg-zero-byte`,
+`neg-truncated`, `neg-partial`, `neg-wrong-called-ae`, `neg-unknown-calling-ae`, `neg-duplicate`,
+`neg-interrupted`, `neg-unsupported-sop`) and judges each against its **own** expected outcome —
+a clean rejection is a PASS, an unsupported-SOP decline is amber (finding F1), junk stored is red.
+Every assertion is behavioural: simulator C-STORE verdicts + the read-only DB keyed to the
+fixture's StudyInstanceUID and the total study count. Run it directly (no service restart):
+
+    cd /home/hermes/telerad-repo/scripts/acceptance-console
+    /opt/dicom-tools/bin/python negative_suite.py            # all nine, JSON on stdout
+    /opt/dicom-tools/bin/python negative_suite.py --list
+
+The console exposes `GET /api/negative/cases`, `POST /api/negative/run` and
+`POST /api/negative/run-all`, driving panel **6 · Negative suite (P3)**. The SR case needs its
+fixture generated once, host-side:
+
+    /opt/dicom-tools/bin/python scripts/make_sr_fixture.py \
+        --out-root /home/hermes/dicom-fixtures
+
+(derives a small de-identified CT+SR fixture from the spent-but-readable `F/f-full.zip`; the case
+warns with this command if the fixture is missing).
 
 ## Prove the viewer-render check (P1)
 
