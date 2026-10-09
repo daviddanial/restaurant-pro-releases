@@ -15,6 +15,34 @@ Modality ──C-STORE──► Orthanc (:11113 / AE TELERAD_EDGE)
 Orthanc HTTP/UI is **internal only** (compose network) and password-protected.  
 Only the **DICOM port** is published to the LAN.
 
+## Facility deployment (Ubuntu + Docker)
+
+On the **hospital edge device** (not the TeleRad VPS). Need Docker installed. Copy or clone this `edge-gateway/` folder onto the machine.
+
+```bash
+cd edge-gateway
+
+# 1) Allow only your modalities (AE Title + IP)
+#    edit allowlist.json, then:
+python3 scripts/render_orthanc_config.py allowlist.json orthanc/orthanc.json
+
+# 2) One-time enroll (outbound internet to TeleRad required)
+#    Platform admin creates a gateway in TeleRad → gives you enrollmentToken (24h)
+mkdir -p secrets
+pip3 install -r requirements.txt
+python3 agent.py enroll \
+  --api https://YOUR-TELERAD-HOST \
+  --mtls https://YOUR-TELERAD-HOST:8443 \
+  --token 'enroll_…' \
+  --config secrets/config.json
+
+# 3) Run Orthanc + agent
+docker compose up -d --build
+```
+
+Then point modalities at this machine: **port 11113**, AE **TELERAD_EDGE**.  
+Do not commit `secrets/`. Set `TELERAD_GATEWAY_BEARER_DEV=false` on the TeleRad VPS for pilot/production.
+
 ## Allowlist (K3)
 
 Edit `allowlist.json` (AE + IP). Render Orthanc config:
