@@ -77,9 +77,9 @@ curl -X POST "http://localhost:18080/api/hospitals/11111111-1111-1111-1111-11111
 
 ## Modality / PACS simulator (preferred ingest path)
 
-TeleRad listens as **SCP** (`TELERAD_SCP` / port **11112**). A scanner or hospital gateway is the **SCU** and C-STOREs finished studies. The lab simulator pretends to be that sender.
+TeleRad listens as **SCP** (`TELERAD_SCP` / port **11112**) for lab/VPN. Production facilities should use the **edge gateway** (LAN C-STORE → HTTPS ingest) — see [`edge-gateway/README.md`](edge-gateway/README.md).
 
-**Prereqs:** API+worker on `:18080`, infra up, then SCP in a second terminal:
+**Prereqs:** API+worker on `:18080`, infra up. Optional SCP in a second terminal:
 
 ```bash
 ./scripts/start-scp.sh
@@ -104,6 +104,8 @@ Same send with parameters set explicitly (host/IP only — not an `http://` URL)
   --called-ae TELERAD_SCP \
   --calling-ae DEMOHOSP_PACS
 ```
+
+To exercise the secure facility path, point the simulator at the edge gateway (`TELERAD_EDGE` / `11113`) instead of TeleRad SCP.
 
 Options: `--host`, `--port`, `--calling-ae`, `--called-ae`. Unknown Calling AEs are rejected (FR-PAC-002).
 

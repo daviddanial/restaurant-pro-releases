@@ -2,5 +2,6 @@ package com.telerad.common;
 
 public enum StudySource {
     UPLOAD,
-    CSTORE
+    CSTORE,
+    GATEWAY
 }

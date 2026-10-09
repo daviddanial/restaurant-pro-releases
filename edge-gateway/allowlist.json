@@ -1,0 +1,8 @@
+{
+  "senders": [
+    { "ae": "DEMOHOSP_PACS", "ip": "172.18.0.1" },
+    { "ae": "DEMOHOSP_PACS", "ip": "127.0.0.1" },
+    { "ae": "MODALITY_SIM", "ip": "172.18.0.1" },
+    { "ae": "MODALITY_SIM", "ip": "127.0.0.1" }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "telerad_api_url": "http://127.0.0.1:18080",
+  "telerad_mtls_url": "https://127.0.0.1:18443",
+  "gateway_access_token": null,
+  "orthanc_url": "http://orthanc:8042",
+  "orthanc_user": "agent",
+  "orthanc_password": "agent",
+  "delete_safety_seconds": 86400,
+  "upload_batch_size": 20,
+  "heartbeat_seconds": 300,
+  "allowlist_file": "/config/allowlist.json",
+  "data_dir": "/data",
+  "client_cert": "/data/client.crt",
+  "client_key": "/data/client.key",
+  "ca_cert": "/data/ca.crt"
+}

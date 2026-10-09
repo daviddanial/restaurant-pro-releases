@@ -8,5 +8,5 @@ RUN mvn -q -B -DskipTests package
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY --from=build /app/target/telerad-backend-*.jar app.jar
-EXPOSE 8080 11112
+EXPOSE 8080 8443 11112
 ENTRYPOINT ["java", "-jar", "app.jar"]

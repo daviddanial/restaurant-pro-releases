@@ -5,15 +5,8 @@ import com.telerad.auth.UserPrincipal;
 import com.telerad.common.Role;
 import com.telerad.common.StudyPriority;
 import com.telerad.common.StudySource;
-import com.telerad.common.StudyStatus;
-import com.telerad.storage.ObjectStorageService;
-import com.telerad.study.Study;
-import com.telerad.study.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dcm4che3.data.Attributes;
-import org.dcm4che3.data.Tag;
-import org.dcm4che3.io.DicomInputStream;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -31,11 +24,8 @@ import java.util.zip.ZipInputStream;
 @RequiredArgsConstructor
 @Slf4j
 public class UploadService {
-    private final ObjectStorageService storage;
-    private final IngestPublisher publisher;
-    private final StudyRepository studyRepository;
+    private final DicomObjectIngestService dicomObjectIngestService;
     private final AuditService auditService;
-    private final IngestWorker ingestWorker;
 
     @Transactional
     @PreAuthorize("hasAnyRole('HOSPITAL_USER','ADMIN')")
@@ -52,7 +42,10 @@ public class UploadService {
                 if (name.endsWith(".zip")) {
                     stored += processZip(tenantId, file.getBytes(), studyUids, priority);
                 } else {
-                    stored += processDicomBytes(tenantId, file.getBytes(), studyUids, priority);
+                    var one = dicomObjectIngestService.ingestBytes(
+                            tenantId, file.getBytes(), StudySource.UPLOAD, priority, "UPLOAD");
+                    if (one.stored()) stored++;
+                    studyUids.add(one.studyInstanceUid());
                 }
             } catch (Exception e) {
                 log.warn("Upload failed for {}: {}", name, e.getMessage());
@@ -80,38 +73,16 @@ public class UploadService {
                 byte[] data = readAll(zis);
                 if (data.length < 132) continue;
                 try {
-                    count += processDicomBytes(tenantId, data, studyUids, priority);
+                    var one = dicomObjectIngestService.ingestBytes(
+                            tenantId, data, StudySource.UPLOAD, priority, "UPLOAD");
+                    if (one.stored()) count++;
+                    studyUids.add(one.studyInstanceUid());
                 } catch (Exception e) {
                     log.debug("Skipping zip entry {}: {}", entry.getName(), e.getMessage());
                 }
             }
         }
         return count;
-    }
-
-    private int processDicomBytes(UUID tenantId, byte[] data, Set<String> studyUids, StudyPriority priority) throws Exception {
-        Attributes attrs;
-        try (DicomInputStream dis = new DicomInputStream(new ByteArrayInputStream(data))) {
-            attrs = dis.readDataset(-1, -1);
-        }
-        String studyUid = attrs.getString(Tag.StudyInstanceUID);
-        String seriesUid = attrs.getString(Tag.SeriesInstanceUID);
-        String sopUid = attrs.getString(Tag.SOPInstanceUID);
-        if (studyUid == null || sopUid == null) {
-            throw new IllegalArgumentException("Not a valid DICOM object");
-        }
-        String key = tenantId + "/" + studyUid + "/" + seriesUid + "/" + sopUid + ".dcm";
-        storage.put(key, data, "application/dicom");
-
-        // Process synchronously for reliable MVP, also publish for async reprocessing
-        Study study = ingestWorker.upsertFromDataset(tenantId, key, attrs, StudySource.UPLOAD);
-        if (priority != null && priority != StudyPriority.ROUTINE) {
-            study.setPriority(priority);
-            studyRepository.save(study);
-        }
-        publisher.publish(tenantId, key, studyUid, "UPLOAD", null);
-        studyUids.add(studyUid);
-        return 1;
     }
 
     private UUID resolveTenant(UserPrincipal user, UUID hospitalId) {

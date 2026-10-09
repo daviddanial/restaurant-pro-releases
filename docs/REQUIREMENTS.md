@@ -4,8 +4,8 @@
 |-------|-------|
 | **Product** | TeleRad |
 | **Document** | Canonical product requirements |
-| **Version** | 1.1 |
-| **Date** | 2026-08-12 |
+| **Version** | 1.15 |
+| **Date** | 2026-10-06 |
 | **Owners** | Product + Engineering |
 | **Status** | Active — **feature development (not live)** |
 | **Related** | [`PLAN.md`](../PLAN.md) (architecture & delivery), [`README.md`](../README.md) (runbook), [`ETHIOPIA-GTM.md`](ETHIOPIA-GTM.md) (sales/GTM draft) |
@@ -354,6 +354,50 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 
 ---
 
+### 6.4b Secure edge delivery — `FR-EDGE`
+
+Locked decisions (**2026-10-06**, supersede 2026-10-05 where they conflict). Radiologist worklist visibility remains **unchanged** (assigned-only is out of scope).
+
+| ID | Decision |
+|----|----------|
+| **A1** | Path: Orthanc/agent → HTTPS ingest → **MinIO + worker** (not C-STORE hop into cloud SCP). |
+| **B2** | Unmodified **Orthanc (Docker)** is the facility DICOM receiver; custom pynetdicom SCP is replaced. Agent keeps queue, uploader, audit; study readiness from Orthanc **changes feed** (persist cursor); delete from Orthanc after confirmed upload + safety period. |
+| **C2** | One-time enrollment token obtains a **gateway client cert**. Bearer/token auth is **local-dev only**; **mTLS required before pilot**. |
+| **D1** | Upload = **HTTPS multipart** (STOW-RS only if a partner requires DICOMweb). Per-instance results (success / duplicate / failed + temporary-or-permanent); confirm only after durable MinIO write; batched uploads with study-completeness handling. |
+| **E3** | Delete safety period **configurable**; default **24h** (pilot); shorter allowed for lab/dev. |
+| **F1** | Edge package = **Docker Compose** (Orthanc + agent): pinned images; only DICOM port on LAN; volumes on encrypted disk; restart policies + health checks; secrets outside compose; log rotation; Docker preinstalled on device/VM image. |
+| **G1** | Cloud SCP **private only** (VPN/lab); AE+IP allowlist per facility; same ingest pipeline as gateway/portal; external scan verifies never public. |
+| **H2** | Ops pack + **required** mTLS heartbeat (no PHI); TeleRad alerts on missed heartbeats; alert on oldest queued study age; include disk watermark, queue depth, Orthanc/agent health, cert expiry, TLS-inspection detection, last successful upload time. |
+| **I2** | TeleRad ingest audit: gateway/facility, study/series/SOP UIDs, cert serial/fingerprint, source IP, request ID, per-instance outcome; append-only; access-controlled; defined retention; **no PHI beyond UIDs**. |
+| **J1** | TeleRad **internal CA** issues/rotates gateway certs; revoke by serial on compromise. |
+| **K3** | Orthanc sender allowlist: **local file is source of truth**; heartbeat reports allowlist + rejected senders (AE+IP) read-only; log config changes; validate on load. Remote push (K2) planned for later rollout. |
+| **L2** | Many gateways per facility; each gateway bound to **exactly one** facility with its own cert; admin labels (name, location, primary/backup, status); facility from binding only; replacement = enroll new → verify → disable old. |
+| **M1** | Platform admin only for enroll + re-enable; facility admins may **disable** their facility's gateways (emergency); single-use short-lived tokens; MFA for these roles; actions audit-logged. |
+| **N1** | Cert lifetime **90 days**; auto-renew from day 60 with retries; new key on device each renewal; renew auth'd by current cert; disabled cannot renew; expired → re-enroll; heartbeat alerts at 21 and 7 days; renewals audit-logged. |
+| **O3** | Ingest-audit retention configurable; default = study/report retention (**minimum 1 year**), pending compliance confirmation; automatic logged purge; legal-hold exemption. |
+| **P2** | Heartbeat every **5 min** (configurable); missed alert after **15 min**; critical events immediate; jitter; recovery notify + dedupe; heartbeat failures never block uploads. |
+| **Q2** | Enrollment token TTL **24 hours**, single-use. |
+
+| ID | Requirement | Pri | Phase | Status |
+|----|-------------|-----|-------|--------|
+| **FR-EDGE-001** | Platform admin shall register a gateway for a facility (labels: name, location, primary/backup, status) and issue a single-use enrollment token (TTL 24h). Facility admins shall not enroll or re-enable; they may disable gateways for their facility only. MFA required; actions audit-logged. | P1 | P1 | **Partial** |
+| **FR-EDGE-002** | Gateway shall enroll with the token and receive a client certificate from the TeleRad internal CA; private key generated on device. Token/Bearer auth is local-dev only; pilot path is mTLS. | P1 | P1 | **Done** |
+| **FR-EDGE-003** | HTTPS multipart ingest (mTLS) shall accept DICOM from an active enrolled gateway, attribute the study to the gateway's bound facility only, confirm success only after durable MinIO write, return per-instance results (stored / duplicate / failed + temporary-or-permanent), support batched uploads with study-completeness handling, and run the existing ingest pipeline with `source=GATEWAY`. | P1 | P1 | **Done** |
+| **FR-EDGE-004** | Duplicate SOPInstanceUID shall be reported as duplicate success without corrupting the study (idempotent). | P1 | P1 | **Done** |
+| **FR-EDGE-005** | Disabled gateways shall be rejected immediately (ingest, renew, heartbeat auth as applicable). | P1 | P1 | **Done** |
+| **FR-EDGE-006** | Edge stack shall use unmodified Orthanc (Docker) as DICOM receiver with sender allowlist (AE+IP); Orthanc HTTP/UI internal-only and password-protected. Agent shall consume Orthanc stable-study signals via changes feed (persist cursor), queue/upload with retry, and delete from Orthanc only after confirmed upload + configurable safety period (default 24h). | P1 | P1 | **Partial** |
+| **FR-EDGE-007** | Edge agent audit log shall record receive/queue/upload/fail/delete using UIDs only (no patient name/MRN/DOB). | P1 | P1 | **Done** |
+| **FR-EDGE-008** | TeleRad SCP shall remain private (VPN/lab), AE+IP allowlist per facility, same pipeline as gateway/portal; must not be public (verified by external scan). | P1 | P1 | **Partial** |
+| **FR-EDGE-009** | Edge shall ship as Docker Compose (Orthanc + agent): pinned image versions; only DICOM port exposed to LAN; volumes on encrypted disk; restart policies + health checks; secrets outside compose; log rotation. | P1 | P1 | **Partial** |
+| **FR-EDGE-010** | Agent shall send mTLS heartbeats (no PHI) on a configurable interval (default 5 min); TeleRad shall alert after missed window (default 15 min). Payload/alerts cover disk watermark, queue depth, oldest queued study age, Orthanc/agent health, cert expiry (21d/7d), TLS-inspection detection, last successful upload, allowlist snapshot, rejected senders (AE+IP). Critical events immediate; jitter; recovery + dedupe; heartbeat must not block uploads. | P1 | P1 | **Partial** |
+| **FR-EDGE-011** | TeleRad shall keep append-only, access-controlled ingest audit (gateway/facility, UIDs, cert serial/fingerprint, source IP, request ID, per-instance outcome + reason). Retention configurable; default ≥1 year aligned with study/report retention pending compliance; logged purge; legal-hold exemption. No PHI beyond UIDs. | P1 | P1 | **Partial** |
+| **FR-EDGE-012** | Client certs: 90-day lifetime; auto-renew from day 60 over mTLS with retries; new key per renewal on device; disabled gateways cannot renew; expired requires re-enroll; renewals audit-logged; revoke by serial on compromise. | P1 | P1 | **Partial** |
+| **FR-EDGE-013** | Local Orthanc allowlist file is source of truth; validate on load; log config changes; report allowlist + rejected senders via heartbeat (read-only). Remote allowlist push is out of scope for pilot (planned later). | P1 | P1 | **Partial** |
+
+**Acceptance:** Simulated modality → Orthanc → agent → mTLS multipart ingest → worklist READY (`source=GATEWAY`); unknown/disabled gateway rejected; duplicate SOP reported; offline queue drains after reconnect; heartbeat miss alerts; Orthanc delete only after confirm + safety period.
+
+---
+
 ### 6.5 Worklist & assignment — `FR-WL`
 
 | ID | Requirement | Pri | Phase | Status |
@@ -494,7 +538,7 @@ RECEIVED → READY → IN_PROGRESS → REPORTED → DELIVERED
 
 | ID | Requirement | Pri | Phase | Status |
 |----|-------------|-----|-------|--------|
-| **FR-EXT-001** | Edge ingest daemon with local queue + resumable upload. | P3 | Px | **Deferred** |
+| **FR-EXT-001** | Edge ingest daemon with local queue + resumable upload. | P3 | Px | **Superseded** — see FR-EDGE-* (OD-EDGE = B) |
 | **FR-EXT-002** | Population health anonymized heatmap dashboard. | P3 | Px | **Deferred** |
 | **FR-EXT-003** | Manager revenue reconciliation CSV export. | P3 | Px | **Deferred** |
 
@@ -574,7 +618,7 @@ Unresolved items **block** promoting related Deferred FRs.
 | **OD-ROLE** | Extra roles (Nurse, Resident/Senior, Patient, Sales)? | A) Keep 3 roles. B) Add Nurse assign. C) Split radiologist grades. | Product / Medical | FR-WL assign UX, FR-RPT sign rules |
 | **OD-SAF** | Which clinical safety pack for P2? | A) Indication gate only. B) + missing images. C) + critical ack chain. D) All. | Medical Director | FR-SAF-* |
 | **OD-PAT** | Patient-facing report links? | A) Out of scope. B) Ephemeral link post-sign. | Product | FR-DLV-008 |
-| **OD-EDGE** | Edge ingest node for low bandwidth? | A) Out of scope. B) Include in P1 build sequence. C) Later / Deferred. | Product / Eng | FR-EXT-001 |
+| **OD-EDGE** | Edge ingest node for low bandwidth / secure facility delivery? | **Resolved B (2026-10-06 locks A1–Q2).** Facility C-STORE → **Orthanc + agent** → mTLS HTTPS multipart ingest → MinIO+worker (`source=GATEWAY`). Bearer enroll/dev only; mTLS before pilot. Private SCP VPN/lab only. See §6.4b decision table. Radiologist assigned-only visibility remains **out of this scope**. | Product / Eng | FR-EXT-001, FR-EDGE-* |
 | **OD-POP** | Population health analytics? | A) Out of scope. B) After core features (P0–P2) complete. | Product | FR-EXT-002 |
 | **OD-INT** | HL7 v2 vs FHIR-only outbound? | A) FHIR/webhook only. B) Add ORU^R01. | Eng / Hospital IT | FR-DLV-007 |
 | **OD-RPT** | Report templates priority? | **Resolved B — insert cascade shipped (FR-RPT-009).** Admin CRUD remains Deferred (`FR-ADM-007`). | Radiologist lead | FR-ADM-007 |
@@ -700,5 +744,8 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | 1.10 | 2026-10-01 | Engineering | FR-VW-011 Done: MPR axial/sagittal/coronal orthographic views with crosshair Link views. |
 | 1.11 | 2026-10-02 | Engineering | FR-VW-012 Done: RadiAnt 2×2 MPR with MIP/VR 4th pane linked to the crosshair center. |
 | 1.12 | 2026-10-02 | Engineering | FR-VW-013/014 Done: Export menu (PNG/JPEG + async DICOM) and Print preview with layout options. |
+| 1.13 | 2026-10-05 | Engineering | OD-EDGE = B; added FR-EDGE-001–008 for secure facility gateway delivery (multipart ingest, not public SCP). |
+| 1.14 | 2026-10-06 | Engineering | OD-EDGE locks A1–Q2: Orthanc receiver + agent, mTLS-before-pilot, multipart ingest contract, Compose packaging, heartbeat/ops, PKI/audit/RBAC. Expanded FR-EDGE-001–013; statuses reset to Partial/Todo where prior Done no longer matches. |
+| 1.15 | 2026-10-06 | Engineering | Implemented FR-EDGE stack: internal CA + enroll/renew, mTLS :8443, ingest audit + heartbeat miss alerts, Orthanc+agent compose, allowlist render. MFA and encrypted-disk ops remain site/runbook. |
 
 **End of TeleRad Requirements Source of Truth**

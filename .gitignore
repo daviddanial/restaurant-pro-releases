@@ -66,3 +66,9 @@ rabbitmq_data/
 dist/
 tmp/
 temp/
+
+# Edge gateway local state / secrets
+edge-gateway/data/
+edge-gateway/config.json
+edge-gateway/secrets/
+certs/gateway-ca/

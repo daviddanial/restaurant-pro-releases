@@ -1,0 +1,24 @@
+{
+  "Name": "TeleRad Edge Orthanc",
+  "DicomAet": "TELERAD_EDGE",
+  "DicomPort": 4242,
+  "HttpPort": 8042,
+  "RemoteAccessAllowed": false,
+  "AuthenticationEnabled": true,
+  "RegisteredUsers": {
+    "agent": "agent"
+  },
+  "DicomAlwaysAllowEcho": true,
+  "DicomAlwaysAllowStore": false,
+  "DicomCheckModalityHost": true,
+  "DicomModalities": {
+    "DEMOHOSP_PACS_HOST": ["DEMOHOSP_PACS", "127.0.0.1", 11112],
+    "DEMOHOSP_PACS_DOCKER": ["DEMOHOSP_PACS", "172.18.0.1", 11112],
+    "MODALITY_SIM_HOST": ["MODALITY_SIM", "127.0.0.1", 11112],
+    "MODALITY_SIM_DOCKER": ["MODALITY_SIM", "172.18.0.1", 11112]
+  },
+  "StableAge": 30,
+  "StrictAetComparison": false,
+  "HttpVerbose": false,
+  "DicomVerbose": false
+}

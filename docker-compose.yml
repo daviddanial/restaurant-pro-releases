@@ -81,8 +81,16 @@ services:
       TELERAD_NOTIFY_EMAIL_ENABLED: "true"
       TELERAD_NOTIFY_WEBHOOK_ENABLED: "true"
       TELERAD_SLA_ENABLED: "true"
+      TELERAD_GATEWAY_BEARER_DEV: "true"
+      TELERAD_GATEWAY_CA_DIR: /app/certs/gateway-ca
+      TELERAD_GATEWAY_SERVER_KEYSTORE: /app/certs/gateway-ca/server.p12
+      TELERAD_GATEWAY_MTLS_ENABLED: "true"
+      TELERAD_GATEWAY_MTLS_PORT: "8443"
     ports:
       - "18080:8080"
+      - "18443:8443"
+    volumes:
+      - gateway_ca:/app/certs/gateway-ca
     depends_on:
       postgres:
         condition: service_healthy
@@ -135,3 +143,4 @@ services:
 volumes:
   postgres_data:
   minio_data:
+  gateway_ca:

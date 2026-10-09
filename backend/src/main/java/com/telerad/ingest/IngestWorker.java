@@ -46,12 +46,20 @@ public class IngestWorker {
             try (DicomInputStream dis = new DicomInputStream(new ByteArrayInputStream(bytes))) {
                 attrs = dis.readDataset(-1, -1);
             }
-            upsertFromDataset(message.tenantId(), message.storageKey(), attrs,
-                    "CSTORE".equalsIgnoreCase(message.source()) ? StudySource.CSTORE : StudySource.UPLOAD);
+            upsertFromDataset(message.tenantId(), message.storageKey(), attrs, resolveSource(message.source()));
         } catch (Exception e) {
             log.error("Failed to ingest {}: {}", message.storageKey(), e.getMessage(), e);
             throw new RuntimeException(e);
         }
+    }
+
+    private static StudySource resolveSource(String raw) {
+        if (raw == null) return StudySource.UPLOAD;
+        return switch (raw.toUpperCase()) {
+            case "CSTORE" -> StudySource.CSTORE;
+            case "GATEWAY" -> StudySource.GATEWAY;
+            default -> StudySource.UPLOAD;
+        };
     }
 
     @Transactional

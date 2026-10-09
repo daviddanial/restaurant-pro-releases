@@ -1,0 +1,61 @@
+# Facility edge stack: Orthanc (DICOM) + TeleRad agent.
+# Only DICOM port is published to the LAN. Orthanc HTTP stays on the internal network.
+#
+# Usage (from repo root or this directory):
+#   docker compose -f edge-gateway/docker-compose.yml up -d
+#
+# Before first run: enroll the agent (see README) and place config under ./secrets/.
+
+services:
+  orthanc:
+    image: jodogne/orthanc:1.12.4
+    restart: unless-stopped
+    volumes:
+      - ./orthanc/orthanc.json:/etc/orthanc/orthanc.json:ro
+      - orthanc_data:/var/lib/orthanc/db
+    ports:
+      - "11113:4242"
+    # HTTP UI/API not published — agent reaches it on the compose network only
+    expose:
+      - "8042"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8042'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      orthanc:
+        condition: service_healthy
+    environment:
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./secrets/config.json:/config/config.json:ro
+      - ./allowlist.json:/config/allowlist.json:ro
+      - agent_data:/data
+    # No host ports — outbound HTTPS/mTLS only
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /data/queue.sqlite3 || exit 0"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  orthanc_data:
+  agent_data:

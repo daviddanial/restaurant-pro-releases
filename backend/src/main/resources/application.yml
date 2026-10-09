@@ -67,6 +67,22 @@ telerad:
     urgent-minutes: ${TELERAD_SLA_URGENT_MINUTES:240}
     routine-minutes: ${TELERAD_SLA_ROUTINE_MINUTES:1440}
     check-interval-ms: ${TELERAD_SLA_CHECK_MS:60000}
+  gateway:
+    bearer-dev: ${TELERAD_GATEWAY_BEARER_DEV:true}
+    ca-dir: ${TELERAD_GATEWAY_CA_DIR:certs/gateway-ca}
+    ca-cert-file: ca.crt
+    ca-key-file: ca.key
+    cert-validity-days: ${TELERAD_GATEWAY_CERT_DAYS:90}
+    renew-after-days: ${TELERAD_GATEWAY_RENEW_AFTER_DAYS:60}
+    enrollment-token-hours: ${TELERAD_GATEWAY_ENROLL_HOURS:24}
+    heartbeat-interval-seconds: 300
+    heartbeat-miss-seconds: ${TELERAD_GATEWAY_HEARTBEAT_MISS_SECONDS:900}
+    heartbeat-check-ms: 60000
+    ingest-audit-retention-days: ${TELERAD_GATEWAY_AUDIT_RETENTION_DAYS:365}
+    mtls-port: ${TELERAD_GATEWAY_MTLS_PORT:8443}
+    mtls-enabled: ${TELERAD_GATEWAY_MTLS_ENABLED:true}
+    server-keystore: ${TELERAD_GATEWAY_SERVER_KEYSTORE:certs/gateway-ca/server.p12}
+    server-keystore-password: ${TELERAD_GATEWAY_SERVER_KEYSTORE_PASSWORD:telerad}
 
 logging:
   level:
