@@ -622,8 +622,8 @@ def main() -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_enroll = sub.add_parser("enroll", help="Exchange enrollment token + CSR for client cert")
-    p_enroll.add_argument("--api", required=True, help="TeleRad API base (HTTP), e.g. http://127.0.0.1:18080")
-    p_enroll.add_argument("--mtls", default=None, help="mTLS base URL, e.g. https://127.0.0.1:18443")
+    p_enroll.add_argument("--api", required=True, help="TeleRad API base (HTTP), e.g. http://127.0.0.1:38471")
+    p_enroll.add_argument("--mtls", default=None, help="mTLS base URL, e.g. https://127.0.0.1:38473")
     p_enroll.add_argument("--token", required=True, help="One-time enrollment token")
     p_enroll.add_argument("--config", type=Path, default=Path("edge-gateway/config.json"))
 

@@ -2,6 +2,8 @@ package com.telerad.dicom;
 
 import com.telerad.auth.UserPrincipal;
 import com.telerad.common.Role;
+import com.telerad.share.SharePrincipal;
+import com.telerad.share.ShareService;
 import com.telerad.storage.ObjectStorageService;
 import com.telerad.study.Instance;
 import com.telerad.study.InstanceRepository;
@@ -58,12 +60,13 @@ public class WadoController {
     private final StudyRepository studyRepository;
     private final InstanceRepository instanceRepository;
     private final ObjectStorageService storage;
+    private final ShareService shareService;
 
     @GetMapping("/studies/{studyUID}")
     public Map<String, Object> studyMetadata(@PathVariable String studyUID) {
         Study study = studyRepository.findByStudyInstanceUid(studyUID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        assertCanView(UserPrincipal.current(), study);
+        assertCanView(study);
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("StudyInstanceUID", study.getStudyInstanceUid());
         body.put("id", study.getId());
@@ -118,7 +121,7 @@ public class WadoController {
         Instance instance = instanceRepository.findBySopInstanceUid(sopUID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Study study = instance.getSeries().getStudy();
-        assertCanView(UserPrincipal.current(), study);
+        assertCanView(study);
         try {
             byte[] dicom = storage.getBytes(instance.getStorageKey());
             Attributes attrs;
@@ -200,11 +203,17 @@ public class WadoController {
         if (!study.getStudyInstanceUid().equals(studyUID) || !series.getSeriesInstanceUid().equals(seriesUID)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        assertCanView(UserPrincipal.current(), study);
+        assertCanView(study);
         return instance;
     }
 
-    private void assertCanView(UserPrincipal user, Study study) {
+    private void assertCanView(Study study) {
+        SharePrincipal share = SharePrincipal.currentOrNull();
+        if (share != null) {
+            shareService.assertShareCanViewStudy(study.getId());
+            return;
+        }
+        UserPrincipal user = UserPrincipal.current();
         if (user.getRole() == Role.ADMIN || user.getRole() == Role.RADIOLOGIST) return;
         if (user.getRole() == Role.HOSPITAL_USER && study.getTenantId().equals(user.getTenantId())) return;
         throw new ResponseStatusException(HttpStatus.FORBIDDEN);

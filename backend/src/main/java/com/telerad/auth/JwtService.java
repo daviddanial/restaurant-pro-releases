@@ -33,6 +33,7 @@ public class JwtService {
         Instant exp = now.plusSeconds(accessTokenMinutes * 60);
         var builder = Jwts.builder()
                 .subject(user.getId().toString())
+                .claim("typ", "user")
                 .claim("email", user.getEmail())
                 .claim("role", user.getRole().name())
                 .claim("name", user.getFullName())
@@ -45,8 +46,37 @@ public class JwtService {
         return builder.signWith(key).compact();
     }
 
+    /** Share session JWT — expires at share.expiresAt (decision 7B). */
+    public String createShareToken(
+            UUID shareId,
+            UUID tenantId,
+            UUID patientId,
+            int codeVersion,
+            boolean includeReports,
+            boolean allowDicomDownload,
+            Instant expiresAt
+    ) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(shareId.toString())
+                .claim("typ", "share")
+                .claim("tenantId", tenantId.toString())
+                .claim("patientId", patientId.toString())
+                .claim("codeVersion", codeVersion)
+                .claim("includeReports", includeReports)
+                .claim("allowDicomDownload", allowDicomDownload)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiresAt))
+                .signWith(key)
+                .compact();
+    }
+
     public Claims parse(String token) {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+    }
+
+    public boolean isShareToken(Claims claims) {
+        return "share".equals(claims.get("typ", String.class));
     }
 
     public UUID userId(Claims claims) {

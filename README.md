@@ -12,7 +12,7 @@ docker compose up -d postgres minio minio-init rabbitmq
 ./scripts/build-backend.sh
 java -jar backend/target/telerad-backend-0.1.0-SNAPSHOT.jar \
   --spring.profiles.active=local,api,worker \
-  --server.port=18080 \
+  --server.port=38471 \
   --spring.datasource.url=jdbc:postgresql://localhost:5433/telerad \
   --spring.datasource.username=telerad \
   --spring.datasource.password=telerad \
@@ -27,9 +27,9 @@ java -jar backend/target/telerad-backend-0.1.0-SNAPSHOT.jar \
 # Optional DICOM SCP (separate process) — facility / modality receive path
 ./scripts/start-scp.sh
 # equivalent: java -jar … --spring.profiles.active=scp --telerad.scp.enabled=true
-#             --telerad.scp.port=11112 --telerad.scp.ae-title=TELERAD_SCP --server.port=18081
+#             --telerad.scp.port=11112 --telerad.scp.ae-title=TELERAD_SCP --server.port=38472
 
-# 3) Frontend (proxies /api → :18080)
+# 3) Frontend (proxies /api → :38471)
 cd frontend && npm install && npm run dev
 ```
 
@@ -42,8 +42,8 @@ docker compose up --build
 | Service | URL / port |
 |---------|------------|
 | UI | http://localhost:5173 |
-| API | http://localhost:18080 |
-| Swagger | http://localhost:18080/swagger-ui.html |
+| API | http://localhost:38471 |
+| Swagger | http://localhost:38471/swagger-ui.html |
 | Postgres | localhost:5433 |
 | MinIO | http://localhost:9000 (console :9001) |
 | RabbitMQ | http://localhost:15672 (`telerad`/`telerad`) |
@@ -68,10 +68,10 @@ python3 scripts/generate_sample_dicom.py -o /tmp/sample.dcm
 Upload via hospital portal (backup path) or:
 
 ```bash
-TOKEN=$(curl -s -X POST http://localhost:18080/api/auth/login \
+TOKEN=$(curl -s -X POST http://localhost:38471/api/auth/login \
   -H 'Content-Type: application/json' \
   -d '{"email":"staff@demohosp.local","password":"password"}' | jq -r .accessToken)
-curl -X POST "http://localhost:18080/api/hospitals/11111111-1111-1111-1111-111111111111/studies/upload?priority=STAT" \
+curl -X POST "http://localhost:38471/api/hospitals/11111111-1111-1111-1111-111111111111/studies/upload?priority=STAT" \
   -H "Authorization: Bearer $TOKEN" -F "files=@/tmp/sample.dcm"
 ```
 
@@ -79,7 +79,7 @@ curl -X POST "http://localhost:18080/api/hospitals/11111111-1111-1111-1111-11111
 
 TeleRad listens as **SCP** (`TELERAD_SCP` / port **11112**) for lab/VPN. Production facilities should use the **edge gateway** (LAN C-STORE → HTTPS ingest) — see [`edge-gateway/README.md`](edge-gateway/README.md).
 
-**Prereqs:** API+worker on `:18080`, infra up. Optional SCP in a second terminal:
+**Prereqs:** API+worker on `:38471`, infra up. Optional SCP in a second terminal:
 
 ```bash
 ./scripts/start-scp.sh

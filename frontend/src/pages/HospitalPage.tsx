@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
+import { PatientSharePanel } from '../components/PatientSharePanel'
 import type { HospitalReportItem, StudyListItem, StudyStatus } from '../types'
 
 const PROGRESS_STEPS = ['Received', 'Assigned', 'In Progress', 'Report Ready'] as const
@@ -80,6 +81,7 @@ export function HospitalPage() {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [shareStudyId, setShareStudyId] = useState<string | null>(null)
 
   async function load() {
     if (!hospitalId) return
@@ -305,6 +307,7 @@ export function HospitalPage() {
               <th>Date Created</th>
               <th>Progress</th>
               <th className="col-report">Report</th>
+              <th>Share</th>
             </tr>
           </thead>
           <tbody>
@@ -312,6 +315,7 @@ export function HospitalPage() {
               const report = reportByStudy.get(s.id)
               const filled = stepIndex(s.status)
               const tone = slaTone(s)
+              const canShare = s.status !== 'RECEIVED' && s.instanceCount > 0
               return (
                 <tr key={s.id} className={tone === 'breach' ? 'row-overdue' : undefined}>
                   <td className="patient-cell">{displayPatientName(s.patientName)}</td>
@@ -363,18 +367,42 @@ export function HospitalPage() {
                       <span className="report-empty">—</span>
                     )}
                   </td>
+                  <td>
+                    {canShare ? (
+                      <button
+                        type="button"
+                        className="btn secondary"
+                        style={{ fontSize: '0.85rem', padding: '0.25rem 0.6rem' }}
+                        onClick={() => setShareStudyId(shareStudyId === s.id ? null : s.id)}
+                      >
+                        {shareStudyId === s.id ? 'Close' : 'Share'}
+                      </button>
+                    ) : (
+                      <span className="muted">—</span>
+                    )}
+                  </td>
                 </tr>
               )
             })}
             {filteredStudies.length === 0 && (
               <tr>
-                <td colSpan={6} className="muted" style={{ padding: '1.75rem', textAlign: 'center' }}>
+                <td colSpan={7} className="muted" style={{ padding: '1.75rem', textAlign: 'center' }}>
                   No orders yet.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+        {shareStudyId && (
+          <div style={{ padding: '1rem 1.15rem' }}>
+            <PatientSharePanel
+              studyId={shareStudyId}
+              patientLabel={displayPatientName(
+                filteredStudies.find((s) => s.id === shareStudyId)?.patientName ?? null
+              )}
+            />
+          </div>
+        )}
       </section>
     </div>
   )

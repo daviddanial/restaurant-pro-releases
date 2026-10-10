@@ -87,8 +87,8 @@ services:
       TELERAD_GATEWAY_MTLS_ENABLED: "true"
       TELERAD_GATEWAY_MTLS_PORT: "8443"
     ports:
-      - "18080:8080"
-      - "18443:8443"
+      - "38471:8080"
+      - "38473:8443"
     volumes:
       - gateway_ca:/app/certs/gateway-ca
     depends_on:
@@ -122,7 +122,7 @@ services:
       SERVER_PORT: "8081"
     ports:
       - "11112:11112"
-      - "18081:8081"
+      - "38472:8081"
     depends_on:
       postgres:
         condition: service_healthy

@@ -82,6 +82,15 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
         assertCanView(UserPrincipal.current(), study);
+        return findPriorStudiesForSnapshot(study).stream().map(this::toListItem).toList();
+    }
+
+    /**
+     * Prior studies eligible to freeze into a patient image share (same ranking as viewer compare).
+     * Caller must authorize; does not check UserPrincipal.
+     */
+    @Transactional(readOnly = true)
+    public List<Study> findPriorStudiesForSnapshot(Study study) {
         if (study.getPatientId() == null) {
             return List.of();
         }
@@ -89,9 +98,24 @@ public class StudyService {
                 .findPriors(study.getPatientId(), study.getTenantId(), study.getId(), study.getModality())
                 .stream()
                 .filter(candidate -> isPriorOf(candidate, study))
+                .filter(candidate -> candidate.getStatus() != StudyStatus.RECEIVED)
                 .limit(MAX_PRIORS)
-                .map(this::toListItem)
                 .toList();
+    }
+
+    /** Study detail without role checks — caller must authorize (e.g. share snapshot). */
+    @Transactional(readOnly = true)
+    public StudyDetail detailWithoutAuth(UUID id) {
+        Study study = studyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
+        return toDetail(study);
+    }
+
+    @Transactional(readOnly = true)
+    public StudyListItem listItemWithoutAuth(UUID id) {
+        Study study = studyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Study not found"));
+        return toListItem(study);
     }
 
     private boolean isPriorOf(Study candidate, Study current) {

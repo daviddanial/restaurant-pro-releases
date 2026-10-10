@@ -3,6 +3,8 @@ package com.telerad.export;
 import com.telerad.audit.AuditService;
 import com.telerad.auth.UserPrincipal;
 import com.telerad.common.Role;
+import com.telerad.share.SharePrincipal;
+import com.telerad.share.ShareService;
 import com.telerad.storage.ObjectStorageService;
 import com.telerad.study.*;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class ExportService {
     private final ObjectStorageService storage;
     private final AuditService auditService;
     private final ExportWorker exportWorker;
+    private final ShareService shareService;
 
     public ExportService(
             ExportJobRepository exportJobRepository,
@@ -43,7 +46,8 @@ public class ExportService {
             InstanceRepository instanceRepository,
             ObjectStorageService storage,
             AuditService auditService,
-            @Lazy ExportWorker exportWorker) {
+            @Lazy ExportWorker exportWorker,
+            @Lazy ShareService shareService) {
         this.exportJobRepository = exportJobRepository;
         this.studyRepository = studyRepository;
         this.seriesQueryRepository = seriesQueryRepository;
@@ -52,6 +56,7 @@ public class ExportService {
         this.storage = storage;
         this.auditService = auditService;
         this.exportWorker = exportWorker;
+        this.shareService = shareService;
     }
 
     public record StartRequest(ExportScope scope, String seriesInstanceUid, String sopInstanceUid) {}
@@ -109,9 +114,52 @@ public class ExportService {
         return toDto(job);
     }
 
+    @Transactional
+    public ExportJobDto startForShare(UUID studyId, StartRequest request, SharePrincipal share) {
+        if (request == null || request.scope() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "scope is required");
+        }
+        if (!share.isAllowDicomDownload()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "DICOM download not enabled");
+        }
+        shareService.assertShareCanViewStudy(studyId);
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        List<Instance> instances = resolveInstances(study, request);
+        if (instances.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No DICOM objects to export");
+        }
+        ExportJob job = ExportJob.builder()
+                .tenantId(study.getTenantId())
+                .studyId(study.getId())
+                .requestedBy(share.getShareId())
+                .scope(request.scope())
+                .seriesInstanceUid(request.seriesInstanceUid())
+                .sopInstanceUid(request.sopInstanceUid())
+                .status(ExportJobStatus.PENDING)
+                .totalObjects(instances.size())
+                .completedObjects(0)
+                .build();
+        exportJobRepository.save(job);
+        UUID jobId = job.getId();
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                exportWorker.run(jobId);
+            }
+        });
+        return toDto(job);
+    }
+
     @Transactional(readOnly = true)
     public ExportJobDto status(UUID jobId) {
         ExportJob job = loadAuthorized(jobId);
+        return toDto(job);
+    }
+
+    @Transactional(readOnly = true)
+    public ExportJobDto statusForShare(UUID jobId, SharePrincipal share) {
+        ExportJob job = loadForShare(jobId, share);
         return toDto(job);
     }
 
@@ -123,6 +171,15 @@ public class ExportService {
         }
         auditService.record(job.getTenantId(), UserPrincipal.current().getId(), "DOWNLOAD_EXPORT",
                 "ExportJob", jobId.toString(), job.getScope().name(), null);
+        return storage.getBytes(job.getResultKey());
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] downloadForShare(UUID jobId, SharePrincipal share) {
+        ExportJob job = loadForShare(jobId, share);
+        if (job.getStatus() != ExportJobStatus.DONE || job.getResultKey() == null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Export not ready");
+        }
         return storage.getBytes(job.getResultKey());
     }
 
@@ -224,6 +281,19 @@ public class ExportService {
         Study study = studyRepository.findById(job.getStudyId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         assertCanView(UserPrincipal.current(), study);
+        return job;
+    }
+
+    private ExportJob loadForShare(UUID jobId, SharePrincipal share) {
+        if (!share.isAllowDicomDownload()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "DICOM download not enabled");
+        }
+        ExportJob job = exportJobRepository.findById(jobId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (!share.getShareId().equals(job.getRequestedBy())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        shareService.assertShareCanViewStudy(job.getStudyId());
         return job;
     }
 

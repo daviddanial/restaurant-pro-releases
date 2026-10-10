@@ -1,6 +1,6 @@
 {
-  "telerad_api_url": "http://127.0.0.1:18080",
-  "telerad_mtls_url": "https://127.0.0.1:18443",
+  "telerad_api_url": "http://127.0.0.1:38471",
+  "telerad_mtls_url": "https://127.0.0.1:38473",
   "gateway_access_token": null,
   "orthanc_url": "http://orthanc:8042",
   "orthanc_user": "agent",

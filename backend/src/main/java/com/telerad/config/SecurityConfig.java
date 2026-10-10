@@ -34,6 +34,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/actuator/health", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/gateway/enroll").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/public/shares/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/public/shares/*/unlock").permitAll()
+                        .requestMatchers("/api/public/shares/me/**").hasRole("SHARE")
                         .requestMatchers("/api/gateway/**").hasRole("GATEWAY")
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())

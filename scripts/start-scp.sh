@@ -14,7 +14,7 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 exec java -jar "$JAR" \
   --spring.profiles.active=scp \
-  --server.port=18081 \
+  --server.port=38472 \
   --spring.datasource.url=jdbc:postgresql://localhost:5433/telerad \
   --spring.datasource.username=telerad \
   --spring.datasource.password=telerad \

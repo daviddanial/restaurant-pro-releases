@@ -15,6 +15,9 @@ public interface StudyRepository extends JpaRepository<Study, UUID> {
 
     List<Study> findByTenantIdOrderByCreatedAtDesc(UUID tenantId);
 
+    List<Study> findByTenantIdAndPatientIdAndStatusInOrderByStudyDateDescCreatedAtDesc(
+            UUID tenantId, UUID patientId, java.util.Collection<StudyStatus> statuses);
+
     @Query("""
         SELECT s FROM Study s
         WHERE s.status IN :statuses

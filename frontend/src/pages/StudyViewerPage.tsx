@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { DicomViewport, type DicomViewportHandle } from '../components/DicomViewport'
 import { MprViewer } from '../components/MprViewer'
+import { PatientSharePanel } from '../components/PatientSharePanel'
 import { PrintPreviewModal } from '../components/PrintPreviewModal'
 import { SeriesThumbnail } from '../components/SeriesThumbnail'
 import { ViewerExportMenu } from '../components/ViewerExportMenu'
+import { clearShareToken, shareApi, shareBlob } from '../shareApi'
 import { pickDefaultMprSeriesIdx, seriesSupportsMpr } from '../mprEligibility'
 import { defaultPrior, formatInterval, formatStudyDate, matchPriorSeries } from '../priors'
 import type { SeriesDto, StudyDetail, StudyListItem } from '../types'
@@ -67,8 +69,14 @@ function SeriesRail({ studyUid, series, activeIdx, onSelect }: SeriesRailProps) 
   )
 }
 
-export function StudyViewerPage() {
-  const { id } = useParams()
+type StudyViewerProps = {
+  /** Public patient share: same viewer, staff chrome hidden; data via share JWT. */
+  shareMode?: boolean
+}
+
+export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
+  const { id, token: shareLinkToken } = useParams()
+  const navigate = useNavigate()
   const [detail, setDetail] = useState<StudyDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -105,9 +113,27 @@ export function StudyViewerPage() {
     }
   }, [])
 
+  const studyPath = useCallback(
+    (studyId: string) =>
+      shareMode ? `/api/public/shares/me/studies/${studyId}` : `/api/studies/${studyId}`,
+    [shareMode],
+  )
+  const priorsPath = useCallback(
+    (studyId: string) =>
+      shareMode
+        ? `/api/public/shares/me/studies/${studyId}/priors`
+        : `/api/studies/${studyId}/priors`,
+    [shareMode],
+  )
+  const loadStudy = useCallback(
+    <T,>(path: string) => (shareMode ? shareApi<T>(path) : api<T>(path)),
+    [shareMode],
+  )
+
   useEffect(() => {
+    if (!id) return
     let cancelled = false
-    api<StudyDetail>(`/api/studies/${id}`)
+    loadStudy<StudyDetail>(studyPath(id))
       .then((data) => {
         if (cancelled) return
         setDetail(data)
@@ -124,14 +150,15 @@ export function StudyViewerPage() {
     return () => {
       cancelled = true
     }
-  }, [id])
+  }, [id, loadStudy, studyPath])
 
-  // Hanging protocol: offer the patient's earlier studies and open the closest one.
+  // Hanging protocol: frozen priors in share mode; live priors for staff.
   useEffect(() => {
+    if (!id) return
     let cancelled = false
     setPriors([])
     setPriorId(null)
-    api<StudyListItem[]>(`/api/studies/${id}/priors`)
+    loadStudy<StudyListItem[]>(priorsPath(id))
       .then((data) => {
         if (cancelled) return
         setPriors(data)
@@ -144,7 +171,7 @@ export function StudyViewerPage() {
     return () => {
       cancelled = true
     }
-  }, [id, detail?.study.modality])
+  }, [id, detail?.study.modality, loadStudy, priorsPath])
 
   useEffect(() => {
     if (!priorId) {
@@ -154,7 +181,7 @@ export function StudyViewerPage() {
     let cancelled = false
     setPriorSeriesIdx(0)
     setPriorInstanceIdx(0)
-    api<StudyDetail>(`/api/studies/${priorId}`)
+    loadStudy<StudyDetail>(studyPath(priorId))
       .then((data) => {
         if (!cancelled) setPriorDetail(data)
       })
@@ -164,7 +191,7 @@ export function StudyViewerPage() {
     return () => {
       cancelled = true
     }
-  }, [priorId])
+  }, [priorId, loadStudy, studyPath])
 
   const comparing = Boolean(priorId && priorDetail) && !mprMode
   // Prior compare always uses a dedicated 1×2 (current | prior). Same-study multi
@@ -319,14 +346,17 @@ export function StudyViewerPage() {
               <span className="muted">{study.modality || '—'}</span>
             </div>
             <div className="viewer-topstrip-meta">
-              <span className={`badge ${study.priority === 'STAT' ? 'stat' : ''}`}>{study.priority}</span>
-              <span className="badge">{study.status}</span>
-              {study.slaDueAt && (
+              {!shareMode && (
+                <span className={`badge ${study.priority === 'STAT' ? 'stat' : ''}`}>{study.priority}</span>
+              )}
+              {!shareMode && <span className="badge">{study.status}</span>}
+              {!shareMode && study.slaDueAt && (
                 <span className={`badge ${study.slaOverdue ? 'breached' : ''}`}>
                   {study.slaOverdue ? 'SLA Breached' : `Due ${new Date(study.slaDueAt).toLocaleString()}`}
                 </span>
               )}
               {detail.report?.status === 'SIGNED' && <span className="badge">Report signed</span>}
+              {shareMode && <span className="badge">Shared study</span>}
             </div>
 
             <div className="viewer-layout-toggle" role="group" aria-label="Viewport layout">
@@ -411,19 +441,63 @@ export function StudyViewerPage() {
                 patientLabel={study.patientName || study.accessionNumber || study.id}
                 seriesInstanceUid={exportSeries?.seriesInstanceUid ?? null}
                 sopInstanceUid={exportInstance?.sopInstanceUid ?? null}
+                allowDicom={!shareMode}
               />
+              {!shareMode && (
+                <PatientSharePanel
+                  studyId={study.id}
+                  patientLabel={study.patientName || study.accessionNumber || study.id}
+                  compact
+                />
+              )}
               <button type="button" className="btn secondary" onClick={() => setPrintOpen(true)}>
                 Print
               </button>
-              <Link className="btn secondary" to="/worklist">Back to worklist</Link>
-              <a
-                className="btn"
-                href={`/studies/${id}/report`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Report
-              </a>
+              {shareMode && detail.report?.hasPdf && (
+                <button
+                  type="button"
+                  className="btn secondary"
+                  onClick={async () => {
+                    try {
+                      const blob = await shareBlob(`/api/public/shares/me/studies/${study.id}/report.pdf`)
+                      const a = document.createElement('a')
+                      a.href = URL.createObjectURL(blob)
+                      a.download = `report-${study.id}.pdf`
+                      a.click()
+                    } catch {
+                      /* ignore */
+                    }
+                  }}
+                >
+                  Report PDF
+                </button>
+              )}
+              {shareMode ? (
+                <button
+                  type="button"
+                  className="btn secondary"
+                  onClick={() => {
+                    clearShareToken()
+                    navigate(shareLinkToken ? `/s/${shareLinkToken}` : '/')
+                  }}
+                >
+                  Lock again
+                </button>
+              ) : (
+                <>
+                  <Link className="btn secondary" to="/worklist">
+                    Back to worklist
+                  </Link>
+                  <a
+                    className="btn"
+                    href={`/studies/${id}/report`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Report
+                  </a>
+                </>
+              )}
             </div>
           </div>
           {/* Active stack viewport portals its tools here — never over the image. */}

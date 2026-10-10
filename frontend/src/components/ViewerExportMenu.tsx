@@ -13,6 +13,8 @@ type Props = {
   seriesInstanceUid: string | null
   sopInstanceUid: string | null
   disabled?: boolean
+  /** When false, hide DICOM zip options (share sessions without allowDicomDownload). */
+  allowDicom?: boolean
 }
 
 export function ViewerExportMenu({
@@ -21,6 +23,7 @@ export function ViewerExportMenu({
   seriesInstanceUid,
   sopInstanceUid,
   disabled,
+  allowDicom = true,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
@@ -113,18 +116,22 @@ export function ViewerExportMenu({
             <div className="viewer-export-heading">Current layout</div>
             <button type="button" role="menuitem" onClick={() => exportRaster('layout', 'png')}>PNG</button>
           </div>
-          <div className="viewer-export-group">
-            <div className="viewer-export-heading">Current image</div>
-            <button type="button" role="menuitem" disabled={!sopInstanceUid} onClick={() => exportDicom('IMAGE')}>DICOM</button>
-          </div>
-          <div className="viewer-export-group">
-            <div className="viewer-export-heading">Series</div>
-            <button type="button" role="menuitem" disabled={!seriesInstanceUid} onClick={() => exportDicom('SERIES')}>DICOM</button>
-          </div>
-          <div className="viewer-export-group">
-            <div className="viewer-export-heading">Study</div>
-            <button type="button" role="menuitem" onClick={() => exportDicom('STUDY')}>DICOM</button>
-          </div>
+          {allowDicom && (
+            <>
+              <div className="viewer-export-group">
+                <div className="viewer-export-heading">Current image</div>
+                <button type="button" role="menuitem" disabled={!sopInstanceUid} onClick={() => exportDicom('IMAGE')}>DICOM</button>
+              </div>
+              <div className="viewer-export-group">
+                <div className="viewer-export-heading">Series</div>
+                <button type="button" role="menuitem" disabled={!seriesInstanceUid} onClick={() => exportDicom('SERIES')}>DICOM</button>
+              </div>
+              <div className="viewer-export-group">
+                <div className="viewer-export-heading">Study</div>
+                <button type="button" role="menuitem" onClick={() => exportDicom('STUDY')}>DICOM</button>
+              </div>
+            </>
+          )}
         </div>
       )}
       {(busy || job || error || localError) && (

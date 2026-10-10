@@ -32,7 +32,7 @@ import {
 } from '@cornerstonejs/tools'
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
 import { presetsForModality } from '../wlPresets'
-import { loadAuth } from '../api'
+import { getBearerToken } from '../authToken'
 import {
   buildStackPositions,
   hasSpatialPositions,
@@ -140,7 +140,7 @@ function firstStackIndexForInstance(stack: StackEntry[], instanceIndex: number):
 async function enrichPlaneFromMetadata(
   instances: ViewportInstance[],
 ): Promise<ViewportInstance[] | null> {
-  const token = loadAuth()?.accessToken
+  const token = getBearerToken()
   const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {}
   const next = instances.map((i) => ({ ...i }))
   let filled = 0

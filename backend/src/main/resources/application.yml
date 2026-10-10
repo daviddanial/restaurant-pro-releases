@@ -67,6 +67,9 @@ telerad:
     urgent-minutes: ${TELERAD_SLA_URGENT_MINUTES:240}
     routine-minutes: ${TELERAD_SLA_ROUTINE_MINUTES:1440}
     check-interval-ms: ${TELERAD_SLA_CHECK_MS:60000}
+  share:
+    public-base-url: ${TELERAD_SHARE_PUBLIC_BASE_URL:http://localhost:5173}
+    default-expiry-days: ${TELERAD_SHARE_EXPIRY_DAYS:60}
   gateway:
     bearer-dev: ${TELERAD_GATEWAY_BEARER_DEV:true}
     ca-dir: ${TELERAD_GATEWAY_CA_DIR:certs/gateway-ca}

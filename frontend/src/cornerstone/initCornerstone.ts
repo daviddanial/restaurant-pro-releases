@@ -15,7 +15,7 @@ import {
   TrackballRotateTool,
 } from '@cornerstonejs/tools'
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader'
-import { loadAuth } from '../api'
+import { getBearerToken } from '../authToken'
 
 let initPromise: Promise<void> | null = null
 let toolsRegistered = false
@@ -40,7 +40,7 @@ export function ensureCornerstoneInit(): Promise<void> {
         maxWebWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
         useLegacyMetadataProvider: true,
         beforeSend(_xhr, _imageId, _defaultHeaders) {
-          const token = loadAuth()?.accessToken
+          const token = getBearerToken()
           if (token) {
             return { Authorization: `Bearer ${token}` }
           }

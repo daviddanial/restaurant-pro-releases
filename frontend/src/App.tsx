@@ -7,7 +7,9 @@ import { AppShell } from './pages/AppShell'
 import { DispatchPage } from './pages/DispatchPage'
 import { HospitalPage } from './pages/HospitalPage'
 import { LoginPage } from './pages/LoginPage'
+import PatientSharePublicPage from './pages/PatientSharePublicPage'
 import { ReportEditorPage } from './pages/ReportEditorPage'
+import ShareSlipPage from './pages/ShareSlipPage'
 import { SharedReportPage } from './pages/SharedReportPage'
 import { WorklistPage } from './pages/WorklistPage'
 
@@ -22,6 +24,15 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/s/:token" element={<PatientSharePublicPage />} />
+          <Route
+            path="/s/:token/studies/:id"
+            element={
+              <Suspense fallback={<div className="page"><p className="muted">Loading viewer…</p></div>}>
+                <StudyViewerPage shareMode />
+              </Suspense>
+            }
+          />
           <Route element={<RequireAuth />}>
             <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
               <Route path="/hospital/reports/:studyId" element={<SharedReportPage />} />
@@ -38,6 +49,9 @@ export default function App() {
                   }
                 />
                 <Route path="/studies/:id/report" element={<ReportEditorPage />} />
+              </Route>
+              <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN', 'RADIOLOGIST']} />}>
+                <Route path="/shares/slip" element={<ShareSlipPage />} />
               </Route>
               <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
                 <Route path="/hospital" element={<HospitalPage />} />

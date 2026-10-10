@@ -32,8 +32,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        // Force IPv4 — localhost can resolve to ::1 and hang against the JVM listener
-        target: 'http://127.0.0.1:18080',
+        // Uncommon host port (avoids clashes with other local stacks on 8080/18080).
+        // Force IPv4 — localhost can resolve to ::1 and hang against the JVM listener.
+        target: 'http://127.0.0.1:38471',
         changeOrigin: true,
       },
     },

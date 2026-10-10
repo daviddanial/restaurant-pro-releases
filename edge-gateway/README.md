@@ -63,8 +63,8 @@ pip3 install -r edge-gateway/requirements.txt
 # Platform admin: POST /api/admin/gateways → enrollmentToken (24h)
 
 python3 edge-gateway/agent.py enroll \
-  --api http://127.0.0.1:18080 \
-  --mtls https://127.0.0.1:18443 \
+  --api http://127.0.0.1:38471 \
+  --mtls https://127.0.0.1:38473 \
   --token 'enroll_…' \
   --config edge-gateway/secrets/config.json
 ```

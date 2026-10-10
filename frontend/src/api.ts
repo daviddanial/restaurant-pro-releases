@@ -1,3 +1,4 @@
+import { getBearerToken } from './authToken'
 import type { AuthUser } from './types'
 
 const TOKEN_KEY = 'telerad_auth'
@@ -29,7 +30,7 @@ export async function api<T>(
   if (!(options.body instanceof FormData) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
-  const auth = token ?? loadAuth()?.accessToken
+  const auth = token ?? getBearerToken()
   if (auth) headers.set('Authorization', `Bearer ${auth}`)
 
   const res = await fetch(path, { ...options, headers })
@@ -50,7 +51,7 @@ export async function api<T>(
 }
 
 export async function apiBlob(path: string): Promise<Blob> {
-  const auth = loadAuth()?.accessToken
+  const auth = getBearerToken()
   const res = await fetch(path, {
     headers: auth ? { Authorization: `Bearer ${auth}` } : {},
   })

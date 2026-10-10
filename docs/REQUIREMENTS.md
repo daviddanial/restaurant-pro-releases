@@ -122,7 +122,7 @@ Tracked so they are not lost. **Not commitments** until moved via Open Decision 
 | Chapa / PATIENT_PAY billing gate | Payment before READY | OD-BIL |
 | Nurse dispatch / assign role | Separate from Hospital Staff | OD-ROLE |
 | Resident vs Senior sign split | Dual radiologist grades | OD-ROLE |
-| Patient mobile share links | Ephemeral JWT report link | OD-PAT |
+| Patient ephemeral mobile report link (SMS/WhatsApp) | Separate from facility image share (FR-SHARE); still deferred | OD-PAT / FR-DLV-008 |
 | Edge Ingest Node | Offline/resumable clinic uploader | OD-EDGE |
 | Population Health dashboard | Anonymized regional aggregates | OD-POP |
 | Fatigue / reading-velocity alerts | Admin-only pace monitoring | OD-SAF |
@@ -482,6 +482,40 @@ Locked decisions (**2026-10-06**, supersede 2026-10-05 where they conflict). Rad
 
 **Acceptance (DLV-002):** Hospital user sees signed report and downloads non-empty PDF.
 
+> **Note:** Facility-scoped patient **image** shares (CD replacement) are **FR-SHARE-*** — not FR-DLV-008 / OD-PAT. OD-PAT remains Deferred for ephemeral single-report SMS/WhatsApp links.
+
+---
+
+### 6.8b Patient image share (CD replacement) — `FR-SHARE`
+
+Facility staff create a **study-scoped** share: one MAIN READY+ study plus **frozen prior study IDs** available at create time. Unregistered recipients unlock with a printed link + access code and use the same diagnostic viewer (share mode) until expiry or revoke.
+
+| ID | Requirement | Pri | Phase | Status |
+|----|-------------|-----|-------|--------|
+| **FR-SHARE-001** | Hospital Staff (own tenant), Admin, and Radiologist may create a share for a study at the patient’s facility tenant with explicit consent confirmation. | P1 | P1 | **Done** |
+| **FR-SHARE-002** | Share requires `studyId` (MAIN). At create, freeze MAIN + prior study UUIDs (same ranking as staff Compare; exclude RECEIVED). Later studies/priors require a new share. | P1 | P1 | **Done** |
+| **FR-SHARE-003** | Defaults: expiry 60 days, include signed reports on, DICOM zip download off; overrides allowed on create. | P1 | P1 | **Done** |
+| **FR-SHARE-004** | Create returns one-time plain link token URL and access code; store only hashes. Access code charset omits ambiguous characters. | P1 | P1 | **Done** |
+| **FR-SHARE-005** | Staff may list shares for a patient/facility, revoke, and regenerate access code (invalidates prior code/session version). | P1 | P1 | **Done** |
+| **FR-SHARE-006** | Public metadata endpoint exposes non-PHI only (facility name, expired/revoked/locked). Unlock with access code issues a share JWT valid until share expiry; regenerate/revoke/expiry ends access. | P1 | P1 | **Done** |
+| **FR-SHARE-007** | Share session may view only frozen MAIN+PRIOR studies; WADO and exports enforce study ∈ snapshot server-side. Priors endpoint returns frozen priors only. | P1 | P1 | **Done** |
+| **FR-SHARE-008** | Signed report PDF download only when includeReports; DICOM zip only when allowDicomDownload. | P1 | P1 | **Done** |
+| **FR-SHARE-009** | Unlock lockout after repeated failures; IP rate limit; `X-Robots-Tag: noindex` on public share responses; opaque token in URL (no PHI). | P1 | P1 | **Done** |
+| **FR-SHARE-010** | Audit SHARE_CREATE, SHARE_REVOKE, SHARE_REGEN_CODE, SHARE_UNLOCK_OK/FAIL, SHARE_VIEW_STUDY, SHARE_DOWNLOAD_PDF, SHARE_DOWNLOAD_DICOM (userId null for public; IP always). | P1 | P1 | **Done** |
+| **FR-SHARE-011** | Staff UI: consent + create from study, print-friendly HTML slip (facility, QR, URL, code, expiry, study identity + frozen prior count, keep-private; no diagnosis), manage revoke/regen. | P1 | P1 | **Done** |
+| **FR-SHARE-012** | Public UI `/s/:token` unlock → `/s/:token/studies/:id` reuses staff `StudyViewerPage` in share mode (viewer tools + prior compare; hide report editor/worklist/claim/share-create). | P1 | P1 | **Done** |
+
+**Acceptance checklist**
+
+- [ ] Hospital/radiologist creates share from a study with consent; slip prints study identity + prior count; unlock opens full viewer on MAIN study
+- [ ] Frozen priors appear in Compare; a prior created after the share is not visible
+- [ ] Wrong codes lock out; revoked/expired share rejects unlock and JWT
+- [ ] Signed PDF / DICOM zip gated by flags; unsigned reports never downloadable
+- [ ] Radiologist/admin can create for patient facility; hospital user cannot create for other tenants
+- [ ] WADO for non-snapshot studyId rejected under share JWT
+
+**Out of scope (v1):** SMS/WhatsApp delivery, server PDF slip, live-updating study/prior list, other-facility studies, draft reports, JPEG-only package.
+
 ---
 
 ### 6.9 Notifications — `FR-NTF`
@@ -617,7 +651,7 @@ Unresolved items **block** promoting related Deferred FRs.
 | **OD-BIL** | Is patient-pay (Chapa) part of TeleRad? | A) No — hospital billed only. B) Yes — gate READY on payment. C) Later phase only. | Product | FR-BIL-* |
 | **OD-ROLE** | Extra roles (Nurse, Resident/Senior, Patient, Sales)? | A) Keep 3 roles. B) Add Nurse assign. C) Split radiologist grades. | Product / Medical | FR-WL assign UX, FR-RPT sign rules |
 | **OD-SAF** | Which clinical safety pack for P2? | A) Indication gate only. B) + missing images. C) + critical ack chain. D) All. | Medical Director | FR-SAF-* |
-| **OD-PAT** | Patient-facing report links? | A) Out of scope. B) Ephemeral link post-sign. | Product | FR-DLV-008 |
+| **OD-PAT** | Patient-facing **ephemeral report** links (SMS/WhatsApp)? | A) Out of scope. B) Ephemeral link post-sign. **Unchanged / Deferred** — distinct from facility image share (**FR-SHARE**, shipped). | Product | FR-DLV-008 |
 | **OD-EDGE** | Edge ingest node for low bandwidth / secure facility delivery? | **Resolved B (2026-10-06 locks A1–Q2).** Facility C-STORE → **Orthanc + agent** → mTLS HTTPS multipart ingest → MinIO+worker (`source=GATEWAY`). Bearer enroll/dev only; mTLS before pilot. Private SCP VPN/lab only. See §6.4b decision table. Radiologist assigned-only visibility remains **out of this scope**. | Product / Eng | FR-EXT-001, FR-EDGE-* |
 | **OD-POP** | Population health analytics? | A) Out of scope. B) After core features (P0–P2) complete. | Product | FR-EXT-002 |
 | **OD-INT** | HL7 v2 vs FHIR-only outbound? | A) FHIR/webhook only. B) Add ORU^R01. | Eng / Hospital IT | FR-DLV-007 |
@@ -747,5 +781,7 @@ OpenAPI: `/swagger-ui.html` on the API process.
 | 1.13 | 2026-10-05 | Engineering | OD-EDGE = B; added FR-EDGE-001–008 for secure facility gateway delivery (multipart ingest, not public SCP). |
 | 1.14 | 2026-10-06 | Engineering | OD-EDGE locks A1–Q2: Orthanc receiver + agent, mTLS-before-pilot, multipart ingest contract, Compose packaging, heartbeat/ops, PKI/audit/RBAC. Expanded FR-EDGE-001–013; statuses reset to Partial/Todo where prior Done no longer matches. |
 | 1.15 | 2026-10-06 | Engineering | Implemented FR-EDGE stack: internal CA + enroll/renew, mTLS :8443, ingest audit + heartbeat miss alerts, Orthanc+agent compose, allowlist render. MFA and encrypted-disk ops remain site/runbook. |
+| 1.16 | 2026-10-09 | Engineering | Added FR-SHARE-001–012 (patient image share / CD replacement). OD-PAT / FR-DLV-008 remain Deferred for ephemeral single-report SMS links. |
+| 1.17 | 2026-10-10 | Engineering | FR-SHARE study-scoped: MAIN study + frozen priors; public UI reuses StudyViewerPage share mode. |
 
 **End of TeleRad Requirements Source of Truth**
