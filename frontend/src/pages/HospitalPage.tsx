@@ -81,7 +81,6 @@ export function HospitalPage() {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [shareStudyId, setShareStudyId] = useState<string | null>(null)
 
   async function load() {
     if (!hospitalId) return
@@ -369,14 +368,11 @@ export function HospitalPage() {
                   </td>
                   <td>
                     {canShare ? (
-                      <button
-                        type="button"
-                        className="btn secondary"
-                        style={{ fontSize: '0.85rem', padding: '0.25rem 0.6rem' }}
-                        onClick={() => setShareStudyId(shareStudyId === s.id ? null : s.id)}
-                      >
-                        {shareStudyId === s.id ? 'Close' : 'Share'}
-                      </button>
+                      <PatientSharePanel
+                        studyId={s.id}
+                        patientLabel={displayPatientName(s.patientName)}
+                        compact
+                      />
                     ) : (
                       <span className="muted">—</span>
                     )}
@@ -393,16 +389,6 @@ export function HospitalPage() {
             )}
           </tbody>
         </table>
-        {shareStudyId && (
-          <div style={{ padding: '1rem 1.15rem' }}>
-            <PatientSharePanel
-              studyId={shareStudyId}
-              patientLabel={displayPatientName(
-                filteredStudies.find((s) => s.id === shareStudyId)?.patientName ?? null
-              )}
-            />
-          </div>
-        )}
       </section>
     </div>
   )
