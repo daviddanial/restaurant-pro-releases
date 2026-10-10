@@ -29,7 +29,7 @@ export default function ShareSlipPage() {
   const asOf = slip.createdAt ? new Date(slip.createdAt).toLocaleString() : new Date().toLocaleString()
 
   return (
-    <div className="page">
+    <div className="page share-slip-print">
       <div className="no-print" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <button type="button" className="btn" onClick={() => window.print()}>
           Print slip
@@ -70,7 +70,14 @@ export default function ShareSlipPage() {
           }}
         >
           {qrUrl && (
-            <img src={qrUrl} alt="QR code for imaging link" width={200} height={200} style={{ border: '1px solid #ccc' }} />
+            <img
+              src={qrUrl}
+              alt="QR code for imaging link"
+              width={200}
+              height={200}
+              style={{ border: '1px solid #ccc' }}
+              crossOrigin="anonymous"
+            />
           )}
           <div>
             <p style={{ marginBottom: '0.35rem' }}>
@@ -99,14 +106,6 @@ export default function ShareSlipPage() {
           statement—ask your clinician for interpretation.
         </p>
       </div>
-
-      <style>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: white; }
-          .share-slip { box-shadow: none; border: none; }
-        }
-      `}</style>
     </div>
   )
 }
