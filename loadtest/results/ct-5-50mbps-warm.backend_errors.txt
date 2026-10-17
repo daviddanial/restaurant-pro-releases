@@ -1,0 +1,2 @@
+ct-5-50mbps-warm new backend ERROR lines: 1
+      1 2026-10-15T22:37:27.306+03:00 ERROR 1796701 --- [telerad] [ntContainer#0-2] o.s.a.r.l.SimpleMessageListenerContainer : Failed to check/redeclare auto-delete queue(s).

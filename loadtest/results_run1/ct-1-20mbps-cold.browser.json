@@ -1,0 +1,40 @@
+{
+ "label": "ct-1-20mbps-cold",
+ "readers": [
+  1
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 358,
+  "max": 358
+ },
+ "fullStudy": {
+  "p50": 156951,
+  "max": 156951
+ },
+ "scrollMs": {
+  "p50": 282,
+  "p95": 293,
+  "p99": 296,
+  "max": 397
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 1,
+   "accession": "LTCT01",
+   "compressed": false,
+   "firstImageMs": 358,
+   "fullStudyMs": 156951,
+   "scrollP95": 293,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+   ]
+  }
+ ]
+}

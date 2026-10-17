@@ -1,0 +1,75 @@
+{
+ "label": "ct-5-unl-warm",
+ "readers": [
+  4,
+  5
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 1392,
+  "max": 1392
+ },
+ "fullStudy": {
+  "p50": 21537,
+  "max": 21537
+ },
+ "allImagesReceived": {
+  "max": 9024
+ },
+ "scrollMs": {
+  "p50": 3,
+  "p95": 12,
+  "p99": 25,
+  "max": 2054
+ },
+ "errors": 0,
+ "previewMs": {
+  "max": null
+ },
+ "perReader": [
+  {
+   "reader": 4,
+   "accession": "LTCT04",
+   "compressed": true,
+   "firstImageMs": 1392,
+   "firstRenderEventMs": 498,
+   "firstInstanceBytesMs": 550,
+   "fullStudyMs": 21537,
+   "scrollP95": 14,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+   ],
+   "previewMs": null,
+   "allImagesReceivedMs": 4797,
+   "wireMb": 113.8,
+   "imageRequests": 520
+  },
+  {
+   "reader": 5,
+   "accession": "LTCT05",
+   "compressed": false,
+   "firstImageMs": 1157,
+   "firstRenderEventMs": 457,
+   "firstInstanceBytesMs": 596,
+   "fullStudyMs": 21473,
+   "scrollP95": 10,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+   ],
+   "previewMs": null,
+   "allImagesReceivedMs": 9024,
+   "wireMb": 143.3,
+   "imageRequests": 520
+  }
+ ]
+}

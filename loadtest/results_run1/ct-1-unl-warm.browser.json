@@ -1,0 +1,40 @@
+{
+ "label": "ct-1-unl-warm",
+ "readers": [
+  1
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 218,
+  "max": 218
+ },
+ "fullStudy": {
+  "p50": 25047,
+  "max": 25047
+ },
+ "scrollMs": {
+  "p50": 34,
+  "p95": 52,
+  "p99": 67,
+  "max": 89
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 1,
+   "accession": "LTCT01",
+   "compressed": false,
+   "firstImageMs": 218,
+   "fullStudyMs": 25047,
+   "scrollP95": 52,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+   ]
+  }
+ ]
+}

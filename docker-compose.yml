@@ -51,14 +51,19 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: telerad
       RABBITMQ_DEFAULT_PASS: telerad
+      # No scheduler busy-waiting: an idle broker otherwise keeps CPU cores spinning.
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "+sbwt none +sbwtdcpu none +sbwtdio none"
     ports:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
+      # Each check boots a CLI Erlang VM (~1 s of CPU), so poll fast only during startup.
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+      start_interval: 3s
 
   api:
     build:

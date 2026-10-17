@@ -1,0 +1,65 @@
+{
+ "label": "ct-5-50mbps-warm",
+ "readers": [
+  3,
+  4,
+  5
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 703,
+  "max": 730
+ },
+ "fullStudy": {
+  "p50": 118383,
+  "max": 118929
+ },
+ "scrollMs": {
+  "p50": 192,
+  "p95": 230,
+  "p99": 256,
+  "max": 1169
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 3,
+   "accession": "LTCT03",
+   "compressed": false,
+   "firstImageMs": 703,
+   "fullStudyMs": 118383,
+   "scrollP95": 233,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  },
+  {
+   "reader": 4,
+   "accession": "LTCT04",
+   "compressed": true,
+   "firstImageMs": 730,
+   "fullStudyMs": 100569,
+   "scrollP95": 207,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  },
+  {
+   "reader": 5,
+   "accession": "LTCT05",
+   "compressed": false,
+   "firstImageMs": 559,
+   "fullStudyMs": 118929,
+   "scrollP95": 234,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  }
+ ]
+}

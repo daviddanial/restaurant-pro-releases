@@ -60,6 +60,15 @@ public class Instance {
     @Column(name = "thumbnail_key", length = 512)
     private String thumbnailKey;
 
+    /** gzip copy of the object at {@link #storageKey}, served when the client accepts gzip. */
+    @Column(name = "gzip_storage_key", length = 512)
+    private String gzipStorageKey;
+
+    /** True once the real transfer syntax was read and the gzip copy made or skipped. */
+    @Column(name = "encodings_checked", nullable = false)
+    @Builder.Default
+    private boolean encodingsChecked = false;
+
     @PrePersist
     void prePersist() {
         if (id == null) id = UUID.randomUUID();

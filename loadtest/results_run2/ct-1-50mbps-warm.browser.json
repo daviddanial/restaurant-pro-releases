@@ -1,0 +1,39 @@
+{
+ "label": "ct-1-50mbps-warm",
+ "readers": [
+  1
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 659,
+  "max": 659
+ },
+ "fullStudy": {
+  "p50": 96396,
+  "max": 96396
+ },
+ "scrollMs": {
+  "p50": 160,
+  "p95": 175,
+  "p99": 180,
+  "max": 187
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 1,
+   "accession": "LTCT01",
+   "compressed": false,
+   "firstImageMs": 659,
+   "firstRenderEventMs": 393,
+   "firstInstanceBytesMs": 560,
+   "fullStudyMs": 96396,
+   "scrollP95": 175,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,71 @@
+{
+ "label": "cr-20-50mbps-cold",
+ "readers": [
+  18,
+  19,
+  20
+ ],
+ "modality": "CR",
+ "firstImage": {
+  "p50": 2705,
+  "max": 3038
+ },
+ "fullStudy": {
+  "p50": 4693,
+  "max": 6044
+ },
+ "scrollMs": {
+  "p50": 1661,
+  "p95": 2718,
+  "p99": 2718,
+  "max": 2718
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 18,
+   "accession": "LTCR18",
+   "compressed": true,
+   "firstImageMs": 2454,
+   "firstRenderEventMs": 423,
+   "firstInstanceBytesMs": 1557,
+   "fullStudyMs": 4455,
+   "scrollP95": 1661,
+   "steps": 1,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+   ]
+  },
+  {
+   "reader": 19,
+   "accession": "LTCR19",
+   "compressed": false,
+   "firstImageMs": 3038,
+   "firstRenderEventMs": 214,
+   "firstInstanceBytesMs": 2865,
+   "fullStudyMs": 6044,
+   "scrollP95": 2718,
+   "steps": 1,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+   ]
+  },
+  {
+   "reader": 20,
+   "accession": "LTCR20",
+   "compressed": true,
+   "firstImageMs": 2705,
+   "firstRenderEventMs": 676,
+   "firstInstanceBytesMs": 1721,
+   "fullStudyMs": 4693,
+   "scrollP95": 1492,
+   "steps": 1,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+   ]
+  }
+ ]
+}

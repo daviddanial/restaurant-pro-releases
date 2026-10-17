@@ -45,6 +45,9 @@ type CtxMenu = { clientX: number; clientY: number; annotationUID: string }
 
 export type ViewportInstance = PlaneInstance & {
   sopUid: string
+  rows?: number | null
+  columns?: number | null
+  transferSyntaxUid?: string | null
 }
 
 export type StackProgress = {
@@ -88,6 +91,22 @@ type StackEntry = {
 }
 
 type WlState = { center: number; width: number }
+
+// Large single images (CR/DX/MG, ~2000×2000 px and up) are several MB each: show a small
+// server-rendered JPEG while the full DICOM downloads, so the reader sees the image at once.
+const PREVIEW_MIN_PIXELS = 4_000_000
+const PREVIEW_MAX_SIZE = 1024
+
+// The server renders previews from native pixel data and baseline JPEG only.
+const PREVIEW_SYNTAXES = new Set([
+  '1.2.840.10008.1.2', '1.2.840.10008.1.2.1', '1.2.840.10008.1.2.2', '1.2.840.10008.1.2.4.50',
+])
+
+function wantsPreview(inst: ViewportInstance | undefined): inst is ViewportInstance {
+  return !!inst && (inst.numberOfFrames || 1) <= 1
+    && (inst.rows ?? 0) * (inst.columns ?? 0) >= PREVIEW_MIN_PIXELS
+    && (!inst.transferSyntaxUid || PREVIEW_SYNTAXES.has(inst.transferSyntaxUid))
+}
 
 const ZOOM_STEP = 1.25
 const MIN_ZOOM = 0.1
@@ -233,6 +252,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [tool, setTool] = useState<Tool>('wwwc')
   const [invert, setInvert] = useState(false)
   const [wl, setWl] = useState<WlState>({ center: 0, width: 0 })
@@ -490,6 +510,27 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   useEffect(() => {
     if (!ready) return
     let cancelled = false
+    let fullImageShown = false
+    let preview: string | null = null
+    const dropPreview = () => {
+      if (preview) URL.revokeObjectURL(preview)
+      preview = null
+      setPreviewUrl(null)
+    }
+
+    function loadPreview(inst: ViewportInstance) {
+      const token = getBearerToken()
+      const url = `/api/dicom/studies/${studyUid}/series/${seriesUid}/instances/${encodeURIComponent(inst.sopUid)}`
+        + `/frames/1?maxSize=${PREVIEW_MAX_SIZE}`
+      fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+        .then((res) => (res.ok ? res.blob() : null))
+        .then((blob) => {
+          if (!blob || cancelled || fullImageShown) return
+          preview = URL.createObjectURL(blob)
+          setPreviewUrl(preview)
+        })
+        .catch(() => { /* preview is optional; the full image still loads */ })
+    }
 
     async function loadStack() {
       const viewport = getViewport()
@@ -506,8 +547,12 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
 
       try {
         const startIdx = firstStackIndexForInstance(stack, instanceIndex)
+        const startInstance = instances[stack[startIdx]?.instanceIndex ?? 0]
+        if (wantsPreview(startInstance)) loadPreview(startInstance)
         syncingRef.current = true
         await viewport.setStack(stack.map((s) => s.imageId), startIdx)
+        fullImageShown = true
+        dropPreview()
         viewport.resetCamera()
         if (invertRef.current) {
           viewport.setProperties({ invert: true })
@@ -524,6 +569,11 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
           setWl({ center: windowCenter, width: windowWidth })
         }
         setLoading(false)
+
+        // Fetch the rest of the series in the background, nearest slices first, so scrolling
+        // reads from memory instead of waiting on the network one image at a time.
+        const el = elementRef.current
+        if (el && stack.length > 1) toolUtilities.stackPrefetch.enable(el)
 
         // For studies ingested before plane tags were stored, fill from WADO metadata.
         if (!hasSpatialPositions(positionsRef.current) && instances.length > 0 && instances.length <= 256) {
@@ -543,7 +593,12 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     }
 
     loadStack()
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+      dropPreview()
+      const el = elementRef.current
+      if (el) toolUtilities.stackPrefetch.disable(el)
+    }
   }, [ready, studyUid, seriesUid, stack, stackKey, cineRate, frameTime, modality, getViewport, instances])
   // intentionally omit instanceIndex — jump handled below
 
@@ -980,7 +1035,18 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         tabIndex={0}
         onContextMenu={onAnnotationContextMenu}
       />
-      {loading && <div className="viewport-overlay muted">Loading DICOM…</div>}
+      {previewUrl && loading && (
+        <>
+          <img
+            className="viewport-preview"
+            src={previewUrl}
+            alt=""
+            onLoad={(e) => { e.currentTarget.dataset.loaded = '1' }}
+          />
+          <span className="viewport-preview-badge">Preview · loading full image…</span>
+        </>
+      )}
+      {loading && !previewUrl && <div className="viewport-overlay muted">Loading DICOM…</div>}
       {error && <div className="viewport-overlay error">{error}</div>}
       <div className="viewport-hud">
         <div>{wl.width > 0 ? `W: ${Math.round(wl.width)}  L: ${Math.round(wl.center)}` : 'W/L: DICOM'}</div>

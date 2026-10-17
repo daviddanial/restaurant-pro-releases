@@ -20,6 +20,9 @@ import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReader;
 import org.dcm4che3.imageio.plugins.dcm.DicomImageReaderSpi;
 import org.dcm4che3.io.DicomInputStream;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,15 +30,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -75,17 +82,71 @@ public class WadoController {
         return body;
     }
 
+    /**
+     * Part-10 DICOM object, streamed from object storage. Uncompressed objects have a gzip copy
+     * (made at ingest) that is sent as-is with Content-Encoding: gzip when the client accepts it.
+     * Objects never change once stored, so responses carry an ETag and may be cached privately.
+     */
     @GetMapping("/studies/{studyUID}/series/{seriesUID}/instances/{sopUID}")
-    public ResponseEntity<byte[]> instance(
+    public ResponseEntity<Resource> instance(
             @PathVariable String studyUID,
             @PathVariable String seriesUID,
-            @PathVariable String sopUID) {
+            @PathVariable String sopUID,
+            @RequestHeader(value = HttpHeaders.ACCEPT_ENCODING, required = false) String acceptEncoding,
+            @RequestHeader(value = HttpHeaders.IF_NONE_MATCH, required = false) String ifNoneMatch) {
         Instance instance = requireInstance(studyUID, seriesUID, sopUID);
-        byte[] data = storage.getBytes(instance.getStorageKey());
-        return ResponseEntity.ok()
+        boolean gzip = instance.getGzipStorageKey() != null && acceptsGzip(acceptEncoding);
+        String etag = "\"" + sopUID + (gzip ? ".gz" : "") + "\"";
+        CacheControl cacheControl = imageCacheControl();
+        if (etagMatches(ifNoneMatch, etag)) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                    .eTag(etag).cacheControl(cacheControl).varyBy(HttpHeaders.ACCEPT_ENCODING).build();
+        }
+        ResponseInputStream<GetObjectResponse> in =
+                storage.getStream(gzip ? instance.getGzipStorageKey() : instance.getStorageKey());
+        ResponseEntity.BodyBuilder response = ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/dicom"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + sopUID + ".dcm\"")
-                .body(data);
+                .contentLength(in.response().contentLength())
+                .eTag(etag)
+                .cacheControl(cacheControl)
+                .varyBy(HttpHeaders.ACCEPT_ENCODING)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + sopUID + ".dcm\"");
+        if (gzip) response.header(HttpHeaders.CONTENT_ENCODING, "gzip");
+        return response.body(new InputStreamResource(in));
+    }
+
+    /** Staff workstations may keep images for a day; patient-share sessions keep nothing on disk. */
+    private static CacheControl imageCacheControl() {
+        return SharePrincipal.currentOrNull() != null
+                ? CacheControl.noStore()
+                : CacheControl.maxAge(Duration.ofDays(1)).cachePrivate();
+    }
+
+    static boolean acceptsGzip(String acceptEncoding) {
+        if (acceptEncoding == null) return false;
+        for (String part : acceptEncoding.split(",")) {
+            String[] tokens = part.trim().split(";");
+            String coding = tokens[0].trim().toLowerCase();
+            if (!coding.equals("gzip") && !coding.equals("*")) continue;
+            boolean refused = false;
+            for (int i = 1; i < tokens.length; i++) {
+                String param = tokens[i].trim().replace(" ", "");
+                if (param.startsWith("q=") && Double.parseDouble(param.substring(2)) == 0) refused = true;
+            }
+            if (!refused) return true;
+        }
+        return false;
+    }
+
+    static boolean etagMatches(String ifNoneMatch, String etag) {
+        if (ifNoneMatch == null) return false;
+        for (String candidate : ifNoneMatch.split(",")) {
+            String c = candidate.trim();
+            if (c.equals("*")) return true;
+            if (c.startsWith("W/")) c = c.substring(2);
+            if (c.equals(etag)) return true;
+        }
+        return false;
     }
 
     @GetMapping("/studies/{studyUID}/series/{seriesUID}/instances/{sopUID}/frames/{frame}")
@@ -95,7 +156,8 @@ public class WadoController {
             @PathVariable String sopUID,
             @PathVariable int frame,
             @RequestParam(required = false) Double windowCenter,
-            @RequestParam(required = false) Double windowWidth) {
+            @RequestParam(required = false) Double windowWidth,
+            @RequestParam(required = false) Integer maxSize) {
         Instance instance = requireInstance(studyUID, seriesUID, sopUID);
         int frameNumber = Math.max(1, frame);
         if (frameNumber > Math.max(1, instance.getNumberOfFrames())) {
@@ -103,8 +165,9 @@ public class WadoController {
         }
         try {
             byte[] dicom = storage.getBytes(instance.getStorageKey());
-            byte[] jpeg = renderFrameAsJpeg(dicom, frameNumber - 1, windowCenter, windowWidth);
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(jpeg);
+            Integer size = maxSize == null ? null : Math.max(64, Math.min(maxSize, 4096));
+            byte[] jpeg = renderFrameAsJpeg(dicom, frameNumber - 1, windowCenter, windowWidth, size);
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).cacheControl(imageCacheControl()).body(jpeg);
         } catch (UnsupportedTransferSyntaxException e) {
             log.warn("Unsupported transfer syntax for frame render: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
@@ -123,10 +186,12 @@ public class WadoController {
         Study study = instance.getSeries().getStudy();
         assertCanView(study);
         try {
-            byte[] dicom = storage.getBytes(instance.getStorageKey());
             Attributes attrs;
-            try (DicomInputStream dis = new DicomInputStream(new ByteArrayInputStream(dicom))) {
+            // Header only: stop before pixel data and drop the rest of the object unread.
+            try (ResponseInputStream<GetObjectResponse> in = storage.getStream(instance.getStorageKey());
+                 DicomInputStream dis = new DicomInputStream(in)) {
                 attrs = dis.readDataset(-1, Tag.PixelData);
+                in.abort();
             }
             Map<String, Object> meta = new LinkedHashMap<>();
             meta.put("SOPInstanceUID", sopUID);
@@ -219,7 +284,12 @@ public class WadoController {
         throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
 
-    private byte[] renderFrameAsJpeg(byte[] dicomBytes, int frameIndex, Double windowCenter, Double windowWidth)
+    private byte[] renderFrameAsJpeg(byte[] dicomBytes, int frameIndex, Double windowCenter, Double windowWidth,
+                                     Integer maxSize) throws Exception {
+        return encodeJpeg(downscale(renderFrame(dicomBytes, frameIndex, windowCenter, windowWidth), maxSize));
+    }
+
+    private BufferedImage renderFrame(byte[] dicomBytes, int frameIndex, Double windowCenter, Double windowWidth)
             throws Exception {
         String tsuid;
         Attributes dataset;
@@ -262,7 +332,7 @@ public class WadoController {
         return renderUncompressedFrame(dataset, frameIndex, photometric, wlCenter, wlWidth);
     }
 
-    private byte[] renderWithDicomImageReader(byte[] dicomBytes, int frameIndex,
+    private BufferedImage renderWithDicomImageReader(byte[] dicomBytes, int frameIndex,
                                               Double windowCenter, Double windowWidth) throws Exception {
         try (ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(dicomBytes))) {
             DicomImageReader reader = new DicomImageReader(new DicomImageReaderSpi());
@@ -274,12 +344,12 @@ public class WadoController {
                 param.setWindowWidth(windowWidth.floatValue());
             }
             BufferedImage image = reader.read(index, param);
-            return encodeJpeg(image);
+            return image;
         }
     }
 
     /** Decode a single encapsulated JPEG Baseline/Extended frame when dcm4che ImageReader is unavailable. */
-    private byte[] renderEncapsulatedJpeg(Attributes attrs, int frameIndex,
+    private BufferedImage renderEncapsulatedJpeg(Attributes attrs, int frameIndex,
                                           Double windowCenter, Double windowWidth) throws Exception {
         Object value = attrs.getValue(Tag.PixelData);
         if (!(value instanceof Fragments fragments) || fragments.size() < 2) {
@@ -297,10 +367,10 @@ public class WadoController {
                 && decoded.getType() == BufferedImage.TYPE_BYTE_GRAY) {
             decoded = applyWindowLevelGray(decoded, windowCenter, windowWidth);
         }
-        return encodeJpeg(decoded);
+        return decoded;
     }
 
-    private byte[] renderRleFrame(Attributes attrs, int frameIndex, String photometric) throws Exception {
+    private BufferedImage renderRleFrame(Attributes attrs, int frameIndex, String photometric) throws Exception {
         Object value = attrs.getValue(Tag.PixelData);
         if (!(value instanceof Fragments fragments) || fragments.size() < 2) {
             throw new IllegalStateException("No RLE fragments");
@@ -317,10 +387,10 @@ public class WadoController {
         int bytesPerSample = 1;
         int frameLen = rows * cols * samples * bytesPerSample;
         byte[] raw = decodeRleFrame(compressed, frameLen, samples);
-        return pixelsToJpeg(attrs, raw, rows, cols, samples, photometric, null, null);
+        return pixelsToImage(attrs, raw, rows, cols, samples, photometric, null, null);
     }
 
-    private byte[] renderUncompressedFrame(Attributes attrs, int frameIndex, String photometric,
+    private BufferedImage renderUncompressedFrame(Attributes attrs, int frameIndex, String photometric,
                                            Double windowCenter, Double windowWidth) throws Exception {
         int rows = attrs.getInt(Tag.Rows, 0);
         int cols = attrs.getInt(Tag.Columns, 0);
@@ -351,10 +421,10 @@ public class WadoController {
         if (planar == 1 && samples == 3 && !"YBR_FULL_422".equals(photometric)) {
             frame = planarToPixelInterleaved(frame, rows, cols, samples);
         }
-        return pixelsToJpeg(attrs, frame, rows, cols, samples, photometric, windowCenter, windowWidth);
+        return pixelsToImage(attrs, frame, rows, cols, samples, photometric, windowCenter, windowWidth);
     }
 
-    private byte[] pixelsToJpeg(Attributes attrs, byte[] frame, int rows, int cols, int samples,
+    private BufferedImage pixelsToImage(Attributes attrs, byte[] frame, int rows, int cols, int samples,
                                 String photometric, Double windowCenter, Double windowWidth)
             throws Exception {
         BufferedImage image;
@@ -370,7 +440,7 @@ public class WadoController {
             default -> // MONOCHROME2 and unknown single-sample
                     image = grayToImage(attrs, frame, rows, cols, windowCenter, windowWidth);
         }
-        return encodeJpeg(image);
+        return image;
     }
 
     /**
@@ -728,6 +798,25 @@ public class WadoController {
         byte[] pixels = ((DataBufferByte) src.getRaster().getDataBuffer()).getData();
         byte[] dest = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
         applyWindowLevel(pixels, dest, dest.length, 1, windowCenter, windowWidth);
+        return out;
+    }
+
+    /** Shrink so the longer side is at most {@code maxSize} px (preview images); no-op when smaller. */
+    private static BufferedImage downscale(BufferedImage image, Integer maxSize) {
+        if (maxSize == null || maxSize <= 0) return image;
+        int w = image.getWidth();
+        int h = image.getHeight();
+        double scale = (double) maxSize / Math.max(w, h);
+        if (scale >= 1) return image;
+        int sw = Math.max(1, (int) Math.round(w * scale));
+        int sh = Math.max(1, (int) Math.round(h * scale));
+        BufferedImage src = toJpegCompatible(image);
+        BufferedImage out = new BufferedImage(sw, sh, src.getType());
+        Graphics2D g = out.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.drawImage(src, 0, 0, sw, sh, null);
+        g.dispose();
         return out;
     }
 

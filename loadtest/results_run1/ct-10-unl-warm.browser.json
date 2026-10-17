@@ -1,0 +1,65 @@
+{
+ "label": "ct-10-unl-warm",
+ "readers": [
+  8,
+  9,
+  10
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 1188,
+  "max": 2250
+ },
+ "fullStudy": {
+  "p50": 75223,
+  "max": 76755
+ },
+ "scrollMs": {
+  "p50": 94,
+  "p95": 168,
+  "p99": 244,
+  "max": 2546
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 8,
+   "accession": "LTCT08",
+   "compressed": true,
+   "firstImageMs": 1188,
+   "fullStudyMs": 76755,
+   "scrollP95": 174,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  },
+  {
+   "reader": 9,
+   "accession": "LTCT09",
+   "compressed": false,
+   "firstImageMs": 1151,
+   "fullStudyMs": 62211,
+   "scrollP95": 144,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  },
+  {
+   "reader": 10,
+   "accession": "LTCT10",
+   "compressed": true,
+   "firstImageMs": 2250,
+   "fullStudyMs": 75223,
+   "scrollP95": 174,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+   ]
+  }
+ ]
+}

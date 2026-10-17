@@ -315,6 +315,9 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
   const priorViewportInstances = (priorSeries?.instances || []).map((i) => ({
     sopUid: i.sopInstanceUid,
     numberOfFrames: i.numberOfFrames,
+    rows: i.rows,
+    columns: i.columns,
+    transferSyntaxUid: i.transferSyntaxUid,
     imagePositionPatient: i.imagePositionPatient,
     imageOrientationPatient: i.imageOrientationPatient,
   }))
@@ -699,6 +702,9 @@ function SlotViewport({
     () => (series?.instances || []).map((i) => ({
       sopUid: i.sopInstanceUid,
       numberOfFrames: i.numberOfFrames,
+      rows: i.rows,
+      columns: i.columns,
+      transferSyntaxUid: i.transferSyntaxUid,
       imagePositionPatient: i.imagePositionPatient,
       imageOrientationPatient: i.imageOrientationPatient,
     })),

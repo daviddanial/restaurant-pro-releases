@@ -1,0 +1,4737 @@
+{
+ "summary": {
+  "label": "ct-1-20mbps-warm",
+  "startedAt": "2026-10-15T16:27:21.412Z",
+  "readers": 1,
+  "modality": "CT",
+  "paceMs": 0,
+  "prefetch": 5,
+  "base": "http://127.0.0.1:5190",
+  "firstImage": {
+   "p50": 530.3910089999999,
+   "max": 530.3910089999999
+  },
+  "fullStudy": {
+   "p50": 57683.429426999995,
+   "max": 57683.429426999995
+  },
+  "scrollMs": {
+   "p50": 548,
+   "p95": 610,
+   "p99": 661,
+   "max": 798
+  },
+  "errors": 0,
+  "errorKinds": [],
+  "mbTotal": 273.135926,
+  "wireMbTotal": 143.012951,
+  "perReader": [
+   {
+    "reader": 1,
+    "accession": "LTCT01",
+    "compressed": false,
+    "firstImageMs": 530,
+    "fullStudyMs": 57683,
+    "scrollP95": 610,
+    "errors": 0,
+    "mb": 273.1,
+    "wireMb": 143
+   }
+  ]
+ },
+ "results": [
+  {
+   "reader": 1,
+   "accession": "LTCT01",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 173,
+     "ttfb": 68,
+     "bytes": 525256,
+     "wire": 275792,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 488,
+     "ttfb": 82,
+     "bytes": 525256,
+     "wire": 275727,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 2,
+     "ms": 590,
+     "ttfb": 95,
+     "bytes": 525256,
+     "wire": 275952,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 3,
+     "ms": 600,
+     "ttfb": 105,
+     "bytes": 525256,
+     "wire": 275710,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 4,
+     "ms": 618,
+     "ttfb": 132,
+     "bytes": 525256,
+     "wire": 275938,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 5,
+     "ms": 549,
+     "ttfb": 130,
+     "bytes": 525256,
+     "wire": 275869,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 6,
+     "ms": 412,
+     "ttfb": 122,
+     "bytes": 525256,
+     "wire": 275954,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 7,
+     "ms": 515,
+     "ttfb": 119,
+     "bytes": 525256,
+     "wire": 275927,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 8,
+     "ms": 530,
+     "ttfb": 113,
+     "bytes": 525256,
+     "wire": 276057,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 9,
+     "ms": 543,
+     "ttfb": 111,
+     "bytes": 525256,
+     "wire": 276145,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 10,
+     "ms": 574,
+     "ttfb": 125,
+     "bytes": 525260,
+     "wire": 275919,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 11,
+     "ms": 505,
+     "ttfb": 162,
+     "bytes": 525260,
+     "wire": 275928,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 12,
+     "ms": 528,
+     "ttfb": 133,
+     "bytes": 525260,
+     "wire": 275918,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 13,
+     "ms": 525,
+     "ttfb": 111,
+     "bytes": 525260,
+     "wire": 275905,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 14,
+     "ms": 580,
+     "ttfb": 120,
+     "bytes": 525260,
+     "wire": 276035,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 15,
+     "ms": 561,
+     "ttfb": 133,
+     "bytes": 525260,
+     "wire": 275962,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 16,
+     "ms": 529,
+     "ttfb": 165,
+     "bytes": 525260,
+     "wire": 275865,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 17,
+     "ms": 561,
+     "ttfb": 138,
+     "bytes": 525260,
+     "wire": 276048,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 18,
+     "ms": 565,
+     "ttfb": 142,
+     "bytes": 525260,
+     "wire": 275956,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 19,
+     "ms": 561,
+     "ttfb": 122,
+     "bytes": 525260,
+     "wire": 276056,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 20,
+     "ms": 585,
+     "ttfb": 127,
+     "bytes": 525260,
+     "wire": 276056,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 21,
+     "ms": 548,
+     "ttfb": 172,
+     "bytes": 525260,
+     "wire": 275633,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 22,
+     "ms": 517,
+     "ttfb": 135,
+     "bytes": 525260,
+     "wire": 275892,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 23,
+     "ms": 537,
+     "ttfb": 138,
+     "bytes": 525260,
+     "wire": 275989,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 24,
+     "ms": 540,
+     "ttfb": 123,
+     "bytes": 525260,
+     "wire": 276003,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 25,
+     "ms": 546,
+     "ttfb": 126,
+     "bytes": 525260,
+     "wire": 275952,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 26,
+     "ms": 556,
+     "ttfb": 163,
+     "bytes": 525260,
+     "wire": 275887,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 27,
+     "ms": 551,
+     "ttfb": 160,
+     "bytes": 525260,
+     "wire": 275936,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 28,
+     "ms": 554,
+     "ttfb": 143,
+     "bytes": 525260,
+     "wire": 276054,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 29,
+     "ms": 551,
+     "ttfb": 128,
+     "bytes": 525260,
+     "wire": 275770,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 30,
+     "ms": 558,
+     "ttfb": 125,
+     "bytes": 525260,
+     "wire": 276017,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 31,
+     "ms": 549,
+     "ttfb": 161,
+     "bytes": 525260,
+     "wire": 275820,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 32,
+     "ms": 545,
+     "ttfb": 166,
+     "bytes": 525260,
+     "wire": 276026,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 33,
+     "ms": 545,
+     "ttfb": 146,
+     "bytes": 525260,
+     "wire": 275884,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 34,
+     "ms": 548,
+     "ttfb": 131,
+     "bytes": 525260,
+     "wire": 276065,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 35,
+     "ms": 610,
+     "ttfb": 144,
+     "bytes": 525260,
+     "wire": 275768,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 36,
+     "ms": 544,
+     "ttfb": 165,
+     "bytes": 525260,
+     "wire": 275836,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 37,
+     "ms": 534,
+     "ttfb": 164,
+     "bytes": 525260,
+     "wire": 276104,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 38,
+     "ms": 532,
+     "ttfb": 145,
+     "bytes": 525260,
+     "wire": 275940,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 39,
+     "ms": 533,
+     "ttfb": 126,
+     "bytes": 525260,
+     "wire": 275972,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 40,
+     "ms": 555,
+     "ttfb": 162,
+     "bytes": 525260,
+     "wire": 275787,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 41,
+     "ms": 551,
+     "ttfb": 146,
+     "bytes": 525260,
+     "wire": 275958,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 42,
+     "ms": 550,
+     "ttfb": 159,
+     "bytes": 525260,
+     "wire": 275829,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 43,
+     "ms": 548,
+     "ttfb": 145,
+     "bytes": 525260,
+     "wire": 275673,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 44,
+     "ms": 548,
+     "ttfb": 125,
+     "bytes": 525260,
+     "wire": 275690,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 45,
+     "ms": 560,
+     "ttfb": 158,
+     "bytes": 525260,
+     "wire": 275815,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 46,
+     "ms": 566,
+     "ttfb": 144,
+     "bytes": 525260,
+     "wire": 275634,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 47,
+     "ms": 549,
+     "ttfb": 174,
+     "bytes": 525260,
+     "wire": 275423,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 48,
+     "ms": 554,
+     "ttfb": 159,
+     "bytes": 525260,
+     "wire": 275513,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 49,
+     "ms": 554,
+     "ttfb": 140,
+     "bytes": 525260,
+     "wire": 275661,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 50,
+     "ms": 541,
+     "ttfb": 163,
+     "bytes": 525260,
+     "wire": 275768,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 51,
+     "ms": 547,
+     "ttfb": 143,
+     "bytes": 525260,
+     "wire": 275170,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 52,
+     "ms": 564,
+     "ttfb": 161,
+     "bytes": 525260,
+     "wire": 275664,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 53,
+     "ms": 552,
+     "ttfb": 151,
+     "bytes": 525260,
+     "wire": 275448,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 54,
+     "ms": 554,
+     "ttfb": 157,
+     "bytes": 525260,
+     "wire": 275461,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 55,
+     "ms": 557,
+     "ttfb": 166,
+     "bytes": 525260,
+     "wire": 275392,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 56,
+     "ms": 544,
+     "ttfb": 143,
+     "bytes": 525260,
+     "wire": 275304,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 57,
+     "ms": 539,
+     "ttfb": 157,
+     "bytes": 525260,
+     "wire": 275007,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 58,
+     "ms": 548,
+     "ttfb": 149,
+     "bytes": 525260,
+     "wire": 275172,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 59,
+     "ms": 546,
+     "ttfb": 127,
+     "bytes": 525260,
+     "wire": 274988,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 60,
+     "ms": 538,
+     "ttfb": 157,
+     "bytes": 525260,
+     "wire": 275062,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 61,
+     "ms": 543,
+     "ttfb": 144,
+     "bytes": 525260,
+     "wire": 274962,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 62,
+     "ms": 556,
+     "ttfb": 159,
+     "bytes": 525260,
+     "wire": 274959,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 63,
+     "ms": 559,
+     "ttfb": 142,
+     "bytes": 525260,
+     "wire": 275077,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 64,
+     "ms": 557,
+     "ttfb": 122,
+     "bytes": 525260,
+     "wire": 274905,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 65,
+     "ms": 550,
+     "ttfb": 169,
+     "bytes": 525260,
+     "wire": 274700,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 66,
+     "ms": 551,
+     "ttfb": 149,
+     "bytes": 525260,
+     "wire": 274781,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 67,
+     "ms": 544,
+     "ttfb": 160,
+     "bytes": 525260,
+     "wire": 274504,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 68,
+     "ms": 543,
+     "ttfb": 139,
+     "bytes": 525260,
+     "wire": 274890,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 69,
+     "ms": 542,
+     "ttfb": 121,
+     "bytes": 525260,
+     "wire": 274577,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 70,
+     "ms": 556,
+     "ttfb": 161,
+     "bytes": 525260,
+     "wire": 274761,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 71,
+     "ms": 560,
+     "ttfb": 142,
+     "bytes": 525260,
+     "wire": 274412,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 72,
+     "ms": 551,
+     "ttfb": 161,
+     "bytes": 525260,
+     "wire": 274364,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 73,
+     "ms": 548,
+     "ttfb": 146,
+     "bytes": 525256,
+     "wire": 274468,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 74,
+     "ms": 549,
+     "ttfb": 128,
+     "bytes": 525260,
+     "wire": 274421,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 75,
+     "ms": 550,
+     "ttfb": 163,
+     "bytes": 525260,
+     "wire": 274283,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 76,
+     "ms": 545,
+     "ttfb": 138,
+     "bytes": 525260,
+     "wire": 274345,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 77,
+     "ms": 545,
+     "ttfb": 163,
+     "bytes": 525260,
+     "wire": 274191,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 78,
+     "ms": 549,
+     "ttfb": 148,
+     "bytes": 525260,
+     "wire": 274057,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 79,
+     "ms": 548,
+     "ttfb": 129,
+     "bytes": 525260,
+     "wire": 274215,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 80,
+     "ms": 545,
+     "ttfb": 159,
+     "bytes": 525260,
+     "wire": 273822,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 81,
+     "ms": 546,
+     "ttfb": 143,
+     "bytes": 525260,
+     "wire": 273826,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 82,
+     "ms": 560,
+     "ttfb": 160,
+     "bytes": 525260,
+     "wire": 273948,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 83,
+     "ms": 554,
+     "ttfb": 144,
+     "bytes": 525260,
+     "wire": 273854,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 84,
+     "ms": 554,
+     "ttfb": 126,
+     "bytes": 525260,
+     "wire": 273843,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 85,
+     "ms": 572,
+     "ttfb": 163,
+     "bytes": 525260,
+     "wire": 273555,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 86,
+     "ms": 569,
+     "ttfb": 148,
+     "bytes": 525260,
+     "wire": 273488,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 87,
+     "ms": 542,
+     "ttfb": 173,
+     "bytes": 525260,
+     "wire": 273874,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 88,
+     "ms": 541,
+     "ttfb": 166,
+     "bytes": 525256,
+     "wire": 273459,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 89,
+     "ms": 539,
+     "ttfb": 148,
+     "bytes": 525260,
+     "wire": 273666,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 90,
+     "ms": 521,
+     "ttfb": 156,
+     "bytes": 525260,
+     "wire": 273467,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 91,
+     "ms": 524,
+     "ttfb": 142,
+     "bytes": 525260,
+     "wire": 273730,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 92,
+     "ms": 544,
+     "ttfb": 156,
+     "bytes": 525260,
+     "wire": 273543,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 93,
+     "ms": 551,
+     "ttfb": 143,
+     "bytes": 525260,
+     "wire": 273649,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 94,
+     "ms": 538,
+     "ttfb": 127,
+     "bytes": 525260,
+     "wire": 273374,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 95,
+     "ms": 625,
+     "ttfb": 156,
+     "bytes": 525260,
+     "wire": 273469,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 96,
+     "ms": 533,
+     "ttfb": 145,
+     "bytes": 525260,
+     "wire": 273583,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 97,
+     "ms": 553,
+     "ttfb": 146,
+     "bytes": 525260,
+     "wire": 273550,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 98,
+     "ms": 542,
+     "ttfb": 135,
+     "bytes": 525260,
+     "wire": 273298,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 99,
+     "ms": 591,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 273626,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 100,
+     "ms": 504,
+     "ttfb": 124,
+     "bytes": 525262,
+     "wire": 273337,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 101,
+     "ms": 549,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 273630,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 102,
+     "ms": 545,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 273525,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 103,
+     "ms": 528,
+     "ttfb": 119,
+     "bytes": 525258,
+     "wire": 273345,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 104,
+     "ms": 519,
+     "ttfb": 150,
+     "bytes": 525262,
+     "wire": 273580,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 105,
+     "ms": 551,
+     "ttfb": 144,
+     "bytes": 525258,
+     "wire": 273593,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 106,
+     "ms": 541,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 273367,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 107,
+     "ms": 540,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 273488,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 108,
+     "ms": 539,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 273538,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 109,
+     "ms": 552,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 273545,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 110,
+     "ms": 544,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 273632,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 111,
+     "ms": 549,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 273888,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 112,
+     "ms": 546,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 273569,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 113,
+     "ms": 547,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 273900,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 114,
+     "ms": 546,
+     "ttfb": 166,
+     "bytes": 525262,
+     "wire": 274038,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 115,
+     "ms": 628,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 273784,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 116,
+     "ms": 547,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 273908,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 117,
+     "ms": 544,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 273983,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 118,
+     "ms": 525,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 273971,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 119,
+     "ms": 513,
+     "ttfb": 166,
+     "bytes": 525262,
+     "wire": 274273,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 120,
+     "ms": 530,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 274342,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 121,
+     "ms": 580,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 274119,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 122,
+     "ms": 553,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 274374,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 123,
+     "ms": 548,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 274357,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 124,
+     "ms": 569,
+     "ttfb": 157,
+     "bytes": 525262,
+     "wire": 274196,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 125,
+     "ms": 584,
+     "ttfb": 159,
+     "bytes": 525262,
+     "wire": 274411,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 126,
+     "ms": 550,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 274238,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 127,
+     "ms": 544,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 274721,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 128,
+     "ms": 541,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 274926,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 129,
+     "ms": 529,
+     "ttfb": 144,
+     "bytes": 525258,
+     "wire": 274659,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 130,
+     "ms": 531,
+     "ttfb": 127,
+     "bytes": 525258,
+     "wire": 274751,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 131,
+     "ms": 541,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 274917,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 132,
+     "ms": 548,
+     "ttfb": 138,
+     "bytes": 525258,
+     "wire": 275065,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 133,
+     "ms": 551,
+     "ttfb": 120,
+     "bytes": 525262,
+     "wire": 274883,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 134,
+     "ms": 557,
+     "ttfb": 148,
+     "bytes": 525258,
+     "wire": 274882,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 135,
+     "ms": 576,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 275133,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 136,
+     "ms": 576,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 275195,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 137,
+     "ms": 576,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 275018,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 138,
+     "ms": 568,
+     "ttfb": 127,
+     "bytes": 525262,
+     "wire": 275246,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 139,
+     "ms": 541,
+     "ttfb": 168,
+     "bytes": 525262,
+     "wire": 275405,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 140,
+     "ms": 538,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275369,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 141,
+     "ms": 538,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 275657,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 142,
+     "ms": 533,
+     "ttfb": 117,
+     "bytes": 525262,
+     "wire": 275515,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 143,
+     "ms": 534,
+     "ttfb": 111,
+     "bytes": 525262,
+     "wire": 275362,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 144,
+     "ms": 553,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275364,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 145,
+     "ms": 534,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 275634,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 146,
+     "ms": 533,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 275343,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 147,
+     "ms": 538,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 275664,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 148,
+     "ms": 606,
+     "ttfb": 115,
+     "bytes": 525262,
+     "wire": 275472,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 149,
+     "ms": 555,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 275445,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 150,
+     "ms": 530,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275689,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 151,
+     "ms": 502,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275661,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 152,
+     "ms": 530,
+     "ttfb": 120,
+     "bytes": 525262,
+     "wire": 275798,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 153,
+     "ms": 581,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275744,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 154,
+     "ms": 553,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275710,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 155,
+     "ms": 525,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 275856,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 156,
+     "ms": 553,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275835,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 157,
+     "ms": 551,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 276080,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 158,
+     "ms": 550,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 275807,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 159,
+     "ms": 580,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275702,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 160,
+     "ms": 573,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 276149,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 161,
+     "ms": 573,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 275784,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 162,
+     "ms": 545,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 275800,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 163,
+     "ms": 548,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 275915,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 164,
+     "ms": 639,
+     "ttfb": 163,
+     "bytes": 525262,
+     "wire": 275881,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 165,
+     "ms": 529,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 275878,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 166,
+     "ms": 532,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 275784,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 167,
+     "ms": 516,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 275940,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 168,
+     "ms": 510,
+     "ttfb": 149,
+     "bytes": 525262,
+     "wire": 275866,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 169,
+     "ms": 554,
+     "ttfb": 163,
+     "bytes": 525262,
+     "wire": 275872,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 170,
+     "ms": 547,
+     "ttfb": 117,
+     "bytes": 525262,
+     "wire": 275919,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 171,
+     "ms": 571,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 275915,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 172,
+     "ms": 539,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 276037,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 173,
+     "ms": 561,
+     "ttfb": 169,
+     "bytes": 525262,
+     "wire": 276149,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 174,
+     "ms": 557,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 275884,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 175,
+     "ms": 563,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275939,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 176,
+     "ms": 564,
+     "ttfb": 123,
+     "bytes": 525262,
+     "wire": 275846,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 177,
+     "ms": 556,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 275831,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 178,
+     "ms": 549,
+     "ttfb": 169,
+     "bytes": 525262,
+     "wire": 276158,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 179,
+     "ms": 545,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 276063,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 180,
+     "ms": 538,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 276106,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 181,
+     "ms": 600,
+     "ttfb": 117,
+     "bytes": 525262,
+     "wire": 275966,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 182,
+     "ms": 542,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 275736,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 183,
+     "ms": 538,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275759,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 184,
+     "ms": 520,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 276255,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 185,
+     "ms": 528,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 275824,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 186,
+     "ms": 533,
+     "ttfb": 119,
+     "bytes": 525262,
+     "wire": 276024,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 187,
+     "ms": 559,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275783,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 188,
+     "ms": 556,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275872,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 189,
+     "ms": 535,
+     "ttfb": 165,
+     "bytes": 525262,
+     "wire": 275876,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 190,
+     "ms": 506,
+     "ttfb": 146,
+     "bytes": 525262,
+     "wire": 275735,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 191,
+     "ms": 798,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 275873,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 192,
+     "ms": 485,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 275817,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 193,
+     "ms": 505,
+     "ttfb": 124,
+     "bytes": 525262,
+     "wire": 275970,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 194,
+     "ms": 538,
+     "ttfb": 116,
+     "bytes": 525258,
+     "wire": 275783,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 195,
+     "ms": 567,
+     "ttfb": 123,
+     "bytes": 525262,
+     "wire": 275855,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 196,
+     "ms": 532,
+     "ttfb": 160,
+     "bytes": 525262,
+     "wire": 275787,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 197,
+     "ms": 480,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 275755,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 198,
+     "ms": 546,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275750,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 199,
+     "ms": 539,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275978,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 200,
+     "ms": 611,
+     "ttfb": 144,
+     "bytes": 525258,
+     "wire": 275481,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 201,
+     "ms": 576,
+     "ttfb": 160,
+     "bytes": 525262,
+     "wire": 275727,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 202,
+     "ms": 548,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 275561,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 203,
+     "ms": 512,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 275773,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 204,
+     "ms": 538,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 275551,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 205,
+     "ms": 559,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275816,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 206,
+     "ms": 559,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275641,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 207,
+     "ms": 555,
+     "ttfb": 127,
+     "bytes": 525262,
+     "wire": 275465,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 208,
+     "ms": 556,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 275431,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 209,
+     "ms": 557,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 275559,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 210,
+     "ms": 549,
+     "ttfb": 157,
+     "bytes": 525262,
+     "wire": 275362,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 211,
+     "ms": 531,
+     "ttfb": 149,
+     "bytes": 525262,
+     "wire": 275438,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 212,
+     "ms": 610,
+     "ttfb": 159,
+     "bytes": 525262,
+     "wire": 275636,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 213,
+     "ms": 618,
+     "ttfb": 159,
+     "bytes": 525262,
+     "wire": 275303,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 214,
+     "ms": 532,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 275256,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 215,
+     "ms": 514,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 275322,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 216,
+     "ms": 509,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275183,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 217,
+     "ms": 528,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275076,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 218,
+     "ms": 511,
+     "ttfb": 118,
+     "bytes": 525262,
+     "wire": 275159,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 219,
+     "ms": 535,
+     "ttfb": 143,
+     "bytes": 525258,
+     "wire": 274861,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 220,
+     "ms": 488,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275122,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 221,
+     "ms": 788,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 274962,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 222,
+     "ms": 480,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 274941,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 223,
+     "ms": 537,
+     "ttfb": 95,
+     "bytes": 525262,
+     "wire": 274640,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 224,
+     "ms": 588,
+     "ttfb": 118,
+     "bytes": 525262,
+     "wire": 274714,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 225,
+     "ms": 559,
+     "ttfb": 166,
+     "bytes": 525262,
+     "wire": 274554,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 226,
+     "ms": 477,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 274431,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 227,
+     "ms": 635,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 274444,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 228,
+     "ms": 525,
+     "ttfb": 119,
+     "bytes": 525262,
+     "wire": 274486,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 229,
+     "ms": 546,
+     "ttfb": 146,
+     "bytes": 525262,
+     "wire": 274472,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 230,
+     "ms": 543,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 274391,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 231,
+     "ms": 528,
+     "ttfb": 168,
+     "bytes": 525262,
+     "wire": 274415,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 232,
+     "ms": 536,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 274204,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 233,
+     "ms": 552,
+     "ttfb": 121,
+     "bytes": 525262,
+     "wire": 274300,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 234,
+     "ms": 580,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 273956,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 235,
+     "ms": 549,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 273981,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 236,
+     "ms": 509,
+     "ttfb": 146,
+     "bytes": 525262,
+     "wire": 274177,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 237,
+     "ms": 553,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 273861,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 238,
+     "ms": 533,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 273754,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 239,
+     "ms": 546,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 273754,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 240,
+     "ms": 661,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 273827,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 241,
+     "ms": 546,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 273914,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 242,
+     "ms": 505,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 273567,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 243,
+     "ms": 481,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 273633,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 244,
+     "ms": 529,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 273635,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 245,
+     "ms": 559,
+     "ttfb": 119,
+     "bytes": 525262,
+     "wire": 273824,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 246,
+     "ms": 560,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 273461,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 247,
+     "ms": 528,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 273456,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 248,
+     "ms": 550,
+     "ttfb": 146,
+     "bytes": 525258,
+     "wire": 273452,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 249,
+     "ms": 543,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 273815,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 250,
+     "ms": 540,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 273578,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 251,
+     "ms": 562,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 273546,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 252,
+     "ms": 542,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 273302,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 253,
+     "ms": 545,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 273369,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 254,
+     "ms": 541,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 273521,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 255,
+     "ms": 566,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 273549,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 256,
+     "ms": 567,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 273236,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 257,
+     "ms": 545,
+     "ttfb": 153,
+     "bytes": 525262,
+     "wire": 273355,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 258,
+     "ms": 545,
+     "ttfb": 158,
+     "bytes": 525262,
+     "wire": 273368,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 259,
+     "ms": 527,
+     "ttfb": 167,
+     "bytes": 525262,
+     "wire": 273316,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 260,
+     "ms": 544,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 273577,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 261,
+     "ms": 536,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 273625,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 262,
+     "ms": 564,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 273464,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 263,
+     "ms": 561,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 273594,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 264,
+     "ms": 553,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 273624,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 265,
+     "ms": 549,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 273311,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 266,
+     "ms": 544,
+     "ttfb": 149,
+     "bytes": 525262,
+     "wire": 273463,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 267,
+     "ms": 542,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 273592,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 268,
+     "ms": 536,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 273713,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 269,
+     "ms": 545,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 273746,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 270,
+     "ms": 537,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 273915,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 271,
+     "ms": 544,
+     "ttfb": 147,
+     "bytes": 525258,
+     "wire": 273982,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 272,
+     "ms": 555,
+     "ttfb": 127,
+     "bytes": 525262,
+     "wire": 273791,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 273,
+     "ms": 562,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 273915,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 274,
+     "ms": 562,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 273949,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 275,
+     "ms": 539,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 274175,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 276,
+     "ms": 542,
+     "ttfb": 159,
+     "bytes": 525262,
+     "wire": 273712,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 277,
+     "ms": 530,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 274204,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 278,
+     "ms": 532,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 274205,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 279,
+     "ms": 636,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 274327,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 280,
+     "ms": 572,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 274264,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 281,
+     "ms": 565,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 274474,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 282,
+     "ms": 523,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 274582,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 283,
+     "ms": 541,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 274581,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 284,
+     "ms": 551,
+     "ttfb": 158,
+     "bytes": 525262,
+     "wire": 274496,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 285,
+     "ms": 550,
+     "ttfb": 110,
+     "bytes": 525262,
+     "wire": 274548,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 286,
+     "ms": 532,
+     "ttfb": 155,
+     "bytes": 525262,
+     "wire": 275002,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 287,
+     "ms": 549,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 274771,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 288,
+     "ms": 504,
+     "ttfb": 146,
+     "bytes": 525262,
+     "wire": 274867,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 289,
+     "ms": 533,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 274968,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 290,
+     "ms": 617,
+     "ttfb": 120,
+     "bytes": 525262,
+     "wire": 275049,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 291,
+     "ms": 581,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 274827,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 292,
+     "ms": 543,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 275116,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 293,
+     "ms": 542,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 275116,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 294,
+     "ms": 487,
+     "ttfb": 160,
+     "bytes": 525262,
+     "wire": 275116,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 295,
+     "ms": 518,
+     "ttfb": 114,
+     "bytes": 525262,
+     "wire": 274960,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 296,
+     "ms": 537,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 275369,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 297,
+     "ms": 610,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 275007,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 298,
+     "ms": 550,
+     "ttfb": 120,
+     "bytes": 525262,
+     "wire": 275360,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 299,
+     "ms": 559,
+     "ttfb": 160,
+     "bytes": 525262,
+     "wire": 275319,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 300,
+     "ms": 525,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 275303,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 301,
+     "ms": 530,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 275604,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 302,
+     "ms": 514,
+     "ttfb": 120,
+     "bytes": 525262,
+     "wire": 275519,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 303,
+     "ms": 639,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275464,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 304,
+     "ms": 546,
+     "ttfb": 157,
+     "bytes": 525262,
+     "wire": 275580,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 305,
+     "ms": 527,
+     "ttfb": 127,
+     "bytes": 525262,
+     "wire": 275742,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 306,
+     "ms": 533,
+     "ttfb": 128,
+     "bytes": 525262,
+     "wire": 275746,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 307,
+     "ms": 561,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 275653,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 308,
+     "ms": 595,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 275800,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 309,
+     "ms": 564,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275448,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 310,
+     "ms": 520,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 275762,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 311,
+     "ms": 542,
+     "ttfb": 155,
+     "bytes": 525262,
+     "wire": 275743,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 312,
+     "ms": 529,
+     "ttfb": 168,
+     "bytes": 525262,
+     "wire": 275760,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 313,
+     "ms": 530,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 275693,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 314,
+     "ms": 535,
+     "ttfb": 123,
+     "bytes": 525262,
+     "wire": 275901,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 315,
+     "ms": 583,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275914,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 316,
+     "ms": 551,
+     "ttfb": 146,
+     "bytes": 525262,
+     "wire": 275926,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 317,
+     "ms": 550,
+     "ttfb": 144,
+     "bytes": 525262,
+     "wire": 275927,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 318,
+     "ms": 546,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275839,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 319,
+     "ms": 571,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275798,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 320,
+     "ms": 569,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 276085,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 321,
+     "ms": 570,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 275900,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 322,
+     "ms": 552,
+     "ttfb": 166,
+     "bytes": 525262,
+     "wire": 275892,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 323,
+     "ms": 535,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 275908,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 324,
+     "ms": 640,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 275888,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 325,
+     "ms": 552,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 276133,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 326,
+     "ms": 544,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 276001,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 327,
+     "ms": 553,
+     "ttfb": 150,
+     "bytes": 525262,
+     "wire": 275855,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 328,
+     "ms": 521,
+     "ttfb": 180,
+     "bytes": 525262,
+     "wire": 275840,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 329,
+     "ms": 523,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275883,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 330,
+     "ms": 528,
+     "ttfb": 119,
+     "bytes": 525262,
+     "wire": 276052,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 331,
+     "ms": 533,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 276152,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 332,
+     "ms": 616,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 275885,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 333,
+     "ms": 551,
+     "ttfb": 167,
+     "bytes": 525262,
+     "wire": 275784,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 334,
+     "ms": 537,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 276159,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 335,
+     "ms": 535,
+     "ttfb": 113,
+     "bytes": 525262,
+     "wire": 275894,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 336,
+     "ms": 528,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 275985,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 337,
+     "ms": 554,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275974,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 338,
+     "ms": 552,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275944,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 339,
+     "ms": 555,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 276353,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 340,
+     "ms": 559,
+     "ttfb": 115,
+     "bytes": 525262,
+     "wire": 276018,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 341,
+     "ms": 565,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 276031,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 342,
+     "ms": 562,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 275863,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 343,
+     "ms": 551,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 275913,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 344,
+     "ms": 516,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 275942,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 345,
+     "ms": 535,
+     "ttfb": 118,
+     "bytes": 525262,
+     "wire": 276007,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 346,
+     "ms": 566,
+     "ttfb": 154,
+     "bytes": 525262,
+     "wire": 275766,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 347,
+     "ms": 563,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 276027,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 348,
+     "ms": 550,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275985,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 349,
+     "ms": 545,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 275761,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 350,
+     "ms": 574,
+     "ttfb": 120,
+     "bytes": 525262,
+     "wire": 275821,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 351,
+     "ms": 574,
+     "ttfb": 127,
+     "bytes": 525262,
+     "wire": 275784,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 352,
+     "ms": 575,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275917,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 353,
+     "ms": 552,
+     "ttfb": 157,
+     "bytes": 525262,
+     "wire": 275965,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 354,
+     "ms": 551,
+     "ttfb": 166,
+     "bytes": 525258,
+     "wire": 275862,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 355,
+     "ms": 505,
+     "ttfb": 121,
+     "bytes": 525262,
+     "wire": 275695,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 356,
+     "ms": 531,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 275624,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 357,
+     "ms": 549,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275788,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 358,
+     "ms": 569,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 275655,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 359,
+     "ms": 556,
+     "ttfb": 160,
+     "bytes": 525262,
+     "wire": 275768,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 360,
+     "ms": 580,
+     "ttfb": 163,
+     "bytes": 525262,
+     "wire": 275801,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 361,
+     "ms": 555,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 275850,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 362,
+     "ms": 541,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 275651,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 363,
+     "ms": 541,
+     "ttfb": 125,
+     "bytes": 525262,
+     "wire": 275638,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 364,
+     "ms": 560,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275587,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 365,
+     "ms": 561,
+     "ttfb": 119,
+     "bytes": 525262,
+     "wire": 275359,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 366,
+     "ms": 550,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 275534,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 367,
+     "ms": 498,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 275462,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 368,
+     "ms": 583,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275399,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 369,
+     "ms": 532,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 275280,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 370,
+     "ms": 559,
+     "ttfb": 95,
+     "bytes": 525262,
+     "wire": 275361,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 371,
+     "ms": 666,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275206,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 372,
+     "ms": 505,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 275160,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 373,
+     "ms": 472,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275283,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 374,
+     "ms": 514,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 274993,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 375,
+     "ms": 659,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 275040,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 376,
+     "ms": 560,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 274927,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 377,
+     "ms": 565,
+     "ttfb": 165,
+     "bytes": 525262,
+     "wire": 274991,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 378,
+     "ms": 516,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 274900,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 379,
+     "ms": 580,
+     "ttfb": 165,
+     "bytes": 525262,
+     "wire": 274877,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 380,
+     "ms": 450,
+     "ttfb": 105,
+     "bytes": 525262,
+     "wire": 274746,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 381,
+     "ms": 595,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 274748,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 382,
+     "ms": 565,
+     "ttfb": 112,
+     "bytes": 525262,
+     "wire": 274561,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 383,
+     "ms": 583,
+     "ttfb": 152,
+     "bytes": 525262,
+     "wire": 274637,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 384,
+     "ms": 481,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 274510,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 385,
+     "ms": 467,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 274573,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 386,
+     "ms": 570,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 274427,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 387,
+     "ms": 674,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 274557,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 388,
+     "ms": 550,
+     "ttfb": 123,
+     "bytes": 525262,
+     "wire": 274256,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 389,
+     "ms": 540,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 274302,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 390,
+     "ms": 487,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 274261,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 391,
+     "ms": 709,
+     "ttfb": 104,
+     "bytes": 525262,
+     "wire": 274018,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 392,
+     "ms": 561,
+     "ttfb": 112,
+     "bytes": 525262,
+     "wire": 273997,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 393,
+     "ms": 590,
+     "ttfb": 90,
+     "bytes": 525262,
+     "wire": 274029,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 394,
+     "ms": 506,
+     "ttfb": 95,
+     "bytes": 525262,
+     "wire": 273855,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 395,
+     "ms": 551,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 274071,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 396,
+     "ms": 459,
+     "ttfb": 109,
+     "bytes": 525262,
+     "wire": 273848,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 397,
+     "ms": 540,
+     "ttfb": 105,
+     "bytes": 525262,
+     "wire": 273802,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 398,
+     "ms": 534,
+     "ttfb": 111,
+     "bytes": 525262,
+     "wire": 274013,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 399,
+     "ms": 545,
+     "ttfb": 101,
+     "bytes": 525262,
+     "wire": 273809,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 400,
+     "ms": 538,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 273675,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 401,
+     "ms": 592,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 273605,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 402,
+     "ms": 539,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 273483,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 403,
+     "ms": 511,
+     "ttfb": 86,
+     "bytes": 525262,
+     "wire": 273482,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 404,
+     "ms": 536,
+     "ttfb": 95,
+     "bytes": 525262,
+     "wire": 273419,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 405,
+     "ms": 588,
+     "ttfb": 126,
+     "bytes": 525262,
+     "wire": 273449,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 406,
+     "ms": 532,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 273349,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 407,
+     "ms": 504,
+     "ttfb": 113,
+     "bytes": 525262,
+     "wire": 273501,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 408,
+     "ms": 506,
+     "ttfb": 95,
+     "bytes": 525262,
+     "wire": 273282,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 409,
+     "ms": 580,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 273454,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 410,
+     "ms": 565,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 273518,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 411,
+     "ms": 531,
+     "ttfb": 117,
+     "bytes": 525262,
+     "wire": 273236,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 412,
+     "ms": 553,
+     "ttfb": 128,
+     "bytes": 525262,
+     "wire": 273190,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 413,
+     "ms": 549,
+     "ttfb": 133,
+     "bytes": 525262,
+     "wire": 273444,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 414,
+     "ms": 534,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 273324,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 415,
+     "ms": 534,
+     "ttfb": 150,
+     "bytes": 525262,
+     "wire": 273302,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 416,
+     "ms": 542,
+     "ttfb": 126,
+     "bytes": 525262,
+     "wire": 273180,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 417,
+     "ms": 549,
+     "ttfb": 112,
+     "bytes": 525262,
+     "wire": 273483,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 418,
+     "ms": 546,
+     "ttfb": 117,
+     "bytes": 525262,
+     "wire": 273387,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 419,
+     "ms": 568,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 273504,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 420,
+     "ms": 563,
+     "ttfb": 150,
+     "bytes": 525262,
+     "wire": 273402,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 421,
+     "ms": 502,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 273415,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 422,
+     "ms": 532,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 273503,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 423,
+     "ms": 565,
+     "ttfb": 164,
+     "bytes": 525262,
+     "wire": 273391,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 424,
+     "ms": 637,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 273611,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 425,
+     "ms": 529,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 273907,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 426,
+     "ms": 509,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 273901,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 427,
+     "ms": 499,
+     "ttfb": 118,
+     "bytes": 525262,
+     "wire": 273771,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 428,
+     "ms": 523,
+     "ttfb": 125,
+     "bytes": 525262,
+     "wire": 273831,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 429,
+     "ms": 527,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 273768,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 430,
+     "ms": 553,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 274002,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 431,
+     "ms": 554,
+     "ttfb": 155,
+     "bytes": 525262,
+     "wire": 273922,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 432,
+     "ms": 556,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 274018,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 433,
+     "ms": 552,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 274250,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 434,
+     "ms": 545,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 273993,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 435,
+     "ms": 540,
+     "ttfb": 146,
+     "bytes": 525262,
+     "wire": 274330,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 436,
+     "ms": 532,
+     "ttfb": 155,
+     "bytes": 525262,
+     "wire": 274151,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 437,
+     "ms": 623,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 274222,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 438,
+     "ms": 540,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 274318,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 439,
+     "ms": 540,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 274383,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 440,
+     "ms": 523,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 274460,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 441,
+     "ms": 528,
+     "ttfb": 160,
+     "bytes": 525262,
+     "wire": 274452,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 442,
+     "ms": 530,
+     "ttfb": 121,
+     "bytes": 525262,
+     "wire": 274570,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 443,
+     "ms": 550,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 274817,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 444,
+     "ms": 555,
+     "ttfb": 140,
+     "bytes": 525262,
+     "wire": 274760,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 445,
+     "ms": 563,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 274753,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 446,
+     "ms": 563,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275128,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 447,
+     "ms": 537,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 275174,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 448,
+     "ms": 529,
+     "ttfb": 155,
+     "bytes": 525262,
+     "wire": 275108,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 449,
+     "ms": 647,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 274976,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 450,
+     "ms": 538,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 274933,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 451,
+     "ms": 551,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275373,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 452,
+     "ms": 555,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275158,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 453,
+     "ms": 583,
+     "ttfb": 163,
+     "bytes": 525258,
+     "wire": 275319,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 454,
+     "ms": 557,
+     "ttfb": 128,
+     "bytes": 525262,
+     "wire": 275160,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 455,
+     "ms": 556,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 275328,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 456,
+     "ms": 523,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 275431,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 457,
+     "ms": 561,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 275383,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 458,
+     "ms": 561,
+     "ttfb": 164,
+     "bytes": 525258,
+     "wire": 275721,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 459,
+     "ms": 547,
+     "ttfb": 129,
+     "bytes": 525262,
+     "wire": 275685,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 460,
+     "ms": 534,
+     "ttfb": 157,
+     "bytes": 525262,
+     "wire": 275526,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 461,
+     "ms": 540,
+     "ttfb": 167,
+     "bytes": 525262,
+     "wire": 275755,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 462,
+     "ms": 529,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275694,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 463,
+     "ms": 530,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 275401,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 464,
+     "ms": 522,
+     "ttfb": 115,
+     "bytes": 525262,
+     "wire": 275772,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 465,
+     "ms": 543,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275697,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 466,
+     "ms": 543,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275978,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 467,
+     "ms": 548,
+     "ttfb": 134,
+     "bytes": 525262,
+     "wire": 275682,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 468,
+     "ms": 549,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 276025,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 469,
+     "ms": 549,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275735,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 470,
+     "ms": 548,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275851,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 471,
+     "ms": 640,
+     "ttfb": 140,
+     "bytes": 525258,
+     "wire": 275775,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 472,
+     "ms": 553,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275872,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 473,
+     "ms": 551,
+     "ttfb": 142,
+     "bytes": 525262,
+     "wire": 275902,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 474,
+     "ms": 528,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275951,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 475,
+     "ms": 535,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 275801,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 476,
+     "ms": 555,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 276010,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 477,
+     "ms": 551,
+     "ttfb": 116,
+     "bytes": 525258,
+     "wire": 275789,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 478,
+     "ms": 550,
+     "ttfb": 155,
+     "bytes": 525262,
+     "wire": 275759,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 479,
+     "ms": 553,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 276004,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 480,
+     "ms": 546,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275862,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 481,
+     "ms": 540,
+     "ttfb": 153,
+     "bytes": 525262,
+     "wire": 275881,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 482,
+     "ms": 541,
+     "ttfb": 111,
+     "bytes": 525262,
+     "wire": 275978,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 483,
+     "ms": 613,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 275932,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 484,
+     "ms": 549,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275655,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 485,
+     "ms": 545,
+     "ttfb": 136,
+     "bytes": 525262,
+     "wire": 276023,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 486,
+     "ms": 578,
+     "ttfb": 162,
+     "bytes": 525262,
+     "wire": 275799,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 487,
+     "ms": 552,
+     "ttfb": 126,
+     "bytes": 525262,
+     "wire": 276055,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 488,
+     "ms": 547,
+     "ttfb": 158,
+     "bytes": 525262,
+     "wire": 275989,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 489,
+     "ms": 548,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 275850,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 490,
+     "ms": 551,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 275855,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 491,
+     "ms": 531,
+     "ttfb": 135,
+     "bytes": 525262,
+     "wire": 275988,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 492,
+     "ms": 533,
+     "ttfb": 122,
+     "bytes": 525262,
+     "wire": 275943,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 493,
+     "ms": 553,
+     "ttfb": 143,
+     "bytes": 525262,
+     "wire": 276096,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 494,
+     "ms": 572,
+     "ttfb": 116,
+     "bytes": 525262,
+     "wire": 276068,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 495,
+     "ms": 573,
+     "ttfb": 123,
+     "bytes": 525262,
+     "wire": 275894,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 496,
+     "ms": 649,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 276136,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 497,
+     "ms": 521,
+     "ttfb": 161,
+     "bytes": 525262,
+     "wire": 275854,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 498,
+     "ms": 532,
+     "ttfb": 163,
+     "bytes": 525262,
+     "wire": 275907,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 499,
+     "ms": 552,
+     "ttfb": 114,
+     "bytes": 525262,
+     "wire": 275874,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 500,
+     "ms": 565,
+     "ttfb": 145,
+     "bytes": 525262,
+     "wire": 276102,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 501,
+     "ms": 462,
+     "ttfb": 123,
+     "bytes": 525258,
+     "wire": 275978,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 502,
+     "ms": 525,
+     "ttfb": 156,
+     "bytes": 525262,
+     "wire": 275878,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 503,
+     "ms": 561,
+     "ttfb": 125,
+     "bytes": 525262,
+     "wire": 275986,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 504,
+     "ms": 579,
+     "ttfb": 148,
+     "bytes": 525262,
+     "wire": 275797,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 505,
+     "ms": 555,
+     "ttfb": 132,
+     "bytes": 525262,
+     "wire": 276004,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 506,
+     "ms": 589,
+     "ttfb": 147,
+     "bytes": 525262,
+     "wire": 276021,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 507,
+     "ms": 583,
+     "ttfb": 139,
+     "bytes": 525262,
+     "wire": 275944,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 508,
+     "ms": 594,
+     "ttfb": 124,
+     "bytes": 525262,
+     "wire": 275986,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 509,
+     "ms": 596,
+     "ttfb": 125,
+     "bytes": 525262,
+     "wire": 275994,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 510,
+     "ms": 548,
+     "ttfb": 138,
+     "bytes": 525262,
+     "wire": 275636,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 511,
+     "ms": 498,
+     "ttfb": 137,
+     "bytes": 525262,
+     "wire": 276011,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 512,
+     "ms": 483,
+     "ttfb": 131,
+     "bytes": 525262,
+     "wire": 275812,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 513,
+     "ms": 543,
+     "ttfb": 141,
+     "bytes": 525262,
+     "wire": 275790,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 514,
+     "ms": 536,
+     "ttfb": 117,
+     "bytes": 525262,
+     "wire": 275969,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 515,
+     "ms": 551,
+     "ttfb": 150,
+     "bytes": 525262,
+     "wire": 275968,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 516,
+     "ms": 577,
+     "ttfb": 151,
+     "bytes": 525262,
+     "wire": 275786,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 517,
+     "ms": 558,
+     "ttfb": 153,
+     "bytes": 525262,
+     "wire": 276076,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 518,
+     "ms": 438,
+     "ttfb": 175,
+     "bytes": 525262,
+     "wire": 275519,
+     "gzip": true,
+     "status": 200
+    },
+    {
+     "i": 519,
+     "ms": 360,
+     "ttfb": 130,
+     "bytes": 525262,
+     "wire": 275536,
+     "gzip": true,
+     "status": 200
+    }
+   ],
+   "openMs": 357.23356399999994,
+   "firstImageMs": 530.3910089999999,
+   "fullStudyMs": 57683.429426999995,
+   "bytes": 273135926,
+   "wireBytes": 143012951
+  }
+ ]
+}

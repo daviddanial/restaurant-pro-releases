@@ -4,6 +4,7 @@ import com.telerad.config.TeleradProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -44,7 +45,8 @@ public class ObjectStorageService {
         return response.asByteArray();
     }
 
-    public InputStream getStream(String key) {
+    /** Open the object for streaming; the response carries its length. Caller must close it. */
+    public ResponseInputStream<GetObjectResponse> getStream(String key) {
         return s3Client.getObject(GetObjectRequest.builder()
                 .bucket(properties.getS3().getBucket())
                 .key(key)

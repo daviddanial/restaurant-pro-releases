@@ -244,7 +244,8 @@ public class StudyService {
                             i.getRows(), i.getColumns(), i.getNumberOfFrames(),
                             i.getCineRate(), i.getFrameTime(),
                             parseDoubles(i.getImagePositionPatient()),
-                            parseDoubles(i.getImageOrientationPatient())))
+                            parseDoubles(i.getImageOrientationPatient()),
+                            i.getTransferSyntaxUid()))
                     .toList();
             seriesDtos.add(new SeriesDto(ser.getId(), ser.getSeriesInstanceUid(), ser.getModality(),
                     ser.getSeriesNumber(), ser.getSeriesDescription(), ser.getInstanceCount(), instances));
@@ -293,7 +294,8 @@ public class StudyService {
     public record InstanceDto(UUID id, String sopInstanceUid, Integer instanceNumber,
                               Integer rows, Integer columns, int numberOfFrames,
                               Double cineRate, Double frameTime,
-                              double[] imagePositionPatient, double[] imageOrientationPatient) {}
+                              double[] imagePositionPatient, double[] imageOrientationPatient,
+                              String transferSyntaxUid) {}
 
     public record ReportSummary(UUID id, com.telerad.common.ReportStatus status, String findings,
                                 String impression, boolean critical, Instant signedAt, boolean hasPdf) {}

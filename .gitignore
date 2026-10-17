@@ -72,3 +72,4 @@ edge-gateway/data/
 edge-gateway/config.json
 edge-gateway/secrets/
 certs/gateway-ca/
+loadtest/.browsers/

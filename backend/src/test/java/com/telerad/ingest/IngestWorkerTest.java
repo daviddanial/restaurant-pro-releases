@@ -4,6 +4,7 @@ import com.telerad.common.StudySource;
 import com.telerad.common.StudyStatus;
 import com.telerad.notify.NotificationService;
 import com.telerad.notify.SlaService;
+import com.telerad.storage.GzipVariantService;
 import com.telerad.storage.ObjectStorageService;
 import com.telerad.study.*;
 import org.dcm4che3.data.Attributes;
@@ -30,6 +31,8 @@ class IngestWorkerTest {
     @Mock PatientRepository patientRepository;
     @Mock SlaService slaService;
     @Mock NotificationService notificationService;
+    @Mock IngestLocks ingestLocks;
+    @Mock GzipVariantService gzipVariantService;
     @InjectMocks IngestWorker ingestWorker;
 
     private UUID tenantId;
@@ -156,5 +159,25 @@ class IngestWorkerTest {
         Study result = ingestWorker.upsertFromDataset(tenantId, "key", attrs, StudySource.CSTORE);
         assertThat(result.getStatus()).isEqualTo(StudyStatus.REPORTED);
         verify(notificationService, never()).notifyStudyReady(any());
+    }
+
+    @Test
+    void upsertFromDataset_recordsFileTransferSyntaxAndLocksPatient() {
+        Study existingStudy = Study.builder().id(UUID.randomUUID()).tenantId(tenantId)
+                .studyInstanceUid("1.2.840.10008.1.1").status(StudyStatus.READY)
+                .readyAt(java.time.Instant.now()).build();
+        Series series = Series.builder().id(UUID.randomUUID()).study(existingStudy)
+                .seriesInstanceUid("1.2.840.10008.1.2").build();
+        Instance instance = Instance.builder().id(UUID.randomUUID()).series(series)
+                .sopInstanceUid("1.2.840.10008.1.3").storageKey("k")
+                .transferSyntaxUid(org.dcm4che3.data.UID.ExplicitVRLittleEndian).build();
+        when(instanceRepository.findBySopInstanceUid("1.2.840.10008.1.3")).thenReturn(Optional.of(instance));
+        when(instanceRepository.save(instance)).thenReturn(instance);
+        when(studyRepository.save(existingStudy)).thenReturn(existingStudy);
+
+        ingestWorker.upsertFromDataset(tenantId, "k", attrs, org.dcm4che3.data.UID.JPEGLSLossless, StudySource.UPLOAD);
+
+        assertThat(instance.getTransferSyntaxUid()).isEqualTo(org.dcm4che3.data.UID.JPEGLSLossless);
+        verify(ingestLocks).lockPatient(tenantId, "MRN001");
     }
 }

@@ -1,0 +1,231 @@
+<title>TeleRad Reading Load Test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column for the narrative; tables break out to full width in their own scroll boxes. */
+:root {
+  --bg: #f6f7f8; --panel: #ffffff; --fg: #15191d; --fg-2: #4b545d; --fg-3: #737d87;
+  --line: #dde2e7; --accent: #1f7a72; --accent-soft: #e3f1ef;
+  --good: #1d7a3e; --good-soft: #e4f3e9; --bad: #b4332f; --bad-soft: #fbe9e8; --warn: #946200; --warn-soft: #fbf1dc;
+  --s1: #2a78d6; --s2: #eb6834;
+  --display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111417; --panel: #181c20; --fg: #e8ecef; --fg-2: #b2bbc3; --fg-3: #8a949d;
+  --line: #2b3238; --accent: #4fb3a8; --accent-soft: #16302d;
+  --good: #5cc283; --good-soft: #15291d; --bad: #f07a74; --bad-soft: #341a19; --warn: #e0b04a; --warn-soft: #2f2612;
+  --s1: #3987e5; --s2: #d95926; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111417; --panel: #181c20; --fg: #e8ecef; --fg-2: #b2bbc3; --fg-3: #8a949d;
+  --line: #2b3238; --accent: #4fb3a8; --accent-soft: #16302d;
+  --good: #5cc283; --good-soft: #15291d; --bad: #f07a74; --bad-soft: #341a19; --warn: #e0b04a; --warn-soft: #2f2612;
+  --s1: #3987e5; --s2: #d95926; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 15px/1.6 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 40px; }
+.prose { max-width: 70ch; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: 2.1rem; font-weight: 600; letter-spacing: -0.01em; }
+h2 { font-size: 1.45rem; font-weight: 600; margin-bottom: 12px; }
+h3 { font-size: 1.08rem; font-weight: 600; margin-bottom: 4px; }
+p { margin: 0 0 10px; }
+.eyebrow { font: 500 0.72rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.lede { font-size: 1.08rem; color: var(--fg-2); margin-top: 12px; }
+.meta { font: 0.8rem var(--mono); color: var(--fg-3); margin-top: 10px; }
+code, .mono { font-family: var(--mono); font-size: 0.86em; }
+section { display: grid; gap: 14px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; }
+.answer { border-left: 4px solid var(--accent); }
+.answer p { font-size: 1.05rem; }
+.verdicts { display: grid; gap: 0; }
+.verdict { display: grid; grid-template-columns: 112px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); align-items: start; }
+.verdict:first-child { border-top: 0; padding-top: 0; }
+.verdict > div { min-width: 0; }
+.pill { display: inline-block; font: 600 0.72rem/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 8px; border-radius: 5px; text-align: center; }
+.pill.met { color: var(--good); background: var(--good-soft); }
+.pill.miss { color: var(--bad); background: var(--bad-soft); }
+.pill.part { color: var(--warn); background: var(--warn-soft); }
+.verdict .target { font-weight: 600; }
+.verdict .detail { color: var(--fg-2); font-size: 0.94rem; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-3); background: var(--panel); position: sticky; top: 0; }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td:first-child { white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.ctrl td { background: var(--accent-soft); }
+td.ok { color: var(--good); } td.bad { color: var(--bad); font-weight: 600; } td.miss { color: var(--bad); }
+.caption { font-size: 0.84rem; color: var(--fg-3); max-width: 90ch; }
+.chart { width: 100%; max-width: 680px; height: auto; display: block; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .tick, .chart .gsub { fill: var(--fg-3); font: 11px var(--mono); }
+.chart .glabel { fill: var(--fg); font: 500 13px var(--body); }
+.chart .val { fill: var(--fg-2); font: 12px var(--mono); }
+.chart .s1 { fill: var(--s1); } .chart .s2 { fill: var(--s2); }
+.chart .est { fill-opacity: 0.45; stroke-width: 1.5; stroke-dasharray: 4 3; }
+.chart .s1.est { stroke: var(--s1); } .chart .s2.est { stroke: var(--s2); }
+.chart .bar:hover rect { fill-opacity: 0.85; }
+.chart .target { stroke: var(--fg); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.chart .targetlabel { fill: var(--fg); font: 500 11px var(--mono); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.85rem; color: var(--fg-2); }
+.legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+.findings { display: grid; gap: 14px; }
+.finding { display: grid; gap: 4px; }
+.evidence { font-size: 0.9rem; color: var(--fg-2); }
+ol.recs { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; counter-reset: r; }
+ol.recs li { counter-increment: r; display: grid; grid-template-columns: 34px 1fr; gap: 12px; }
+ol.recs li::before { content: counter(r); font: 600 1.1rem/1.4 var(--display); color: var(--accent); }
+ol.recs li > div { min-width: 0; }
+.impact { font-size: 0.9rem; color: var(--fg-2); }
+.impact b { color: var(--fg); font-weight: 600; }
+ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.two > * { min-width: 0; }
+@media (max-width: 560px) { .verdict { grid-template-columns: 1fr; gap: 8px; } h1 { font-size: 1.7rem; } }
+</style>
+
+<div class="wrap">
+<header class="prose">
+  <div class="eyebrow">Load test · concurrent radiologist reading</div>
+  <h1>TeleRad Reading Load Test</h1>
+  <p class="lede">Can TeleRad serve 10+ radiologists opening and reading large studies at the same time? The server can. The viewer's loading pattern is what makes a full CT slow.</p>
+  <p class="meta">Local test environment · 14–15 Oct 2026 · 60 synthetic studies · 2 full runs of 28 scenarios + 5 control runs</p>
+</header>
+
+<section>
+  <div class="panel answer prose">
+    <p><b>Yes, TeleRad handles 10 and 20 concurrent CT readers.</b> There were zero errors in every run, the first CT or MR image appeared within 2.5 s at 10 readers, and the server averaged at most about 1.5 CPU cores at 50 Mbps per reader. With the browsers off the machine, full-study time at 20 readers was the same as at 1 reader.</p>
+    <p>The miss is the full CT study at 50 Mbps: <b>76 s uncompressed and 50 s JPEG-LS</b>, against a 60 s target. That time comes from the viewer fetching one image at a time with no prefetch, and from sending uncompressed pixel data. It is not a capacity limit.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Targets</h2>
+  <div class="panel verdicts">
+    <div class="verdict"><div><span class="pill met">Met</span></div><div>
+      <div class="target">Time to first image &lt; 3 s at 10 concurrent readers (CT, MR)</div>
+      <div class="detail">CT at 10 readers on 50 Mbps: 0.43 s worst simulated reader, 1.97 s worst real browser. MR: 0.39 s / 1.93 s. The worst browser in any CT or MR scenario was 4.8 s, at 20 readers unthrottled, when the test machine's CPU was saturated by the browsers.</div></div></div>
+    <div class="verdict"><div><span class="pill miss">Missed</span></div><div>
+      <div class="target">Time to first image &lt; 3 s for uncompressed CR/DX</div>
+      <div class="detail">Each uncompressed CR image is 15 MB, which takes 2.4 s to transfer at 50 Mbps. At 10 readers: 3.3 s simulated, 3.5 s browser. The same image stored as JPEG-LS (5.5 MB) showed in 1.5–2.6 s.</div></div></div>
+    <div class="verdict"><div><span class="pill part">Partly</span></div><div>
+      <div class="target">Full CT study &lt; 60 s at 10 readers on 50 Mbps</div>
+      <div class="detail">JPEG-LS CT (113 MB): 50 s with simulated readers only, 57 s with browsers on the same machine. Uncompressed CT (273 MB): 76 s, and 87 s with browsers. Real browsers, which also decode every image, took 93–110 s. One reader alone already takes 75 s for uncompressed CT, so this is not caused by concurrency.</div></div></div>
+    <div class="verdict"><div><span class="pill met">Met</span></div><div>
+      <div class="target">Zero errors at 10 readers, graceful degradation at 20</div>
+      <div class="detail">0 errors, 0 timeouts and 0 new backend error lines across 61 scenario runs, including 20 readers unthrottled. API memory stayed flat at about 1.1 GB and threads at 82 or fewer.</div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Full CT study time at 50 Mbps per reader</h2>
+  <div class="panel" style="display:grid;gap:12px">
+    <p class="caption" id="chart-desc" style="margin:0">Simulated readers only (control runs, no browsers on the machine), 520-image CT, 50 Mbps per reader with 50 ms latency, median per encoding. The prefetch bars are an estimate: study size ÷ bandwidth, with the per-image wait removed.</p>
+    <div class="legend"><span style="--c:var(--s1)">Uncompressed (273 MB)</span><span style="--c:var(--s2)">JPEG-LS lossless (113 MB)</span><span style="--c:transparent;border:0">Dashed bars = estimate</span></div>
+    <div id="chart-title" hidden>Full CT study time by encoding and reader count</div>
+    {{CHART}}
+  </div>
+</section>
+
+<section>
+  <h2>Results by scenario</h2>
+  <p class="caption">Run 2 of the matrix (run 1 agreed within about 10%). In browser runs with 5 or more readers, 3 of the readers are real headless Chromium sessions running the TeleRad viewer and the rest are simulated. Simulated full-study time is split by encoding (median). "Cold" means MinIO was restarted just before the run. Shaded rows are control runs with no browsers on the machine.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Scenario</th><th class="n">Readers</th><th class="n">First image s<br>sim p50 / max</th><th class="n">Browser first<br>image max s</th>
+      <th class="n">Full study s<br>uncompr. / JPEG-LS</th><th class="n">Browser full<br>study max s</th><th class="n">Scroll ms<br>sim p50 / p95</th><th class="n">Browser step<br>p95 ms</th><th class="n">Errors</th>
+    </tr></thead>
+    <tbody>
+{{RESULT_ROWS}}
+    </tbody>
+  </table>
+  </div>
+  <p class="caption">Scroll latency is the time to fetch (simulated) or display (browser) the next image after the previous one, with the viewer's real one-at-a-time behavior. CR studies have 2 images, so their "scroll" is the second full image.</p>
+</section>
+
+<section>
+  <h2>Resource usage by component</h2>
+  <p class="caption">1-second samples from <code>/proc</code> and container cgroups. CPU is in cores (average / peak) on an 8-core host. API out and MinIO disk are MB/s (average / peak). The API process also serves the DICOM images; there is no separate viewer backend. "Client" is host CPU minus all server components, which is the load generator and headless browsers.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Load</th><th class="n">API cpu</th><th class="n">API RSS MB</th><th class="n">API threads</th><th class="n">API out MB/s</th>
+      <th class="n">MinIO cpu</th><th class="n">MinIO mem MB</th><th class="n">MinIO disk MB/s</th><th class="n">Postgres cpu</th><th class="n">RabbitMQ cpu</th>
+      <th class="n">Host cpu</th><th class="n">Client cpu</th><th class="n">iowait</th>
+    </tr></thead>
+    <tbody>
+{{RES_ROWS}}
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Bottlenecks, with evidence</h2>
+  <div class="panel findings prose">
+    <div class="finding"><h3>1. The viewer fetches one image at a time, only when it is shown</h3>
+      <p class="evidence">In a captured viewer session each scroll step issued exactly one full-DICOM request, with nothing fetched ahead. So every image pays a full round trip: at 50 ms latency, 520 images add 26 s to a CT. For one reader, study size ÷ bandwidth + 520 × 50 ms predicts 69.7 s, and 74.5 s was measured. Scrolling can't go faster than about 7 images/s at 50 Mbps (step 140–155 ms) or 3.6 images/s at 20 Mbps (270 ms).</p></div>
+    <div class="finding"><h3>2. Uncompressed pixel data is 2.4× larger than it needs to be</h3>
+      <p class="evidence">The same CT is 273 MB uncompressed and 113 MB as lossless JPEG-LS: 76 s vs 50 s at 50 Mbps. For CR/DX the gap decides the first-image target: 15 MB per image (3.3 s) vs 5.5 MB (1.5 s).</p></div>
+    <div class="finding"><h3>3. Not the server: it has large headroom</h3>
+      <p class="evidence">With simulated readers only, full-study time at 50 Mbps was 79.5 s at 1 reader, 76.5 s at 10 and 75.7 s at 20 (uncompressed). There was no degradation. At 20 readers the API averaged 0.6 core and MinIO 0.3, memory was flat, and iowait was about 0. Unthrottled, 20 readers pulled 200 MB/s (1.6 Gbps) on about 5 server cores. At that rate this machine's server share should cover roughly 30–40 readers at full 50 Mbps. That figure is an extrapolation, not measured.</p></div>
+    <div class="finding"><h3>4. Client-side decode and render are a real cost</h3>
+      <p class="evidence">Headless browsers used about 6 of 8 cores (software WebGL). That made simulated readers 10–15 s slower in the browser runs than in the controls. Unthrottled, real browsers took longer on JPEG-LS CT (54–58 s) than on uncompressed (43 s), which is the decode cost. Workstations with their own CPU and GPU will do better, but prefetch is what hides decode time.</p></div>
+    <div class="finding"><h3>5. "Warm" is no faster than "cold"</h3>
+      <p class="evidence">Image responses have no <code>Cache-Control</code> or <code>ETag</code>, so re-opening a study re-downloads all of it. On the server, MinIO read from disk on every request (disk reads tracked bytes served in every run), so cold and warm runs matched (CT 10 readers at 50 Mbps: 86.4 vs 86.5 s).</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Recommendations, in priority order</h2>
+  <div class="panel prose">
+  <ol class="recs">
+    <li><div><h3>Prefetch the image stack in the viewer</h3>
+      <p class="impact">Keep 6–10 requests in flight, starting from the current slice and working outward. <b>Expected impact:</b> removes the 26 s of per-image waiting. At 50 Mbps a full CT should take about 44 s uncompressed and 18 s JPEG-LS (estimate), which meets the target. Scrolling becomes instant once images are cached, and decode overlaps transfer. Client-only change; the measured server headroom covers the burstier load.</p></div></li>
+    <li><div><h3>Store or serve pixel data compressed</h3>
+      <p class="impact">Keep compressed studies as received and transcode uncompressed ones to lossless JPEG-LS or HTJ2K at ingest. <b>Expected impact:</b> 2.4–2.7× fewer bytes (CT 273 → 113 MB, MR 168 → 70 MB, CR 15 → 5.5 MB per image). Uncompressed CR/DX first image at 50 Mbps drops from about 3.3 s to about 1.5 s. Costs ingest CPU and client decode time.</p></div></li>
+    <li><div><h3>Add caching headers to image responses</h3>
+      <p class="impact">Instances never change for a given SOP UID, so <code>Cache-Control: private, max-age=…, immutable</code> plus an <code>ETag</code> is safe. Keep the cache private and scoped to the session policy for shared workstations. <b>Expected impact:</b> re-opening a study, or loading it again as a comparison prior, comes from the browser cache instead of a full re-download (273 MB per CT today).</p></div></li>
+    <li><div><h3>Show a preview first for large single images (CR/DX/MG)</h3>
+      <p class="impact">The server already has a rendered-JPEG frame endpoint. Show that first, then swap in full fidelity. <b>Expected impact:</b> first image under 1 s regardless of a 15–50 MB original.</p></div></li>
+    <li><div><h3>Stream images instead of buffering them in memory</h3>
+      <p class="impact">The API reads each whole object into memory before sending it. That isn't a problem today (memory flat at about 1.1 GB), but memory per request equals object size. <b>Expected impact:</b> safe headroom for multi-frame US/XA and tomosynthesis (hundreds of MB per object) at 20+ readers, and an earlier first byte on large files.</p></div></li>
+    <li><div><h3>Re-test on production-like hardware before claiming a ceiling</h3>
+      <p class="impact">Use a separate load-generation machine, the production frontend build, the real reverse proxy (HTTP/2) and multi-frame data. <b>Expected impact:</b> confirms or corrects the 30–40-reader estimate. Adding API instances is not needed at 20 readers based on these numbers.</p></div></li>
+  </ol>
+  </div>
+</section>
+
+<section class="two">
+  <div class="panel">
+    <h2>Other findings</h2>
+    <ul class="plain">
+      <li><b>Ingest errors.</b> Upload batches for the same study processed concurrently raise duplicate-key exceptions in the ingest worker: 440 stack traces while loading the test data. Final instance counts were correct, so the messages are retried, but the log noise hides real errors.</li>
+      <li><b>Wrong transfer syntax stored.</b> Every instance is recorded with transfer syntax Explicit VR Little Endian, including JPEG-LS files (<code>IngestWorker.java:137</code> reads the tag from the dataset, not the file meta).</li>
+      <li><b>Duplicate open requests.</b> The dev-mode viewer requests <code>/api/studies/{id}</code> twice and <code>/priors</code> three times per study open.</li>
+      <li><b>RabbitMQ idle CPU.</b> RabbitMQ idles at about 0.45 core.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h2>Method and limits</h2>
+    <ul class="plain">
+      <li><b>Test data:</b> synthetic phantoms, no patient data. 20 CT (520 × 512², 273 / 113 MB), 20 MR (320 × 512², 168 / 70 MB), 20 CR (2 × 3000×2500, 30 / 11 MB). Half of each is JPEG-LS lossless, ingested through the hospital upload API. Every reader opens its own study under its own account.</li>
+      <li><b>Simulated readers</b> replay the captured viewer requests: study, priors, then one full-DICOM GET per image in order, with a 30 s timeout.</li>
+      <li><b>Network shaping</b> uses a per-reader token-bucket proxy (no root for <code>tc</code>), checked to within 5% of theory. It shapes API traffic only; app code was served unshaped.</li>
+      <li><b>One 8-core machine</b> ran servers, load generator and browsers, so browser results are pessimistic. The control runs show server-only behavior.</li>
+      <li><b>Not tested:</b> production build and reverse proxy, separate client hardware, GPU rendering, multi-frame cine, HTJ2K, more than 20 readers, dropping the OS page cache (needs root, though MinIO read from disk anyway).</li>
+    </ul>
+  </div>
+</section>
+
+<section class="prose">
+  <h2>Reproduce or clean up</h2>
+  <p>Scripts and raw results are in <code>loadtest/</code>, which is not committed: <code>gen_ingest.py</code>, <code>proxy.mjs</code>, <code>reader.mjs</code>, <code>browser.mjs</code>, <code>monitor.mjs</code>, <code>run.sh</code>, <code>matrix.sh</code>, <code>control.sh</code> and <code>results/</code> (run 1 is in <code>results_run1/</code>). The test environment still holds 21 accounts (<code>lt_rad_01</code>–<code>lt_rad_20</code>, <code>lt_uploader</code>) and 60 studies with accessions <code>LTCT01–20</code>, <code>LTMR01–20</code> and <code>LTCR01–20</code> at Demo General Hospital (about 6.7 GB in MinIO).</p>
+</section>
+</div>

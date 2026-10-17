@@ -1,0 +1,542 @@
+[
+ {
+  "accession": "LTCR01",
+  "id": "135b2410-2120-4b85-84b1-a46b52b76e6c",
+  "uid": "2.25.98572706340111672451492957012300687004",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR02",
+  "id": "68bf644f-9a4c-4c45-9806-bb72262b27e4",
+  "uid": "2.25.75635933988027860076447756290533236942",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR03",
+  "id": "8a0ed90d-b86e-4ad4-8738-eb91cd9f6a0e",
+  "uid": "2.25.168059664441871157150732250748797671089",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR04",
+  "id": "b10b8292-8eae-4e89-9793-35beccd517ca",
+  "uid": "2.25.305867126971046918442663738698078017164",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR05",
+  "id": "e8bd204c-65af-4c8f-bf48-6f73a3440b5b",
+  "uid": "2.25.207647177924768193048600709417977834053",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR06",
+  "id": "eecfdcb4-6e0b-4514-bbdb-3a6249680662",
+  "uid": "2.25.175130967642190090750239100720110071067",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR07",
+  "id": "4682e045-9247-4b39-b226-fc35b2870c41",
+  "uid": "2.25.261183787625195744164158782679587643857",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR08",
+  "id": "17ef74d4-5bec-4353-8837-78fe7ecd36fc",
+  "uid": "2.25.309584616349531187596441426171084237150",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR09",
+  "id": "b807bb61-6365-452b-8183-dfe0e32de088",
+  "uid": "2.25.336564891503588048552492949604514776986",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR10",
+  "id": "ade2881e-8847-4b0e-86fa-93db19efac3b",
+  "uid": "2.25.265411582867910957675760041897867615409",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR11",
+  "id": "0ad7ff65-30d3-4cdb-9c1d-56611fd8c11c",
+  "uid": "2.25.237348087668915528777513916913635560445",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR12",
+  "id": "f737fc89-6423-4f02-8cf5-a3429f80c7dd",
+  "uid": "2.25.66660440661868690128653413136526870224",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR13",
+  "id": "68940242-7406-49c8-9cba-585ab0073690",
+  "uid": "2.25.236023272625016325484935980081077251258",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR14",
+  "id": "52350964-035a-40f7-b23b-30a11003dae7",
+  "uid": "2.25.252017064779698761658096581602749668534",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR15",
+  "id": "08b368b3-39cc-4cc5-8d94-7bd2b0fe9f75",
+  "uid": "2.25.33454340912319527064823364337683517379",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR16",
+  "id": "30be3b5f-9c04-4285-a2b4-3f8c66f97866",
+  "uid": "2.25.32624460613310497176234323805248069671",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR17",
+  "id": "a3fe4153-39a7-4a09-8a90-be6467826bea",
+  "uid": "2.25.22017752618147515802849642263979242283",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR18",
+  "id": "6e56ca2b-f721-4fc2-96b5-317ae78b0ab2",
+  "uid": "2.25.10664099261412226739419196977081160450",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCR19",
+  "id": "05bcba83-eda5-4aea-ab71-20f7d1f8bb59",
+  "uid": "2.25.266964989059203526629305341169879423175",
+  "modality": "CR",
+  "compressed": false,
+  "images": 2,
+  "mb": 30
+ },
+ {
+  "accession": "LTCR20",
+  "id": "ac251707-60da-4ce0-a8fb-cd549dbc429b",
+  "uid": "2.25.36360013849403632488960075520596463055",
+  "modality": "CR",
+  "compressed": true,
+  "images": 2,
+  "mb": 11
+ },
+ {
+  "accession": "LTCT01",
+  "id": "ab87efde-1d28-4c1b-8210-401eed3b4676",
+  "uid": "2.25.18034026588086895182647752592734331084",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT02",
+  "id": "bfda22e0-5253-4779-804d-d2707dcc0af3",
+  "uid": "2.25.138169933142424161206107768589224574315",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT03",
+  "id": "2a585788-05b2-4129-b3b2-6f04b4a3f4af",
+  "uid": "2.25.302883757624653032069193417798150352646",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT04",
+  "id": "28462564-2148-4717-b93a-173a1e519af0",
+  "uid": "2.25.168029779324246494892384437298581336770",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT05",
+  "id": "f5adf0aa-6ef5-4d20-9ef9-0daf7505ea6f",
+  "uid": "2.25.89701330584648586498213717668941184964",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT06",
+  "id": "f0d24225-57d0-41ec-b6c7-d2b1d7c42ac4",
+  "uid": "2.25.299674877335672816087532565188652190428",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT07",
+  "id": "c50e0d90-e58d-48b8-b089-f49351c28ae2",
+  "uid": "2.25.142649411540610714399927381269417957459",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT08",
+  "id": "a952cd6d-2b99-42e4-8f6a-1c0fd4e117aa",
+  "uid": "2.25.263771950036601042893863232868688041549",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT09",
+  "id": "9e2aa5f3-a75a-4d04-a139-6be5f3e95500",
+  "uid": "2.25.123668095635659594746764255700447412313",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT10",
+  "id": "be526a2b-1db0-4ec7-bd56-b6f94e40e3a7",
+  "uid": "2.25.53639886243114628886497164842542976651",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT11",
+  "id": "100f28cd-1f78-4ce3-a4c1-0d2dc5bf332b",
+  "uid": "2.25.27186664244364967121227051398000576054",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT12",
+  "id": "0009568d-4a2c-41da-8bba-b25661c589af",
+  "uid": "2.25.53914230364909941350352763243285453382",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT13",
+  "id": "92b6238b-8399-4416-8c57-7028a5e98b3e",
+  "uid": "2.25.58149065238438222855058248868443282823",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT14",
+  "id": "83e9f04f-cac7-4abb-991c-48cd044465c0",
+  "uid": "2.25.146065627409335276234577154010783128922",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT15",
+  "id": "e4b468a3-caa1-4b2f-9b6b-69600fa18d06",
+  "uid": "2.25.322418895462323391431040956488677988709",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT16",
+  "id": "89b1bd23-3927-42d1-b498-48d7783a1b07",
+  "uid": "2.25.263089060876349183645390994460541696979",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT17",
+  "id": "b5bb8a1a-308d-459d-bed0-ad3b158137c6",
+  "uid": "2.25.316003531082272969244856337860614153073",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT18",
+  "id": "6a3ec58a-e195-4ea6-b3eb-5e62ccc021de",
+  "uid": "2.25.228952620767254101693224031646593499611",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTCT19",
+  "id": "93953d7a-7e7d-4bbc-b169-73408b16985a",
+  "uid": "2.25.164527770921418650261363774043312117115",
+  "modality": "CT",
+  "compressed": false,
+  "images": 520,
+  "mb": 273
+ },
+ {
+  "accession": "LTCT20",
+  "id": "9964b6c9-5c35-48dd-878e-e73189522f8d",
+  "uid": "2.25.155927170827986266855849206427866691685",
+  "modality": "CT",
+  "compressed": true,
+  "images": 520,
+  "mb": 113
+ },
+ {
+  "accession": "LTMR01",
+  "id": "c124d770-aa62-40af-93e8-92f052fdf5d3",
+  "uid": "2.25.7797441181593001810613613475139995491",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR02",
+  "id": "b64f3ef5-b28f-4307-89bd-40f259ee6d76",
+  "uid": "2.25.175883567996189709462776539729623551402",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR03",
+  "id": "3c855f3a-32e3-4086-bd8e-0146c7a74355",
+  "uid": "2.25.141432245065249803339779047788793818484",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR04",
+  "id": "c4516b8e-95e0-419b-955d-6f835a1bfb74",
+  "uid": "2.25.134190149573084314678727863247408506717",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR05",
+  "id": "0ab3bb45-c0d6-437b-9ed0-bc0f3454121c",
+  "uid": "2.25.57872589849169632352339491633999651806",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR06",
+  "id": "0ddccd37-ac0d-4dfe-b286-70b2a6cadb37",
+  "uid": "2.25.271869641760592739860512542092944457468",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR07",
+  "id": "c23a78ff-19af-4e26-8426-b44199438887",
+  "uid": "2.25.297433058864097938972365462357484106090",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR08",
+  "id": "b5901c45-e11f-47f4-bfef-54e2644687c0",
+  "uid": "2.25.272777723636545600637961703607266926384",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR09",
+  "id": "3f1c87d1-c6ba-48a2-96b3-2e904c7073da",
+  "uid": "2.25.264981990977393581907824398883986520149",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR10",
+  "id": "4722afd1-161f-4863-b4a9-efa0801e2887",
+  "uid": "2.25.302055682123625686542865944818915248733",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR11",
+  "id": "1b8052ff-ce56-4ac9-a08f-7cfb6f907e28",
+  "uid": "2.25.322035705557057491186738225421408282715",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR12",
+  "id": "a7af5bcb-aded-458a-9c99-4a939706f866",
+  "uid": "2.25.67198244328597443571071682120953968705",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR13",
+  "id": "f7b53e5a-e325-4682-adcf-c243132f4025",
+  "uid": "2.25.185672643087196954647213395785480969147",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR14",
+  "id": "2b457ec3-13ba-4f97-bb8b-78cd62d7f4a9",
+  "uid": "2.25.219485743387478699660209264792991086739",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR15",
+  "id": "fc271fb8-0ab7-4460-ae96-776b2a1af2af",
+  "uid": "2.25.28882039894322045703314131694547215168",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR16",
+  "id": "5cad3984-b98b-4a4f-ad2f-84080631ff72",
+  "uid": "2.25.172719864647604213601487167513685775669",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR17",
+  "id": "41953ef8-904a-4ca1-a0e0-ddacde499cc6",
+  "uid": "2.25.57600004939354028980036487576559270092",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR18",
+  "id": "4dd9984a-85a7-41da-a4d2-4a9f3c2a108b",
+  "uid": "2.25.190185709050876919994971609740436858161",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ },
+ {
+  "accession": "LTMR19",
+  "id": "5d8e9244-e822-4888-bea1-ce979350ee4b",
+  "uid": "2.25.79854345922905396330101572152298412396",
+  "modality": "MR",
+  "compressed": false,
+  "images": 320,
+  "mb": 168
+ },
+ {
+  "accession": "LTMR20",
+  "id": "55bfe19e-7aa4-4cf6-8548-3179fea52d9e",
+  "uid": "2.25.254907239457039536328502664411848811595",
+  "modality": "MR",
+  "compressed": true,
+  "images": 320,
+  "mb": 70
+ }
+]

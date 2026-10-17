@@ -4,6 +4,7 @@ import com.telerad.common.StudySource;
 import com.telerad.common.StudyStatus;
 import com.telerad.notify.NotificationService;
 import com.telerad.notify.SlaService;
+import com.telerad.storage.GzipVariantService;
 import com.telerad.storage.ObjectStorageService;
 import com.telerad.study.*;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class IngestWorker {
     private final PatientRepository patientRepository;
     private final SlaService slaService;
     private final NotificationService notificationService;
+    private final IngestLocks ingestLocks;
+    private final GzipVariantService gzipVariantService;
 
     @RabbitListener(queues = "${telerad.rabbit.ingest-queue}")
     @Transactional
@@ -43,10 +46,21 @@ public class IngestWorker {
         try {
             byte[] bytes = storage.getBytes(message.storageKey());
             Attributes attrs;
+            String tsuid;
             try (DicomInputStream dis = new DicomInputStream(new ByteArrayInputStream(bytes))) {
+                tsuid = GzipVariantService.fileTransferSyntax(dis);
                 attrs = dis.readDataset(-1, -1);
             }
-            upsertFromDataset(message.tenantId(), message.storageKey(), attrs, resolveSource(message.source()));
+            upsertFromDataset(message.tenantId(), message.storageKey(), attrs, tsuid, resolveSource(message.source()));
+            Optional<Instance> stored = instanceRepository.findBySopInstanceUid(attrs.getString(Tag.SOPInstanceUID));
+            if (stored.isPresent() && !stored.get().isEncodingsChecked()) {
+                GzipVariantService.Result variant = gzipVariantService.createVariant(message.storageKey(), bytes);
+                Instance inst = stored.get();
+                inst.setTransferSyntaxUid(variant.transferSyntaxUid());
+                inst.setGzipStorageKey(variant.gzipStorageKey());
+                inst.setEncodingsChecked(true);
+                instanceRepository.save(inst);
+            }
         } catch (Exception e) {
             log.error("Failed to ingest {}: {}", message.storageKey(), e.getMessage(), e);
             throw new RuntimeException(e);
@@ -64,17 +78,30 @@ public class IngestWorker {
 
     @Transactional
     public Study upsertFromDataset(UUID tenantId, String storageKey, Attributes attrs, StudySource source) {
+        return upsertFromDataset(tenantId, storageKey, attrs,
+                attrs.getString(Tag.TransferSyntaxUID, UID.ExplicitVRLittleEndian), source);
+    }
+
+    /**
+     * @param transferSyntaxUid from the file meta information; the dataset itself never carries it
+     */
+    @Transactional
+    public Study upsertFromDataset(UUID tenantId, String storageKey, Attributes attrs, String transferSyntaxUid,
+                                   StudySource source) {
         String studyUid = attrs.getString(Tag.StudyInstanceUID);
         String seriesUid = attrs.getString(Tag.SeriesInstanceUID);
         String sopUid = attrs.getString(Tag.SOPInstanceUID);
         if (studyUid == null || seriesUid == null || sopUid == null) {
             throw new IllegalArgumentException("Missing required DICOM UIDs");
         }
+        // A study belongs to one patient, so this also serialises study and series creation.
+        ingestLocks.lockPatient(tenantId, Optional.ofNullable(attrs.getString(Tag.PatientID)).orElse("UNKNOWN"));
 
         Optional<Instance> existing = instanceRepository.findBySopInstanceUid(sopUid);
         if (existing.isPresent()) {
             Instance inst = existing.get();
             inst.setStorageKey(storageKey);
+            if (transferSyntaxUid != null) inst.setTransferSyntaxUid(transferSyntaxUid);
             // Backfill plane tags on re-upload so sync scroll works for older studies.
             String ipp = encodeDoubles(attrs, Tag.ImagePositionPatient, 3);
             String iop = encodeDoubles(attrs, Tag.ImageOrientationPatient, 6);
@@ -134,7 +161,7 @@ public class IngestWorker {
                 .imagePositionPatient(encodeDoubles(attrs, Tag.ImagePositionPatient, 3))
                 .imageOrientationPatient(encodeDoubles(attrs, Tag.ImageOrientationPatient, 6))
                 .storageKey(storageKey)
-                .transferSyntaxUid(attrs.getString(Tag.TransferSyntaxUID, UID.ExplicitVRLittleEndian))
+                .transferSyntaxUid(transferSyntaxUid != null ? transferSyntaxUid : UID.ExplicitVRLittleEndian)
                 .build();
         instanceRepository.save(instance);
 

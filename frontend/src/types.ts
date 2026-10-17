@@ -57,6 +57,7 @@ export interface InstanceDto {
   frameTime?: number | null
   imagePositionPatient?: number[] | null
   imageOrientationPatient?: number[] | null
+  transferSyntaxUid?: string | null
 }
 
 export interface SeriesDto {

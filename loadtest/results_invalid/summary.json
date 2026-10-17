@@ -1,0 +1,127 @@
+[
+ {
+  "label": "ct-1-unl-cold",
+  "sim": {
+   "label": "ct-1-unl-cold",
+   "startedAt": "2026-10-15T06:53:24.540Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 66.94841199999999,
+    "max": 66.94841199999999
+   },
+   "fullStudy": {
+    "p50": 3719.912577,
+    "max": 3719.912577
+   },
+   "scrollMs": {
+    "p50": 7,
+    "p95": 9,
+    "p99": 12,
+    "max": 13
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 67,
+     "fullStudyMs": 3720,
+     "scrollP95": 9,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-unl-cold",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 217,
+    "max": 217
+   },
+   "fullStudy": {
+    "p50": 24994,
+    "max": 24994
+   },
+   "scrollMs": {
+    "p50": 34,
+    "p95": 50,
+    "p99": 60,
+    "max": 301
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 217,
+     "fullStudyMs": 24994,
+     "scrollP95": 50,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.19,
+    "cpu_peak": 0.94,
+    "mem_peak_mb": 1083,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 69,
+    "read_from_minio_mb": 549,
+    "sent_mb": 548
+   },
+   "minio": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.42,
+    "mem_peak_mb": 506,
+    "disk_rd_mb": 79,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "postgres": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.07,
+    "mem_peak_mb": 78,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.35,
+    "cpu_peak": 2.02,
+    "mem_peak_mb": 211,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 1,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 5.65,
+    "cpu_peak": 7.56,
+    "ncpu": 7.8,
+    "iowait_avg": 0.05,
+    "mem_avail_min_mb": 4403,
+    "disk_rd_mb": 459,
+    "client_cpu_avg": 5.05
+   }
+  }
+ }
+]

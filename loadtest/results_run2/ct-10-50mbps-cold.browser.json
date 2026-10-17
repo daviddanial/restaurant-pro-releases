@@ -1,0 +1,80 @@
+{
+ "label": "ct-10-50mbps-cold",
+ "readers": [
+  8,
+  9,
+  10
+ ],
+ "modality": "CT",
+ "firstImage": {
+  "p50": 1436,
+  "max": 1968
+ },
+ "fullStudy": {
+  "p50": 94439,
+  "max": 110342
+ },
+ "scrollMs": {
+  "p50": 166,
+  "p95": 212,
+  "p99": 238,
+  "max": 288
+ },
+ "errors": 0,
+ "perReader": [
+  {
+   "reader": 8,
+   "accession": "LTCT08",
+   "compressed": true,
+   "firstImageMs": 1968,
+   "firstRenderEventMs": 963,
+   "firstInstanceBytesMs": 1161,
+   "fullStudyMs": 94439,
+   "scrollP95": 199,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+   ]
+  },
+  {
+   "reader": 9,
+   "accession": "LTCT09",
+   "compressed": false,
+   "firstImageMs": 1436,
+   "firstRenderEventMs": 802,
+   "firstInstanceBytesMs": 1081,
+   "fullStudyMs": 110342,
+   "scrollP95": 222,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+   ]
+  },
+  {
+   "reader": 10,
+   "accession": "LTCT10",
+   "compressed": true,
+   "firstImageMs": 973,
+   "firstRenderEventMs": 459,
+   "firstInstanceBytesMs": 586,
+   "fullStudyMs": 92745,
+   "scrollP95": 202,
+   "steps": 519,
+   "errors": [],
+   "consoleErrors": [
+    "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+    "Failed to load resource: net::ERR_FAILED",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+    "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+== connection: AS328988 SAFARICOM TELECOMMUNICATIONS ETHIOPIA PLC, Shashamane ET, ቅዳሜ፣ ኦክቶበር 17 ቀን 10:14:40 ጡዋት EAT 2026 ዓ/ም
+== round trip to the VPS (TCP connect, 5 tries)
+avg 252 ms, worst 266 ms
+== download from the VPS, one connection (3 x index-Dxu2yuw1.js)
+0.77 Mbps
+0.91 Mbps
+0.83 Mbps
+== download from the VPS, 8 connections at once
+4.82 Mbps
+== reference servers (15 s max each)
+Cloudflare(nearby) connect 113 ms, 23.60 Mbps
+Germany            connect 404 ms, 11.87 Mbps
+USA                connect 404 ms, 9.87 Mbps
+== route to the VPS
+Start: 2026-10-17T10:15:34+0300
+HOST: said-HP-Pavilion-Laptop-14-dv0xxx Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 10.251.203.70                      0.0%    20    1.8   3.6   1.2  19.5   4.5
+  2.|-- ???                               100.0    20    0.0   0.0   0.0   0.0   0.0
+  3.|-- 10.43.44.33                        0.0%    20   33.4  28.4  18.8  68.9  13.2
+  4.|-- 10.1.81.1                          0.0%    20   30.0  28.6  17.9  57.8  12.0
+  5.|-- 102.218.49.11                      0.0%    20   21.3  30.1  18.8  68.0  12.7
+  6.|-- 10.35.122.111                      0.0%    20   36.7  29.2  17.8  57.0  11.1
+  7.|-- 41.189.225.137                     0.0%    20   24.4  26.2  19.4  45.9   7.5
+  8.|-- 41.189.225.138                     0.0%    20   31.9  36.9  27.3  65.9   9.5
+  9.|-- 185.1.47.50                        0.0%    20  178.8 155.4 144.0 182.6  10.9
+ 10.|-- 103.198.140.214                    0.0%    20  250.4 251.2 240.6 285.3  10.7
+ 11.|-- 49.44.220.240                      0.0%    20  253.0 255.1 245.0 290.6  12.7
+ 12.|-- ???                               100.0    20    0.0   0.0   0.0   0.0   0.0
+ 13.|-- 47.29.32.74                        0.0%    20  225.2 230.6 218.7 270.4  12.6
+ 14.|-- 142.79.248.114                     0.0%    20  223.1 228.2 220.2 257.5   9.6
+ 15.|-- 13.140.56.88                       0.0%    20  243.6 247.3 220.5 421.1  43.5

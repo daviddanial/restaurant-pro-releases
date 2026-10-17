@@ -1,0 +1,7192 @@
+[
+ {
+  "label": "cr-10-50mbps-cold",
+  "sim": {
+   "label": "cr-10-50mbps-cold",
+   "startedAt": "2026-10-15T09:35:43.568Z",
+   "readers": 7,
+   "modality": "CR",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 3201.601441,
+    "max": 3276.0648330000004
+   },
+   "fullStudy": {
+    "p50": 6089.57028,
+    "max": 6171.39402
+   },
+   "scrollMs": {
+    "p50": 2862,
+    "p95": 2934,
+    "p99": 2934,
+    "max": 2934
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 152.044342,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCR01",
+     "compressed": false,
+     "firstImageMs": 3264,
+     "fullStudyMs": 6167,
+     "scrollP95": 2904,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 2,
+     "accession": "LTCR02",
+     "compressed": true,
+     "firstImageMs": 1422,
+     "fullStudyMs": 2548,
+     "scrollP95": 1126,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 3,
+     "accession": "LTCR03",
+     "compressed": false,
+     "firstImageMs": 3228,
+     "fullStudyMs": 6090,
+     "scrollP95": 2862,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 4,
+     "accession": "LTCR04",
+     "compressed": true,
+     "firstImageMs": 1433,
+     "fullStudyMs": 2792,
+     "scrollP95": 1358,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 5,
+     "accession": "LTCR05",
+     "compressed": false,
+     "firstImageMs": 3202,
+     "fullStudyMs": 6135,
+     "scrollP95": 2934,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 6,
+     "accession": "LTCR06",
+     "compressed": true,
+     "firstImageMs": 1461,
+     "fullStudyMs": 2615,
+     "scrollP95": 1154,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 7,
+     "accession": "LTCR07",
+     "compressed": false,
+     "firstImageMs": 3276,
+     "fullStudyMs": 6171,
+     "scrollP95": 2895,
+     "errors": 0,
+     "mb": 30
+    }
+   ]
+  },
+  "browser": {
+   "label": "cr-10-50mbps-cold",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CR",
+   "firstImage": {
+    "p50": 2596,
+    "max": 3536
+   },
+   "fullStudy": {
+    "p50": 4532,
+    "max": 6460
+   },
+   "scrollMs": {
+    "p50": 1380,
+    "p95": 2684,
+    "p99": 2684,
+    "max": 2684
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCR08",
+     "compressed": true,
+     "firstImageMs": 2559,
+     "firstRenderEventMs": 698,
+     "firstInstanceBytesMs": 1820,
+     "fullStudyMs": 4532,
+     "scrollP95": 1380,
+     "steps": 1,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCR09",
+     "compressed": false,
+     "firstImageMs": 3536,
+     "firstRenderEventMs": 553,
+     "firstInstanceBytesMs": 3375,
+     "fullStudyMs": 6460,
+     "scrollP95": 2684,
+     "steps": 1,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCR10",
+     "compressed": true,
+     "firstImageMs": 2596,
+     "firstRenderEventMs": 548,
+     "firstInstanceBytesMs": 1866,
+     "fullStudyMs": 4262,
+     "scrollP95": 1372,
+     "steps": 1,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.2,
+    "cpu_peak": 1.98,
+    "mem_peak_mb": 1164,
+    "disk_rd_mb": 81,
+    "disk_wr_mb": 0,
+    "threads_peak": 81,
+    "read_from_minio_mb": 255,
+    "sent_mb": 203
+   },
+   "minio": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.15,
+    "mem_peak_mb": 344,
+    "disk_rd_mb": 203,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 255
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.07,
+    "mem_peak_mb": 61,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.35,
+    "cpu_peak": 2.21,
+    "mem_peak_mb": 105,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 5.68,
+    "cpu_peak": 7.88,
+    "ncpu": 7.9,
+    "iowait_avg": 0.12,
+    "mem_avail_min_mb": 3911,
+    "disk_rd_mb": 415,
+    "client_cpu_avg": 5.07
+   }
+  }
+ },
+ {
+  "label": "cr-20-50mbps-cold",
+  "sim": {
+   "label": "cr-20-50mbps-cold",
+   "startedAt": "2026-10-15T09:36:09.018Z",
+   "readers": 17,
+   "modality": "CR",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 2864.760821,
+    "max": 3130.8432869999997
+   },
+   "fullStudy": {
+    "p50": 5386.767873999999,
+    "max": 5687.049215999999
+   },
+   "scrollMs": {
+    "p50": 2514,
+    "p95": 2557,
+    "p99": 2557,
+    "max": 2557
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 355.446814,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCR01",
+     "compressed": false,
+     "firstImageMs": 2865,
+     "fullStudyMs": 5387,
+     "scrollP95": 2522,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 2,
+     "accession": "LTCR02",
+     "compressed": true,
+     "firstImageMs": 1215,
+     "fullStudyMs": 2209,
+     "scrollP95": 993,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 3,
+     "accession": "LTCR03",
+     "compressed": false,
+     "firstImageMs": 2881,
+     "fullStudyMs": 5395,
+     "scrollP95": 2514,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 4,
+     "accession": "LTCR04",
+     "compressed": true,
+     "firstImageMs": 1281,
+     "fullStudyMs": 2267,
+     "scrollP95": 986,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 5,
+     "accession": "LTCR05",
+     "compressed": false,
+     "firstImageMs": 3089,
+     "fullStudyMs": 5645,
+     "scrollP95": 2556,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 6,
+     "accession": "LTCR06",
+     "compressed": true,
+     "firstImageMs": 1475,
+     "fullStudyMs": 2454,
+     "scrollP95": 979,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 7,
+     "accession": "LTCR07",
+     "compressed": false,
+     "firstImageMs": 3064,
+     "fullStudyMs": 5600,
+     "scrollP95": 2536,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 8,
+     "accession": "LTCR08",
+     "compressed": true,
+     "firstImageMs": 1447,
+     "fullStudyMs": 2451,
+     "scrollP95": 1004,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 9,
+     "accession": "LTCR09",
+     "compressed": false,
+     "firstImageMs": 2995,
+     "fullStudyMs": 5527,
+     "scrollP95": 2532,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 10,
+     "accession": "LTCR10",
+     "compressed": true,
+     "firstImageMs": 1463,
+     "fullStudyMs": 2435,
+     "scrollP95": 972,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 11,
+     "accession": "LTCR11",
+     "compressed": false,
+     "firstImageMs": 3125,
+     "fullStudyMs": 5682,
+     "scrollP95": 2557,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 12,
+     "accession": "LTCR12",
+     "compressed": true,
+     "firstImageMs": 1483,
+     "fullStudyMs": 2457,
+     "scrollP95": 974,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 13,
+     "accession": "LTCR13",
+     "compressed": false,
+     "firstImageMs": 3035,
+     "fullStudyMs": 5588,
+     "scrollP95": 2553,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 14,
+     "accession": "LTCR14",
+     "compressed": true,
+     "firstImageMs": 1419,
+     "fullStudyMs": 2413,
+     "scrollP95": 994,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 15,
+     "accession": "LTCR15",
+     "compressed": false,
+     "firstImageMs": 3108,
+     "fullStudyMs": 5657,
+     "scrollP95": 2549,
+     "errors": 0,
+     "mb": 30
+    },
+    {
+     "reader": 16,
+     "accession": "LTCR16",
+     "compressed": true,
+     "firstImageMs": 1326,
+     "fullStudyMs": 2316,
+     "scrollP95": 989,
+     "errors": 0,
+     "mb": 10.7
+    },
+    {
+     "reader": 17,
+     "accession": "LTCR17",
+     "compressed": false,
+     "firstImageMs": 3131,
+     "fullStudyMs": 5687,
+     "scrollP95": 2556,
+     "errors": 0,
+     "mb": 30
+    }
+   ]
+  },
+  "browser": {
+   "label": "cr-20-50mbps-cold",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CR",
+   "firstImage": {
+    "p50": 2705,
+    "max": 3038
+   },
+   "fullStudy": {
+    "p50": 4693,
+    "max": 6044
+   },
+   "scrollMs": {
+    "p50": 1661,
+    "p95": 2718,
+    "p99": 2718,
+    "max": 2718
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCR18",
+     "compressed": true,
+     "firstImageMs": 2454,
+     "firstRenderEventMs": 423,
+     "firstInstanceBytesMs": 1557,
+     "fullStudyMs": 4455,
+     "scrollP95": 1661,
+     "steps": 1,
+     "errors": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCR19",
+     "compressed": false,
+     "firstImageMs": 3038,
+     "firstRenderEventMs": 214,
+     "firstInstanceBytesMs": 2865,
+     "fullStudyMs": 6044,
+     "scrollP95": 2718,
+     "steps": 1,
+     "errors": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCR20",
+     "compressed": true,
+     "firstImageMs": 2705,
+     "firstRenderEventMs": 676,
+     "firstInstanceBytesMs": 1721,
+     "fullStudyMs": 4693,
+     "scrollP95": 1492,
+     "steps": 1,
+     "errors": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_CONNECTION_CLOSED"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.06,
+    "cpu_peak": 3.36,
+    "mem_peak_mb": 1495,
+    "disk_rd_mb": 3,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 457,
+    "sent_mb": 406
+   },
+   "minio": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.38,
+    "mem_peak_mb": 380,
+    "disk_rd_mb": 227,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 458
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.08,
+    "mem_peak_mb": 62,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.47,
+    "cpu_peak": 2.73,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 2.08,
+    "cpu_peak": 6.89,
+    "ncpu": 7.9,
+    "iowait_avg": 0.07,
+    "mem_avail_min_mb": 3917,
+    "disk_rd_mb": 315,
+    "client_cpu_avg": 1.51
+   }
+  }
+ },
+ {
+  "label": "ct-1-20mbps-cold",
+  "sim": {
+   "label": "ct-1-20mbps-cold",
+   "startedAt": "2026-10-15T08:43:59.058Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 623.8550759999999,
+    "max": 623.8550759999999
+   },
+   "fullStudy": {
+    "p50": 140933.964191,
+    "max": 140933.964191
+   },
+   "scrollMs": {
+    "p50": 271,
+    "p95": 275,
+    "p99": 276,
+    "max": 281
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 624,
+     "fullStudyMs": 140934,
+     "scrollP95": 275,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-20mbps-cold",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 678,
+    "max": 678
+   },
+   "fullStudy": {
+    "p50": 155895,
+    "max": 155895
+   },
+   "scrollMs": {
+    "p50": 280,
+    "p95": 290,
+    "p99": 294,
+    "max": 296
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 678,
+     "firstRenderEventMs": 363,
+     "firstInstanceBytesMs": 641,
+     "fullStudyMs": 155895,
+     "scrollP95": 290,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.24,
+    "mem_peak_mb": 602,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 1,
+    "threads_peak": 74,
+    "read_from_minio_mb": 549,
+    "sent_mb": 548
+   },
+   "minio": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.42,
+    "mem_peak_mb": 258,
+    "disk_rd_mb": 35,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.04,
+    "mem_peak_mb": 56,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.3,
+    "cpu_peak": 1.66,
+    "mem_peak_mb": 109,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 1.42,
+    "cpu_peak": 3.72,
+    "ncpu": 7.8,
+    "iowait_avg": 0.05,
+    "mem_avail_min_mb": 4978,
+    "disk_rd_mb": 139,
+    "client_cpu_avg": 1.08
+   }
+  }
+ },
+ {
+  "label": "ct-1-20mbps-warm",
+  "sim": {
+   "label": "ct-1-20mbps-warm",
+   "startedAt": "2026-10-15T08:49:08.355Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 612.582115,
+    "max": 612.582115
+   },
+   "fullStudy": {
+    "p50": 141106.24384500002,
+    "max": 141106.24384500002
+   },
+   "scrollMs": {
+    "p50": 271,
+    "p95": 275,
+    "p99": 277,
+    "max": 282
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 613,
+     "fullStudyMs": 141106,
+     "scrollP95": 275,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-20mbps-warm",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 660,
+    "max": 660
+   },
+   "fullStudy": {
+    "p50": 156102,
+    "max": 156102
+   },
+   "scrollMs": {
+    "p50": 281,
+    "p95": 290,
+    "p99": 293,
+    "max": 299
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 660,
+     "firstRenderEventMs": 356,
+     "firstInstanceBytesMs": 629,
+     "fullStudyMs": 156102,
+     "scrollP95": 290,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.2,
+    "mem_peak_mb": 602,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 549,
+    "sent_mb": 548
+   },
+   "minio": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.16,
+    "mem_peak_mb": 367,
+    "disk_rd_mb": 57,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 547
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.03,
+    "mem_peak_mb": 55,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.29,
+    "cpu_peak": 1.62,
+    "mem_peak_mb": 112,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 1.36,
+    "cpu_peak": 3.73,
+    "ncpu": 7.9,
+    "iowait_avg": 0.06,
+    "mem_avail_min_mb": 4637,
+    "disk_rd_mb": 314,
+    "client_cpu_avg": 1.01
+   }
+  }
+ },
+ {
+  "label": "ct-1-50mbps-cold",
+  "sim": {
+   "label": "ct-1-50mbps-cold",
+   "startedAt": "2026-10-15T08:37:46.365Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 439.14817199999993,
+    "max": 439.14817199999993
+   },
+   "fullStudy": {
+    "p50": 74541.621717,
+    "max": 74541.621717
+   },
+   "scrollMs": {
+    "p50": 142,
+    "p95": 149,
+    "p99": 152,
+    "max": 159
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 439,
+     "fullStudyMs": 74542,
+     "scrollP95": 149,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-50mbps-cold",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 925,
+    "max": 925
+   },
+   "fullStudy": {
+    "p50": 100433,
+    "max": 100433
+   },
+   "scrollMs": {
+    "p50": 164,
+    "p95": 180,
+    "p99": 190,
+    "max": 214
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 925,
+     "firstRenderEventMs": 462,
+     "firstInstanceBytesMs": 681,
+     "fullStudyMs": 100433,
+     "scrollP95": 180,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.41,
+    "mem_peak_mb": 593,
+    "disk_rd_mb": 4,
+    "disk_wr_mb": 0,
+    "threads_peak": 77,
+    "read_from_minio_mb": 547,
+    "sent_mb": 547
+   },
+   "minio": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.54,
+    "mem_peak_mb": 237,
+    "disk_rd_mb": 35,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.05,
+    "mem_peak_mb": 60,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.39,
+    "cpu_peak": 2.58,
+    "mem_peak_mb": 112,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 2.93,
+    "cpu_peak": 7.19,
+    "ncpu": 7.8,
+    "iowait_avg": 0.07,
+    "mem_avail_min_mb": 4471,
+    "disk_rd_mb": 386,
+    "client_cpu_avg": 2.46
+   }
+  }
+ },
+ {
+  "label": "ct-1-50mbps-warm",
+  "sim": {
+   "label": "ct-1-50mbps-warm",
+   "startedAt": "2026-10-15T08:40:54.725Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 394.996003,
+    "max": 394.996003
+   },
+   "fullStudy": {
+    "p50": 75215.128211,
+    "max": 75215.128211
+   },
+   "scrollMs": {
+    "p50": 144,
+    "p95": 149,
+    "p99": 154,
+    "max": 170
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 395,
+     "fullStudyMs": 75215,
+     "scrollP95": 149,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-50mbps-warm",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 659,
+    "max": 659
+   },
+   "fullStudy": {
+    "p50": 96396,
+    "max": 96396
+   },
+   "scrollMs": {
+    "p50": 160,
+    "p95": 175,
+    "p99": 180,
+    "max": 187
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 659,
+     "firstRenderEventMs": 393,
+     "firstInstanceBytesMs": 560,
+     "fullStudyMs": 96396,
+     "scrollP95": 175,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Failed to load resource: net::ERR_NAME_NOT_RESOLVED"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.05,
+    "cpu_peak": 0.4,
+    "mem_peak_mb": 598,
+    "disk_rd_mb": 3,
+    "disk_wr_mb": 0,
+    "threads_peak": 77,
+    "read_from_minio_mb": 549,
+    "sent_mb": 548
+   },
+   "minio": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.17,
+    "mem_peak_mb": 338,
+    "disk_rd_mb": 37,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 547
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.05,
+    "mem_peak_mb": 56,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.35,
+    "cpu_peak": 2.23,
+    "mem_peak_mb": 111,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 2.82,
+    "cpu_peak": 5.75,
+    "ncpu": 7.8,
+    "iowait_avg": 0.08,
+    "mem_avail_min_mb": 4413,
+    "disk_rd_mb": 68,
+    "client_cpu_avg": 2.39
+   }
+  }
+ },
+ {
+  "label": "ct-1-unl-cold",
+  "sim": {
+   "label": "ct-1-unl-cold",
+   "startedAt": "2026-10-15T08:36:01.949Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 35.932627999999994,
+    "max": 35.932627999999994
+   },
+   "fullStudy": {
+    "p50": 3593.241132,
+    "max": 3593.241132
+   },
+   "scrollMs": {
+    "p50": 6,
+    "p95": 9,
+    "p99": 13,
+    "max": 23
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 36,
+     "fullStudyMs": 3593,
+     "scrollP95": 9,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-unl-cold",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 375,
+    "max": 375
+   },
+   "fullStudy": {
+    "p50": 34567,
+    "max": 34567
+   },
+   "scrollMs": {
+    "p50": 48,
+    "p95": 82,
+    "p99": 97,
+    "max": 676
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 375,
+     "firstRenderEventMs": 179,
+     "firstInstanceBytesMs": 215,
+     "fullStudyMs": 34567,
+     "scrollP95": 82,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.17,
+    "cpu_peak": 0.79,
+    "mem_peak_mb": 1629,
+    "disk_rd_mb": 99,
+    "disk_wr_mb": 0,
+    "threads_peak": 73,
+    "read_from_minio_mb": 549,
+    "sent_mb": 548
+   },
+   "minio": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.42,
+    "mem_peak_mb": 476,
+    "disk_rd_mb": -46,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "postgres": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.08,
+    "mem_peak_mb": 60,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.41,
+    "cpu_peak": 2.2,
+    "mem_peak_mb": 109,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.22,
+    "cpu_peak": 7.83,
+    "ncpu": 7.9,
+    "iowait_avg": 0.05,
+    "mem_avail_min_mb": 4742,
+    "disk_rd_mb": 541,
+    "client_cpu_avg": 5.57
+   }
+  }
+ },
+ {
+  "label": "ct-1-unl-warm",
+  "sim": {
+   "label": "ct-1-unl-warm",
+   "startedAt": "2026-10-15T08:36:53.508Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 33.41810100000001,
+    "max": 33.41810100000001
+   },
+   "fullStudy": {
+    "p50": 3405.655542,
+    "max": 3405.655542
+   },
+   "scrollMs": {
+    "p50": 6,
+    "p95": 10,
+    "p99": 13,
+    "max": 18
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 33,
+     "fullStudyMs": 3406,
+     "scrollP95": 10,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-1-unl-warm",
+   "readers": [
+    1
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 978,
+    "max": 978
+   },
+   "fullStudy": {
+    "p50": 35363,
+    "max": 35363
+   },
+   "scrollMs": {
+    "p50": 48,
+    "p95": 82,
+    "p99": 104,
+    "max": 145
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 978,
+     "firstRenderEventMs": 459,
+     "firstInstanceBytesMs": 527,
+     "fullStudyMs": 35363,
+     "scrollP95": 82,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.36,
+    "cpu_peak": 2.31,
+    "mem_peak_mb": 702,
+    "disk_rd_mb": 3,
+    "disk_wr_mb": 0,
+    "threads_peak": 75,
+    "read_from_minio_mb": 653,
+    "sent_mb": 652
+   },
+   "minio": {
+    "cpu_avg": 0.13,
+    "cpu_peak": 2.66,
+    "mem_peak_mb": 280,
+    "disk_rd_mb": 29,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 651
+   },
+   "postgres": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.19,
+    "mem_peak_mb": 60,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.56,
+    "cpu_peak": 4.28,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 8.86,
+    "cpu_peak": 98.67,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 4324,
+    "disk_rd_mb": 184,
+    "client_cpu_avg": 7.77
+   }
+  }
+ },
+ {
+  "label": "ct-10-20mbps-cold",
+  "sim": {
+   "label": "ct-10-20mbps-cold",
+   "startedAt": "2026-10-15T09:13:15.603Z",
+   "readers": 7,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 624.5322610000001,
+    "max": 637.1279480000001
+   },
+   "fullStudy": {
+    "p50": 149630.732421,
+    "max": 149940.05879399998
+   },
+   "scrollMs": {
+    "p50": 276,
+    "p95": 302,
+    "p99": 319,
+    "max": 367
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1433.002776,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 630,
+     "fullStudyMs": 149940,
+     "scrollP95": 308,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 485,
+     "fullStudyMs": 83012,
+     "scrollP95": 176,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 634,
+     "fullStudyMs": 149637,
+     "scrollP95": 306,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 514,
+     "fullStudyMs": 82876,
+     "scrollP95": 174,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 637,
+     "fullStudyMs": 149631,
+     "scrollP95": 306,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 506,
+     "fullStudyMs": 83292,
+     "scrollP95": 174,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 625,
+     "fullStudyMs": 149919,
+     "scrollP95": 307,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-10-20mbps-cold",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1385,
+    "max": 1802
+   },
+   "fullStudy": {
+    "p50": 117697,
+    "max": 171815
+   },
+   "scrollMs": {
+    "p50": 215,
+    "p95": 322,
+    "p99": 345,
+    "max": 410
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 1325,
+     "firstRenderEventMs": 882,
+     "firstInstanceBytesMs": 1057,
+     "fullStudyMs": 116260,
+     "scrollP95": 237,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 1385,
+     "firstRenderEventMs": 550,
+     "firstInstanceBytesMs": 837,
+     "fullStudyMs": 171815,
+     "scrollP95": 339,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 1802,
+     "firstRenderEventMs": 1404,
+     "firstInstanceBytesMs": 1585,
+     "fullStudyMs": 117697,
+     "scrollP95": 241,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.14,
+    "cpu_peak": 1.36,
+    "mem_peak_mb": 1132,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 73,
+    "read_from_minio_mb": 1946,
+    "sent_mb": 1942
+   },
+   "minio": {
+    "cpu_avg": 0.1,
+    "cpu_peak": 0.31,
+    "mem_peak_mb": 1357,
+    "disk_rd_mb": 1947,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1935
+   },
+   "postgres": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.13,
+    "mem_peak_mb": 62,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.44,
+    "cpu_peak": 2.52,
+    "mem_peak_mb": 112,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.01,
+    "cpu_peak": 7.81,
+    "ncpu": 7.8,
+    "iowait_avg": 0.03,
+    "mem_avail_min_mb": 2273,
+    "disk_rd_mb": 2075,
+    "client_cpu_avg": 5.3
+   }
+  }
+ },
+ {
+  "label": "ct-10-20mbps-warm",
+  "sim": {
+   "label": "ct-10-20mbps-warm",
+   "startedAt": "2026-10-15T09:16:20.247Z",
+   "readers": 7,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 629.891465,
+    "max": 646.4758899999999
+   },
+   "fullStudy": {
+    "p50": 148893.10434,
+    "max": 149314.76617599998
+   },
+   "scrollMs": {
+    "p50": 275,
+    "p95": 300,
+    "p99": 314,
+    "max": 395
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1433.002776,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 635,
+     "fullStudyMs": 149032,
+     "scrollP95": 307,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 518,
+     "fullStudyMs": 82676,
+     "scrollP95": 173,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 637,
+     "fullStudyMs": 148893,
+     "scrollP95": 302,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 508,
+     "fullStudyMs": 82707,
+     "scrollP95": 172,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 646,
+     "fullStudyMs": 149315,
+     "scrollP95": 304,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 517,
+     "fullStudyMs": 82690,
+     "scrollP95": 173,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 630,
+     "fullStudyMs": 149163,
+     "scrollP95": 305,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-10-20mbps-warm",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1286,
+    "max": 1723
+   },
+   "fullStudy": {
+    "p50": 114866,
+    "max": 170193
+   },
+   "scrollMs": {
+    "p50": 211,
+    "p95": 321,
+    "p99": 342,
+    "max": 387
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 1723,
+     "firstRenderEventMs": 981,
+     "firstInstanceBytesMs": 1183,
+     "fullStudyMs": 114443,
+     "scrollP95": 235,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 1286,
+     "firstRenderEventMs": 615,
+     "firstInstanceBytesMs": 924,
+     "fullStudyMs": 170193,
+     "scrollP95": 335,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 1268,
+     "firstRenderEventMs": 581,
+     "firstInstanceBytesMs": 755,
+     "fullStudyMs": 114866,
+     "scrollP95": 237,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.13,
+    "cpu_peak": 1.41,
+    "mem_peak_mb": 1131,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 1946,
+    "sent_mb": 1942
+   },
+   "minio": {
+    "cpu_avg": 0.11,
+    "cpu_peak": 0.36,
+    "mem_peak_mb": 1766,
+    "disk_rd_mb": 1972,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1936
+   },
+   "postgres": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.13,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.44,
+    "cpu_peak": 2.32,
+    "mem_peak_mb": 111,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 5.96,
+    "cpu_peak": 7.78,
+    "ncpu": 7.9,
+    "iowait_avg": 0.03,
+    "mem_avail_min_mb": 2292,
+    "disk_rd_mb": 2179,
+    "client_cpu_avg": 5.25
+   }
+  }
+ },
+ {
+  "label": "ct-10-50mbps-cold",
+  "sim": {
+   "label": "ct-10-50mbps-cold",
+   "startedAt": "2026-10-15T09:09:05.322Z",
+   "readers": 7,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 420.60176200000006,
+    "max": 433.50376400000005
+   },
+   "fullStudy": {
+    "p50": 86438.218045,
+    "max": 86670.58349599999
+   },
+   "scrollMs": {
+    "p50": 154,
+    "p95": 183,
+    "p99": 207,
+    "max": 267
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1433.002776,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 421,
+     "fullStudyMs": 86483,
+     "scrollP95": 190,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 378,
+     "fullStudyMs": 57338,
+     "scrollP95": 133,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 434,
+     "fullStudyMs": 86604,
+     "scrollP95": 191,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 391,
+     "fullStudyMs": 57274,
+     "scrollP95": 132,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 430,
+     "fullStudyMs": 86671,
+     "scrollP95": 192,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 387,
+     "fullStudyMs": 57368,
+     "scrollP95": 132,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 431,
+     "fullStudyMs": 86438,
+     "scrollP95": 189,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-10-50mbps-cold",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1436,
+    "max": 1968
+   },
+   "fullStudy": {
+    "p50": 94439,
+    "max": 110342
+   },
+   "scrollMs": {
+    "p50": 166,
+    "p95": 212,
+    "p99": 238,
+    "max": 288
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 1968,
+     "firstRenderEventMs": 963,
+     "firstInstanceBytesMs": 1161,
+     "fullStudyMs": 94439,
+     "scrollP95": 199,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 1436,
+     "firstRenderEventMs": 802,
+     "firstInstanceBytesMs": 1081,
+     "fullStudyMs": 110342,
+     "scrollP95": 222,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 973,
+     "firstRenderEventMs": 459,
+     "firstInstanceBytesMs": 586,
+     "fullStudyMs": 92745,
+     "scrollP95": 202,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.22,
+    "cpu_peak": 1.73,
+    "mem_peak_mb": 1137,
+    "disk_rd_mb": 9,
+    "disk_wr_mb": 0,
+    "threads_peak": 75,
+    "read_from_minio_mb": 1946,
+    "sent_mb": 1942
+   },
+   "minio": {
+    "cpu_avg": 0.15,
+    "cpu_peak": 0.38,
+    "mem_peak_mb": 1161,
+    "disk_rd_mb": 1994,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1936
+   },
+   "postgres": {
+    "cpu_avg": 0.05,
+    "cpu_peak": 0.13,
+    "mem_peak_mb": 66,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.46,
+    "cpu_peak": 2.21,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.99,
+    "cpu_peak": 7.88,
+    "ncpu": 7.8,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 2201,
+    "disk_rd_mb": 2217,
+    "client_cpu_avg": 6.11
+   }
+  }
+ },
+ {
+  "label": "ct-10-50mbps-warm",
+  "sim": {
+   "label": "ct-10-50mbps-warm",
+   "startedAt": "2026-10-15T09:11:09.176Z",
+   "readers": 7,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 406.72689299999996,
+    "max": 436.85747000000003
+   },
+   "fullStudy": {
+    "p50": 86465.223872,
+    "max": 86651.903326
+   },
+   "scrollMs": {
+    "p50": 154,
+    "p95": 183,
+    "p99": 208,
+    "max": 326
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1433.002776,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 414,
+     "fullStudyMs": 86652,
+     "scrollP95": 191,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 392,
+     "fullStudyMs": 57156,
+     "scrollP95": 135,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 407,
+     "fullStudyMs": 86592,
+     "scrollP95": 190,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 381,
+     "fullStudyMs": 57245,
+     "scrollP95": 133,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 435,
+     "fullStudyMs": 86554,
+     "scrollP95": 190,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 367,
+     "fullStudyMs": 57232,
+     "scrollP95": 132,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 437,
+     "fullStudyMs": 86465,
+     "scrollP95": 191,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-10-50mbps-warm",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1356,
+    "max": 1440
+   },
+   "fullStudy": {
+    "p50": 93730,
+    "max": 110236
+   },
+   "scrollMs": {
+    "p50": 165,
+    "p95": 213,
+    "p99": 237,
+    "max": 268
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 1440,
+     "firstRenderEventMs": 573,
+     "firstInstanceBytesMs": 686,
+     "fullStudyMs": 92574,
+     "scrollP95": 202,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 1350,
+     "firstRenderEventMs": 705,
+     "firstInstanceBytesMs": 953,
+     "fullStudyMs": 110236,
+     "scrollP95": 224,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 1356,
+     "firstRenderEventMs": 697,
+     "firstInstanceBytesMs": 830,
+     "fullStudyMs": 93730,
+     "scrollP95": 200,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.21,
+    "cpu_peak": 1.49,
+    "mem_peak_mb": 1136,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "threads_peak": 75,
+    "read_from_minio_mb": 1947,
+    "sent_mb": 1942
+   },
+   "minio": {
+    "cpu_avg": 0.15,
+    "cpu_peak": 0.38,
+    "mem_peak_mb": 1611,
+    "disk_rd_mb": 1912,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1936
+   },
+   "postgres": {
+    "cpu_avg": 0.05,
+    "cpu_peak": 0.16,
+    "mem_peak_mb": 61,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.45,
+    "cpu_peak": 2.36,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.01,
+    "cpu_peak": 7.88,
+    "ncpu": 7.8,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 1982,
+    "disk_rd_mb": 2033,
+    "client_cpu_avg": 6.15
+   }
+  }
+ },
+ {
+  "label": "ct-10-unl-cold",
+  "sim": {
+   "label": "ct-10-unl-cold",
+   "startedAt": "2026-10-15T09:06:33.049Z",
+   "readers": 7,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 126.92533300000002,
+    "max": 131.12235800000002
+   },
+   "fullStudy": {
+    "p50": 16668.702641,
+    "max": 18172.549217
+   },
+   "scrollMs": {
+    "p50": 26,
+    "p95": 72,
+    "p99": 123,
+    "max": 281
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1433.002776,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 124,
+     "fullStudyMs": 18098,
+     "scrollP95": 79,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 127,
+     "fullStudyMs": 16330,
+     "scrollP95": 74,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 117,
+     "fullStudyMs": 16683,
+     "scrollP95": 68,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 114,
+     "fullStudyMs": 15784,
+     "scrollP95": 70,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 127,
+     "fullStudyMs": 16669,
+     "scrollP95": 70,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 128,
+     "fullStudyMs": 16582,
+     "scrollP95": 72,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 131,
+     "fullStudyMs": 18173,
+     "scrollP95": 79,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-10-unl-cold",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 2046,
+    "max": 2460
+   },
+   "fullStudy": {
+    "p50": 54269,
+    "max": 58196
+   },
+   "scrollMs": {
+    "p50": 67,
+    "p95": 113,
+    "p99": 141,
+    "max": 225
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 2046,
+     "firstRenderEventMs": 867,
+     "firstInstanceBytesMs": 954,
+     "fullStudyMs": 54269,
+     "scrollP95": 120,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 1897,
+     "firstRenderEventMs": 763,
+     "firstInstanceBytesMs": 1026,
+     "fullStudyMs": 42587,
+     "scrollP95": 91,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 2460,
+     "firstRenderEventMs": 1228,
+     "firstInstanceBytesMs": 1342,
+     "fullStudyMs": 58196,
+     "scrollP95": 116,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.37,
+    "cpu_peak": 2.23,
+    "mem_peak_mb": 1131,
+    "disk_rd_mb": 2,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 1947,
+    "sent_mb": 1943
+   },
+   "minio": {
+    "cpu_avg": 0.24,
+    "cpu_peak": 0.85,
+    "mem_peak_mb": 1350,
+    "disk_rd_mb": 1617,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1936
+   },
+   "postgres": {
+    "cpu_avg": 0.07,
+    "cpu_peak": 0.28,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.49,
+    "cpu_peak": 2.28,
+    "mem_peak_mb": 109,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.67,
+    "cpu_peak": 7.95,
+    "ncpu": 7.9,
+    "iowait_avg": 0.03,
+    "mem_avail_min_mb": 2342,
+    "disk_rd_mb": 1793,
+    "client_cpu_avg": 6.5
+   }
+  }
+ },
+ {
+  "label": "ct-10-unl-warm",
+  "sim": {
+   "label": "ct-10-unl-warm",
+   "startedAt": "2026-10-15T09:07:48.146Z",
+   "readers": 7,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 149.18388,
+    "max": 178.422417
+   },
+   "fullStudy": {
+    "p50": 17788.304887000002,
+    "max": 18409.579686999998
+   },
+   "scrollMs": {
+    "p50": 27,
+    "p95": 67,
+    "p99": 121,
+    "max": 290
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1433.002776,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 168,
+     "fullStudyMs": 18292,
+     "scrollP95": 73,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 149,
+     "fullStudyMs": 16084,
+     "scrollP95": 63,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 178,
+     "fullStudyMs": 17788,
+     "scrollP95": 68,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 142,
+     "fullStudyMs": 16140,
+     "scrollP95": 62,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 156,
+     "fullStudyMs": 18410,
+     "scrollP95": 70,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 143,
+     "fullStudyMs": 15618,
+     "scrollP95": 65,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 149,
+     "fullStudyMs": 18198,
+     "scrollP95": 70,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-10-unl-warm",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1983,
+    "max": 2174
+   },
+   "fullStudy": {
+    "p50": 53707,
+    "max": 54567
+   },
+   "scrollMs": {
+    "p50": 68,
+    "p95": 115,
+    "p99": 138,
+    "max": 173
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 2174,
+     "firstRenderEventMs": 919,
+     "firstInstanceBytesMs": 978,
+     "fullStudyMs": 53707,
+     "scrollP95": 121,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 1979,
+     "firstRenderEventMs": 1016,
+     "firstInstanceBytesMs": 1239,
+     "fullStudyMs": 43083,
+     "scrollP95": 90,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 1983,
+     "firstRenderEventMs": 1009,
+     "firstInstanceBytesMs": 1085,
+     "fullStudyMs": 54567,
+     "scrollP95": 119,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.37,
+    "cpu_peak": 2.39,
+    "mem_peak_mb": 1132,
+    "disk_rd_mb": 2,
+    "disk_wr_mb": 0,
+    "threads_peak": 76,
+    "read_from_minio_mb": 1945,
+    "sent_mb": 1941
+   },
+   "minio": {
+    "cpu_avg": 0.23,
+    "cpu_peak": 0.84,
+    "mem_peak_mb": 1856,
+    "disk_rd_mb": 1922,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1935
+   },
+   "postgres": {
+    "cpu_avg": 0.07,
+    "cpu_peak": 0.28,
+    "mem_peak_mb": 65,
+    "disk_rd_mb": 3,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.45,
+    "cpu_peak": 2.32,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.53,
+    "cpu_peak": 7.91,
+    "ncpu": 7.9,
+    "iowait_avg": 0.15,
+    "mem_avail_min_mb": 2387,
+    "disk_rd_mb": 2000,
+    "client_cpu_avg": 6.41
+   }
+  }
+ },
+ {
+  "label": "ct-20-20mbps-cold",
+  "sim": {
+   "label": "ct-20-20mbps-cold",
+   "startedAt": "2026-10-15T09:26:26.951Z",
+   "readers": 17,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 634.6245079999999,
+    "max": 681.7184330000001
+   },
+   "fullStudy": {
+    "p50": 151708.15492099998,
+    "max": 152268.47394
+   },
+   "scrollMs": {
+    "p50": 271,
+    "p95": 309,
+    "p99": 328,
+    "max": 417
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3366.114366,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 635,
+     "fullStudyMs": 151902,
+     "scrollP95": 315,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 559,
+     "fullStudyMs": 84958,
+     "scrollP95": 183,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 663,
+     "fullStudyMs": 151986,
+     "scrollP95": 315,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 525,
+     "fullStudyMs": 84699,
+     "scrollP95": 181,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 656,
+     "fullStudyMs": 151717,
+     "scrollP95": 315,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 557,
+     "fullStudyMs": 85099,
+     "scrollP95": 183,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 643,
+     "fullStudyMs": 151728,
+     "scrollP95": 314,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 527,
+     "fullStudyMs": 85099,
+     "scrollP95": 182,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 656,
+     "fullStudyMs": 151708,
+     "scrollP95": 316,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 516,
+     "fullStudyMs": 84653,
+     "scrollP95": 182,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 668,
+     "fullStudyMs": 152268,
+     "scrollP95": 316,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 553,
+     "fullStudyMs": 85067,
+     "scrollP95": 182,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 667,
+     "fullStudyMs": 151719,
+     "scrollP95": 316,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 556,
+     "fullStudyMs": 84803,
+     "scrollP95": 181,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 682,
+     "fullStudyMs": 151904,
+     "scrollP95": 315,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 549,
+     "fullStudyMs": 84802,
+     "scrollP95": 182,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 674,
+     "fullStudyMs": 151983,
+     "scrollP95": 318,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-20-20mbps-cold",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1452,
+    "max": 1678
+   },
+   "fullStudy": {
+    "p50": 122809,
+    "max": 174965
+   },
+   "scrollMs": {
+    "p50": 225,
+    "p95": 333,
+    "p99": 357,
+    "max": 398
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 1452,
+     "firstRenderEventMs": 956,
+     "firstInstanceBytesMs": 1145,
+     "fullStudyMs": 121415,
+     "scrollP95": 254,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 1117,
+     "firstRenderEventMs": 540,
+     "firstInstanceBytesMs": 830,
+     "fullStudyMs": 174965,
+     "scrollP95": 349,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 1678,
+     "firstRenderEventMs": 1197,
+     "firstInstanceBytesMs": 1353,
+     "fullStudyMs": 122809,
+     "scrollP95": 252,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.27,
+    "cpu_peak": 2.75,
+    "mem_peak_mb": 1121,
+    "disk_rd_mb": 3,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3891,
+    "sent_mb": 3884
+   },
+   "minio": {
+    "cpu_avg": 0.18,
+    "cpu_peak": 0.46,
+    "mem_peak_mb": 1644,
+    "disk_rd_mb": 3887,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3871
+   },
+   "postgres": {
+    "cpu_avg": 0.05,
+    "cpu_peak": 0.14,
+    "mem_peak_mb": 63,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 22
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.43,
+    "cpu_peak": 2.47,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.18,
+    "cpu_peak": 7.9,
+    "ncpu": 7.9,
+    "iowait_avg": 0.03,
+    "mem_avail_min_mb": 2431,
+    "disk_rd_mb": 3960,
+    "client_cpu_avg": 5.24
+   }
+  }
+ },
+ {
+  "label": "ct-20-20mbps-warm",
+  "sim": {
+   "label": "ct-20-20mbps-warm",
+   "startedAt": "2026-10-15T09:29:35.558Z",
+   "readers": 17,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 695.263665,
+    "max": 730.738719
+   },
+   "fullStudy": {
+    "p50": 153994.586523,
+    "max": 154550.175684
+   },
+   "scrollMs": {
+    "p50": 272,
+    "p95": 319,
+    "p99": 349,
+    "max": 585
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3366.114366,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 695,
+     "fullStudyMs": 154550,
+     "scrollP95": 332,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 561,
+     "fullStudyMs": 87473,
+     "scrollP95": 193,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 710,
+     "fullStudyMs": 154049,
+     "scrollP95": 331,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 610,
+     "fullStudyMs": 87652,
+     "scrollP95": 195,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 711,
+     "fullStudyMs": 154489,
+     "scrollP95": 329,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 596,
+     "fullStudyMs": 87357,
+     "scrollP95": 194,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 697,
+     "fullStudyMs": 153995,
+     "scrollP95": 331,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 598,
+     "fullStudyMs": 87647,
+     "scrollP95": 196,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 721,
+     "fullStudyMs": 154323,
+     "scrollP95": 331,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 603,
+     "fullStudyMs": 87628,
+     "scrollP95": 197,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 705,
+     "fullStudyMs": 154260,
+     "scrollP95": 327,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 609,
+     "fullStudyMs": 87596,
+     "scrollP95": 195,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 703,
+     "fullStudyMs": 154222,
+     "scrollP95": 331,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 586,
+     "fullStudyMs": 87833,
+     "scrollP95": 197,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 731,
+     "fullStudyMs": 154239,
+     "scrollP95": 332,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 602,
+     "fullStudyMs": 87869,
+     "scrollP95": 196,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 697,
+     "fullStudyMs": 154208,
+     "scrollP95": 333,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-20-20mbps-warm",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1768,
+    "max": 1844
+   },
+   "fullStudy": {
+    "p50": 127757,
+    "max": 178935
+   },
+   "scrollMs": {
+    "p50": 232,
+    "p95": 343,
+    "p99": 369,
+    "max": 521
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 1761,
+     "firstRenderEventMs": 904,
+     "firstInstanceBytesMs": 1127,
+     "fullStudyMs": 125934,
+     "scrollP95": 265,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 1844,
+     "firstRenderEventMs": 757,
+     "firstInstanceBytesMs": 1083,
+     "fullStudyMs": 178935,
+     "scrollP95": 363,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 1768,
+     "firstRenderEventMs": 912,
+     "firstInstanceBytesMs": 1163,
+     "fullStudyMs": 127757,
+     "scrollP95": 274,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.27,
+    "cpu_peak": 2.09,
+    "mem_peak_mb": 1121,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3892,
+    "sent_mb": 3884
+   },
+   "minio": {
+    "cpu_avg": 0.18,
+    "cpu_peak": 0.55,
+    "mem_peak_mb": 1697,
+    "disk_rd_mb": 3845,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3872
+   },
+   "postgres": {
+    "cpu_avg": 0.05,
+    "cpu_peak": 0.14,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 2,
+    "net_tx_mb": 21
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.44,
+    "cpu_peak": 2.37,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.22,
+    "cpu_peak": 7.92,
+    "ncpu": 8,
+    "iowait_avg": 0.04,
+    "mem_avail_min_mb": 2433,
+    "disk_rd_mb": 4405,
+    "client_cpu_avg": 5.28
+   }
+  }
+ },
+ {
+  "label": "ct-20-50mbps-cold",
+  "sim": {
+   "label": "ct-20-50mbps-cold",
+   "startedAt": "2026-10-15T09:22:07.374Z",
+   "readers": 17,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 438.517524,
+    "max": 495.8732110000001
+   },
+   "fullStudy": {
+    "p50": 89866.38958,
+    "max": 90341.45216
+   },
+   "scrollMs": {
+    "p50": 153,
+    "p95": 195,
+    "p99": 220,
+    "max": 317
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3366.114366,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 436,
+     "fullStudyMs": 90024,
+     "scrollP95": 203,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 413,
+     "fullStudyMs": 60046,
+     "scrollP95": 141,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 440,
+     "fullStudyMs": 89959,
+     "scrollP95": 205,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 388,
+     "fullStudyMs": 59915,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 459,
+     "fullStudyMs": 89866,
+     "scrollP95": 203,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 434,
+     "fullStudyMs": 60137,
+     "scrollP95": 139,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 462,
+     "fullStudyMs": 90233,
+     "scrollP95": 206,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 415,
+     "fullStudyMs": 60147,
+     "scrollP95": 142,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 471,
+     "fullStudyMs": 90016,
+     "scrollP95": 204,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 415,
+     "fullStudyMs": 60139,
+     "scrollP95": 144,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 496,
+     "fullStudyMs": 89952,
+     "scrollP95": 205,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 417,
+     "fullStudyMs": 59844,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 481,
+     "fullStudyMs": 89951,
+     "scrollP95": 208,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 428,
+     "fullStudyMs": 59978,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 494,
+     "fullStudyMs": 90341,
+     "scrollP95": 205,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 439,
+     "fullStudyMs": 59714,
+     "scrollP95": 145,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 487,
+     "fullStudyMs": 90161,
+     "scrollP95": 207,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-20-50mbps-cold",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1460,
+    "max": 1663
+   },
+   "fullStudy": {
+    "p50": 99141,
+    "max": 114436
+   },
+   "scrollMs": {
+    "p50": 173,
+    "p95": 225,
+    "p99": 251,
+    "max": 286
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 1663,
+     "firstRenderEventMs": 855,
+     "firstInstanceBytesMs": 1032,
+     "fullStudyMs": 99141,
+     "scrollP95": 211,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 1407,
+     "firstRenderEventMs": 731,
+     "firstInstanceBytesMs": 924,
+     "fullStudyMs": 114436,
+     "scrollP95": 238,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 1460,
+     "firstRenderEventMs": 586,
+     "firstInstanceBytesMs": 724,
+     "fullStudyMs": 97062,
+     "scrollP95": 217,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.4,
+    "cpu_peak": 2.9,
+    "mem_peak_mb": 1120,
+    "disk_rd_mb": 2,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3890,
+    "sent_mb": 3882
+   },
+   "minio": {
+    "cpu_avg": 0.27,
+    "cpu_peak": 0.6,
+    "mem_peak_mb": 1780,
+    "disk_rd_mb": 3950,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3870
+   },
+   "postgres": {
+    "cpu_avg": 0.08,
+    "cpu_peak": 0.18,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 21
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.47,
+    "cpu_peak": 2.45,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.14,
+    "cpu_peak": 7.93,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 2243,
+    "disk_rd_mb": 4037,
+    "client_cpu_avg": 5.93
+   }
+  }
+ },
+ {
+  "label": "ct-20-50mbps-warm",
+  "sim": {
+   "label": "ct-20-50mbps-warm",
+   "startedAt": "2026-10-15T09:24:15.814Z",
+   "readers": 17,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 462.47871499999997,
+    "max": 514.875117
+   },
+   "fullStudy": {
+    "p50": 89448.08990199999,
+    "max": 90028.08218900001
+   },
+   "scrollMs": {
+    "p50": 153,
+    "p95": 193,
+    "p99": 215,
+    "max": 274
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3366.114366,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 469,
+     "fullStudyMs": 89882,
+     "scrollP95": 200,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 405,
+     "fullStudyMs": 59594,
+     "scrollP95": 141,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 515,
+     "fullStudyMs": 89516,
+     "scrollP95": 200,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 400,
+     "fullStudyMs": 59837,
+     "scrollP95": 141,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 462,
+     "fullStudyMs": 89535,
+     "scrollP95": 201,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 430,
+     "fullStudyMs": 59455,
+     "scrollP95": 140,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 490,
+     "fullStudyMs": 89846,
+     "scrollP95": 198,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 419,
+     "fullStudyMs": 59745,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 482,
+     "fullStudyMs": 89556,
+     "scrollP95": 201,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 449,
+     "fullStudyMs": 59470,
+     "scrollP95": 142,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 508,
+     "fullStudyMs": 89448,
+     "scrollP95": 197,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 449,
+     "fullStudyMs": 59592,
+     "scrollP95": 138,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 502,
+     "fullStudyMs": 89877,
+     "scrollP95": 202,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 430,
+     "fullStudyMs": 59442,
+     "scrollP95": 144,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 493,
+     "fullStudyMs": 89569,
+     "scrollP95": 201,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 433,
+     "fullStudyMs": 59903,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 489,
+     "fullStudyMs": 90028,
+     "scrollP95": 201,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-20-50mbps-warm",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1828,
+    "max": 1975
+   },
+   "fullStudy": {
+    "p50": 98219,
+    "max": 114012
+   },
+   "scrollMs": {
+    "p50": 171,
+    "p95": 221,
+    "p99": 252,
+    "max": 287
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 1821,
+     "firstRenderEventMs": 601,
+     "firstInstanceBytesMs": 777,
+     "fullStudyMs": 96641,
+     "scrollP95": 211,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 1975,
+     "firstRenderEventMs": 1127,
+     "firstInstanceBytesMs": 1379,
+     "fullStudyMs": 114012,
+     "scrollP95": 231,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 1828,
+     "firstRenderEventMs": 615,
+     "firstInstanceBytesMs": 804,
+     "fullStudyMs": 98219,
+     "scrollP95": 211,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.4,
+    "cpu_peak": 2.8,
+    "mem_peak_mb": 1118,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3889,
+    "sent_mb": 3882
+   },
+   "minio": {
+    "cpu_avg": 0.27,
+    "cpu_peak": 0.69,
+    "mem_peak_mb": 1952,
+    "disk_rd_mb": 3935,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3869
+   },
+   "postgres": {
+    "cpu_avg": 0.08,
+    "cpu_peak": 0.18,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 21
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.44,
+    "cpu_peak": 2.26,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.11,
+    "cpu_peak": 7.92,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 2792,
+    "disk_rd_mb": 4015,
+    "client_cpu_avg": 5.92
+   }
+  }
+ },
+ {
+  "label": "ct-20-unl-cold",
+  "sim": {
+   "label": "ct-20-unl-cold",
+   "startedAt": "2026-10-15T09:19:26.325Z",
+   "readers": 17,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 250.99989099999993,
+    "max": 314.179316
+   },
+   "fullStudy": {
+    "p50": 29577.701204999998,
+    "max": 30012.128535
+   },
+   "scrollMs": {
+    "p50": 53,
+    "p95": 91,
+    "p99": 115,
+    "max": 198
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3366.114366,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 237,
+     "fullStudyMs": 29938,
+     "scrollP95": 97,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 238,
+     "fullStudyMs": 28530,
+     "scrollP95": 89,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 271,
+     "fullStudyMs": 29578,
+     "scrollP95": 91,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 244,
+     "fullStudyMs": 28378,
+     "scrollP95": 87,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 314,
+     "fullStudyMs": 29964,
+     "scrollP95": 93,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 271,
+     "fullStudyMs": 28217,
+     "scrollP95": 84,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 312,
+     "fullStudyMs": 29994,
+     "scrollP95": 92,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 239,
+     "fullStudyMs": 27981,
+     "scrollP95": 87,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 216,
+     "fullStudyMs": 29940,
+     "scrollP95": 92,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 250,
+     "fullStudyMs": 28591,
+     "scrollP95": 91,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 244,
+     "fullStudyMs": 29908,
+     "scrollP95": 95,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 228,
+     "fullStudyMs": 28300,
+     "scrollP95": 92,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 273,
+     "fullStudyMs": 29797,
+     "scrollP95": 94,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 251,
+     "fullStudyMs": 28588,
+     "scrollP95": 95,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 259,
+     "fullStudyMs": 30012,
+     "scrollP95": 93,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 255,
+     "fullStudyMs": 28475,
+     "scrollP95": 89,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 297,
+     "fullStudyMs": 29831,
+     "scrollP95": 91,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-20-unl-cold",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 2926,
+    "max": 3481
+   },
+   "fullStudy": {
+    "p50": 54545,
+    "max": 56068
+   },
+   "scrollMs": {
+    "p50": 64,
+    "p95": 132,
+    "p99": 165,
+    "max": 205
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 2792,
+     "firstRenderEventMs": 1396,
+     "firstInstanceBytesMs": 1550,
+     "fullStudyMs": 54545,
+     "scrollP95": 137,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 3481,
+     "firstRenderEventMs": 2101,
+     "firstInstanceBytesMs": 2194,
+     "fullStudyMs": 45263,
+     "scrollP95": 111,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 2926,
+     "firstRenderEventMs": 1360,
+     "firstInstanceBytesMs": 1435,
+     "fullStudyMs": 56068,
+     "scrollP95": 138,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.68,
+    "cpu_peak": 3.1,
+    "mem_peak_mb": 1097,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3892,
+    "sent_mb": 3884
+   },
+   "minio": {
+    "cpu_avg": 0.39,
+    "cpu_peak": 1.1,
+    "mem_peak_mb": 2163,
+    "disk_rd_mb": 3885,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3871
+   },
+   "postgres": {
+    "cpu_avg": 0.12,
+    "cpu_peak": 0.3,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 22
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.41,
+    "cpu_peak": 2.34,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.73,
+    "cpu_peak": 7.98,
+    "ncpu": 8,
+    "iowait_avg": 0.01,
+    "mem_avail_min_mb": 2193,
+    "disk_rd_mb": 3911,
+    "client_cpu_avg": 6.13
+   }
+  }
+ },
+ {
+  "label": "ct-20-unl-warm",
+  "sim": {
+   "label": "ct-20-unl-warm",
+   "startedAt": "2026-10-15T09:20:39.977Z",
+   "readers": 17,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 294.74737600000003,
+    "max": 327.86294
+   },
+   "fullStudy": {
+    "p50": 35926.181822,
+    "max": 36566.328088
+   },
+   "scrollMs": {
+    "p50": 61,
+    "p95": 127,
+    "p99": 163,
+    "max": 262
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3366.114366,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 277,
+     "fullStudyMs": 36493,
+     "scrollP95": 129,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 214,
+     "fullStudyMs": 34068,
+     "scrollP95": 126,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 190,
+     "fullStudyMs": 36352,
+     "scrollP95": 132,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 299,
+     "fullStudyMs": 34438,
+     "scrollP95": 130,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 204,
+     "fullStudyMs": 36166,
+     "scrollP95": 128,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 303,
+     "fullStudyMs": 34421,
+     "scrollP95": 129,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 305,
+     "fullStudyMs": 36373,
+     "scrollP95": 130,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 299,
+     "fullStudyMs": 34019,
+     "scrollP95": 125,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 295,
+     "fullStudyMs": 36296,
+     "scrollP95": 127,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 244,
+     "fullStudyMs": 34203,
+     "scrollP95": 126,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 242,
+     "fullStudyMs": 35926,
+     "scrollP95": 129,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 323,
+     "fullStudyMs": 33776,
+     "scrollP95": 121,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 328,
+     "fullStudyMs": 36566,
+     "scrollP95": 126,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 282,
+     "fullStudyMs": 34337,
+     "scrollP95": 125,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 294,
+     "fullStudyMs": 36106,
+     "scrollP95": 128,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 322,
+     "fullStudyMs": 34420,
+     "scrollP95": 126,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 315,
+     "fullStudyMs": 36185,
+     "scrollP95": 126,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-20-unl-warm",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 3726,
+    "max": 4809
+   },
+   "fullStudy": {
+    "p50": 64274,
+    "max": 65610
+   },
+   "scrollMs": {
+    "p50": 73,
+    "p95": 179,
+    "p99": 232,
+    "max": 307
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 3723,
+     "firstRenderEventMs": 1398,
+     "firstInstanceBytesMs": 1614,
+     "fullStudyMs": 65610,
+     "scrollP95": 188,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 4809,
+     "firstRenderEventMs": 2502,
+     "firstInstanceBytesMs": 2852,
+     "fullStudyMs": 56405,
+     "scrollP95": 159,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 3726,
+     "firstRenderEventMs": 1125,
+     "firstInstanceBytesMs": 1282,
+     "fullStudyMs": 64274,
+     "scrollP95": 184,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.68,
+    "cpu_peak": 3.68,
+    "mem_peak_mb": 1119,
+    "disk_rd_mb": 2,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3891,
+    "sent_mb": 3884
+   },
+   "minio": {
+    "cpu_avg": 0.42,
+    "cpu_peak": 1.13,
+    "mem_peak_mb": 2281,
+    "disk_rd_mb": 3834,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3871
+   },
+   "postgres": {
+    "cpu_avg": 0.12,
+    "cpu_peak": 0.33,
+    "mem_peak_mb": 65,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 22
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.46,
+    "cpu_peak": 2.31,
+    "mem_peak_mb": 108,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.78,
+    "cpu_peak": 8.0,
+    "ncpu": 7.9,
+    "iowait_avg": 0.01,
+    "mem_avail_min_mb": 2249,
+    "disk_rd_mb": 3984,
+    "client_cpu_avg": 6.09
+   }
+  }
+ },
+ {
+  "label": "ct-5-20mbps-cold",
+  "sim": {
+   "label": "ct-5-20mbps-cold",
+   "startedAt": "2026-10-15T09:00:20.377Z",
+   "readers": 2,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 597.212411,
+    "max": 597.212411
+   },
+   "fullStudy": {
+    "p50": 149578.421497,
+    "max": 149578.421497
+   },
+   "scrollMs": {
+    "p50": 267,
+    "p95": 298,
+    "p99": 310,
+    "max": 447
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 386.62159,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 597,
+     "fullStudyMs": 149578,
+     "scrollP95": 304,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 475,
+     "fullStudyMs": 83111,
+     "scrollP95": 173,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-5-20mbps-cold",
+   "readers": [
+    3,
+    4,
+    5
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1408,
+    "max": 1425
+   },
+   "fullStudy": {
+    "p50": 171535,
+    "max": 172624
+   },
+   "scrollMs": {
+    "p50": 298,
+    "p95": 328,
+    "p99": 348,
+    "max": 452
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 811,
+     "firstRenderEventMs": 407,
+     "firstInstanceBytesMs": 688,
+     "fullStudyMs": 171535,
+     "scrollP95": 331,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 1425,
+     "firstRenderEventMs": 803,
+     "firstInstanceBytesMs": 950,
+     "fullStudyMs": 114795,
+     "scrollP95": 232,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 1408,
+     "firstRenderEventMs": 862,
+     "firstInstanceBytesMs": 1165,
+     "fullStudyMs": 172624,
+     "scrollP95": 338,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.07,
+    "cpu_peak": 0.65,
+    "mem_peak_mb": 706,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 1052,
+    "sent_mb": 1050
+   },
+   "minio": {
+    "cpu_avg": 0.06,
+    "cpu_peak": 0.23,
+    "mem_peak_mb": 1227,
+    "disk_rd_mb": 1076,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1047
+   },
+   "postgres": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.07,
+    "mem_peak_mb": 62,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 6
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.44,
+    "cpu_peak": 2.66,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.19,
+    "cpu_peak": 7.77,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 3107,
+    "disk_rd_mb": 1404,
+    "client_cpu_avg": 5.6
+   }
+  }
+ },
+ {
+  "label": "ct-5-20mbps-warm",
+  "sim": {
+   "label": "ct-5-20mbps-warm",
+   "startedAt": "2026-10-15T09:03:23.934Z",
+   "readers": 2,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 599.421606,
+    "max": 599.421606
+   },
+   "fullStudy": {
+    "p50": 149823.52133,
+    "max": 149823.52133
+   },
+   "scrollMs": {
+    "p50": 267,
+    "p95": 299,
+    "p99": 310,
+    "max": 324
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 386.62159,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 599,
+     "fullStudyMs": 149824,
+     "scrollP95": 304,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 471,
+     "fullStudyMs": 82386,
+     "scrollP95": 170,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-5-20mbps-warm",
+   "readers": [
+    3,
+    4,
+    5
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1395,
+    "max": 1998
+   },
+   "fullStudy": {
+    "p50": 173031,
+    "max": 173643
+   },
+   "scrollMs": {
+    "p50": 298,
+    "p95": 331,
+    "p99": 350,
+    "max": 372
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 1112,
+     "firstRenderEventMs": 462,
+     "firstInstanceBytesMs": 752,
+     "fullStudyMs": 173031,
+     "scrollP95": 333,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 1998,
+     "firstRenderEventMs": 1110,
+     "firstInstanceBytesMs": 1328,
+     "fullStudyMs": 116615,
+     "scrollP95": 234,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 1395,
+     "firstRenderEventMs": 561,
+     "firstInstanceBytesMs": 876,
+     "fullStudyMs": 173643,
+     "scrollP95": 336,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.08,
+    "cpu_peak": 0.55,
+    "mem_peak_mb": 690,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 73,
+    "read_from_minio_mb": 1052,
+    "sent_mb": 1050
+   },
+   "minio": {
+    "cpu_avg": 0.06,
+    "cpu_peak": 0.28,
+    "mem_peak_mb": 1370,
+    "disk_rd_mb": 709,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1047
+   },
+   "postgres": {
+    "cpu_avg": 0.02,
+    "cpu_peak": 0.08,
+    "mem_peak_mb": 61,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 5
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.45,
+    "cpu_peak": 2.45,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.37,
+    "cpu_peak": 7.75,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 2870,
+    "disk_rd_mb": 910,
+    "client_cpu_avg": 5.76
+   }
+  }
+ },
+ {
+  "label": "ct-5-50mbps-cold",
+  "sim": {
+   "label": "ct-5-50mbps-cold",
+   "startedAt": "2026-10-15T08:56:17.854Z",
+   "readers": 2,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 385.38215599999995,
+    "max": 385.38215599999995
+   },
+   "fullStudy": {
+    "p50": 83838.451586,
+    "max": 83838.451586
+   },
+   "scrollMs": {
+    "p50": 140,
+    "p95": 171,
+    "p99": 187,
+    "max": 233
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 386.62159,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 385,
+     "fullStudyMs": 83838,
+     "scrollP95": 178,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 330,
+     "fullStudyMs": 55642,
+     "scrollP95": 122,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-5-50mbps-cold",
+   "readers": [
+    3,
+    4,
+    5
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 840,
+    "max": 1089
+   },
+   "fullStudy": {
+    "p50": 105880,
+    "max": 106919
+   },
+   "scrollMs": {
+    "p50": 175,
+    "p95": 206,
+    "p99": 225,
+    "max": 395
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 1089,
+     "firstRenderEventMs": 696,
+     "firstInstanceBytesMs": 884,
+     "fullStudyMs": 106919,
+     "scrollP95": 208,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 840,
+     "firstRenderEventMs": 416,
+     "firstInstanceBytesMs": 562,
+     "fullStudyMs": 86860,
+     "scrollP95": 182,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 701,
+     "firstRenderEventMs": 323,
+     "firstInstanceBytesMs": 495,
+     "fullStudyMs": 105880,
+     "scrollP95": 210,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.12,
+    "cpu_peak": 0.52,
+    "mem_peak_mb": 705,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "threads_peak": 75,
+    "read_from_minio_mb": 1053,
+    "sent_mb": 1050
+   },
+   "minio": {
+    "cpu_avg": 0.08,
+    "cpu_peak": 0.26,
+    "mem_peak_mb": 872,
+    "disk_rd_mb": 671,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1047
+   },
+   "postgres": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.09,
+    "mem_peak_mb": 62,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 5
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.47,
+    "cpu_peak": 2.41,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.23,
+    "cpu_peak": 7.83,
+    "ncpu": 7.9,
+    "iowait_avg": 0.01,
+    "mem_avail_min_mb": 2604,
+    "disk_rd_mb": 852,
+    "client_cpu_avg": 6.54
+   }
+  }
+ },
+ {
+  "label": "ct-5-50mbps-warm",
+  "sim": {
+   "label": "ct-5-50mbps-warm",
+   "startedAt": "2026-10-15T08:58:15.934Z",
+   "readers": 2,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 386.2188960000001,
+    "max": 386.2188960000001
+   },
+   "fullStudy": {
+    "p50": 83969.30382,
+    "max": 83969.30382
+   },
+   "scrollMs": {
+    "p50": 141,
+    "p95": 173,
+    "p99": 185,
+    "max": 205
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 386.62159,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 386,
+     "fullStudyMs": 83969,
+     "scrollP95": 176,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 337,
+     "fullStudyMs": 55121,
+     "scrollP95": 120,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-5-50mbps-warm",
+   "readers": [
+    3,
+    4,
+    5
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 1206,
+    "max": 1462
+   },
+   "fullStudy": {
+    "p50": 107997,
+    "max": 109238
+   },
+   "scrollMs": {
+    "p50": 178,
+    "p95": 205,
+    "p99": 223,
+    "max": 506
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 1462,
+     "firstRenderEventMs": 923,
+     "firstInstanceBytesMs": 1127,
+     "fullStudyMs": 109238,
+     "scrollP95": 209,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 1206,
+     "firstRenderEventMs": 810,
+     "firstInstanceBytesMs": 921,
+     "fullStudyMs": 88885,
+     "scrollP95": 181,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 935,
+     "firstRenderEventMs": 468,
+     "firstInstanceBytesMs": 637,
+     "fullStudyMs": 107997,
+     "scrollP95": 208,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.12,
+    "cpu_peak": 0.58,
+    "mem_peak_mb": 705,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 1053,
+    "sent_mb": 1050
+   },
+   "minio": {
+    "cpu_avg": 0.1,
+    "cpu_peak": 0.27,
+    "mem_peak_mb": 1294,
+    "disk_rd_mb": 909,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1047
+   },
+   "postgres": {
+    "cpu_avg": 0.03,
+    "cpu_peak": 0.09,
+    "mem_peak_mb": 63,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 5
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.47,
+    "cpu_peak": 2.35,
+    "mem_peak_mb": 109,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.26,
+    "cpu_peak": 7.79,
+    "ncpu": 7.9,
+    "iowait_avg": 0.01,
+    "mem_avail_min_mb": 2569,
+    "disk_rd_mb": 960,
+    "client_cpu_avg": 6.55
+   }
+  }
+ },
+ {
+  "label": "ct-5-unl-cold",
+  "sim": {
+   "label": "ct-5-unl-cold",
+   "startedAt": "2026-10-15T08:54:17.949Z",
+   "readers": 2,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 57.84176199999999,
+    "max": 57.84176199999999
+   },
+   "fullStudy": {
+    "p50": 4496.519168,
+    "max": 4496.519168
+   },
+   "scrollMs": {
+    "p50": 6,
+    "p95": 20,
+    "p99": 35,
+    "max": 62
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 386.62159,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 46,
+     "fullStudyMs": 4392,
+     "scrollP95": 20,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 58,
+     "fullStudyMs": 4497,
+     "scrollP95": 20,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-5-unl-cold",
+   "readers": [
+    3,
+    4,
+    5
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 841,
+    "max": 921
+   },
+   "fullStudy": {
+    "p50": 36148,
+    "max": 42301
+   },
+   "scrollMs": {
+    "p50": 48,
+    "p95": 91,
+    "p99": 166,
+    "max": 869
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 921,
+     "firstRenderEventMs": 513,
+     "firstInstanceBytesMs": 586,
+     "fullStudyMs": 36148,
+     "scrollP95": 88,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 707,
+     "firstRenderEventMs": 328,
+     "firstInstanceBytesMs": 361,
+     "fullStudyMs": 42301,
+     "scrollP95": 94,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 841,
+     "firstRenderEventMs": 453,
+     "firstInstanceBytesMs": 490,
+     "fullStudyMs": 34224,
+     "scrollP95": 88,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.22,
+    "cpu_peak": 1.2,
+    "mem_peak_mb": 726,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 1054,
+    "sent_mb": 1051
+   },
+   "minio": {
+    "cpu_avg": 0.12,
+    "cpu_peak": 0.43,
+    "mem_peak_mb": 570,
+    "disk_rd_mb": 790,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1048
+   },
+   "postgres": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.14,
+    "mem_peak_mb": 62,
+    "disk_rd_mb": 8,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 6
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.39,
+    "cpu_peak": 2.01,
+    "mem_peak_mb": 108,
+    "disk_rd_mb": 11,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.31,
+    "cpu_peak": 8.98,
+    "ncpu": 7.8,
+    "iowait_avg": 0.06,
+    "mem_avail_min_mb": 2442,
+    "disk_rd_mb": 893,
+    "client_cpu_avg": 6.54
+   }
+  }
+ },
+ {
+  "label": "ct-5-unl-warm",
+  "sim": {
+   "label": "ct-5-unl-warm",
+   "startedAt": "2026-10-15T08:55:12.338Z",
+   "readers": 2,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 59.13449700000001,
+    "max": 59.13449700000001
+   },
+   "fullStudy": {
+    "p50": 4926.969727000001,
+    "max": 4926.969727000001
+   },
+   "scrollMs": {
+    "p50": 7,
+    "p95": 17,
+    "p99": 25,
+    "max": 39
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 386.62159,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 59,
+     "fullStudyMs": 4927,
+     "scrollP95": 19,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 53,
+     "fullStudyMs": 4016,
+     "scrollP95": 14,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": {
+   "label": "ct-5-unl-warm",
+   "readers": [
+    3,
+    4,
+    5
+   ],
+   "modality": "CT",
+   "firstImage": {
+    "p50": 973,
+    "max": 2719
+   },
+   "fullStudy": {
+    "p50": 44953,
+    "max": 49421
+   },
+   "scrollMs": {
+    "p50": 57,
+    "p95": 95,
+    "p99": 122,
+    "max": 175
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 750,
+     "firstRenderEventMs": 339,
+     "firstInstanceBytesMs": 373,
+     "fullStudyMs": 37531,
+     "scrollP95": 81,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 973,
+     "firstRenderEventMs": 367,
+     "firstInstanceBytesMs": 424,
+     "fullStudyMs": 49421,
+     "scrollP95": 109,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 2719,
+     "firstRenderEventMs": 1503,
+     "firstInstanceBytesMs": 1600,
+     "fullStudyMs": 44953,
+     "scrollP95": 84,
+     "steps": 519,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.21,
+    "cpu_peak": 1.03,
+    "mem_peak_mb": 716,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "threads_peak": 74,
+    "read_from_minio_mb": 1053,
+    "sent_mb": 1051
+   },
+   "minio": {
+    "cpu_avg": 0.13,
+    "cpu_peak": 0.51,
+    "mem_peak_mb": 1170,
+    "disk_rd_mb": 1047,
+    "disk_wr_mb": 8,
+    "net_tx_mb": 1048
+   },
+   "postgres": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.13,
+    "mem_peak_mb": 60,
+    "disk_rd_mb": 4,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 5
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.46,
+    "cpu_peak": 2.32,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 8,
+    "disk_wr_mb": 1,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.38,
+    "cpu_peak": 7.85,
+    "ncpu": 7.8,
+    "iowait_avg": 0.03,
+    "mem_avail_min_mb": 2605,
+    "disk_rd_mb": 1227,
+    "client_cpu_avg": 6.55
+   }
+  }
+ },
+ {
+  "label": "ctrl-ct-1-50mbps-simonly",
+  "sim": {
+   "label": "ctrl-ct-1-50mbps-simonly",
+   "startedAt": "2026-10-15T09:52:42.582Z",
+   "readers": 1,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 418.38230999999996,
+    "max": 418.38230999999996
+   },
+   "fullStudy": {
+    "p50": 79532.155298,
+    "max": 79532.155298
+   },
+   "scrollMs": {
+    "p50": 152,
+    "p95": 163,
+    "p99": 169,
+    "max": 182
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 273.135926,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 418,
+     "fullStudyMs": 79532,
+     "scrollP95": 163,
+     "errors": 0,
+     "mb": 273.1
+    }
+   ]
+  },
+  "browser": null,
+  "resources": {
+   "api": {
+    "cpu_avg": 0.07,
+    "cpu_peak": 0.34,
+    "mem_peak_mb": 1505,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 69,
+    "read_from_minio_mb": 272,
+    "sent_mb": 272
+   },
+   "minio": {
+    "cpu_avg": 0.05,
+    "cpu_peak": 0.27,
+    "mem_peak_mb": 477,
+    "disk_rd_mb": 272,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 272
+   },
+   "postgres": {
+    "cpu_avg": 0.01,
+    "cpu_peak": 0.05,
+    "mem_peak_mb": 55,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.5,
+    "cpu_peak": 3.08,
+    "mem_peak_mb": 109,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 2.33,
+    "cpu_peak": 5.04,
+    "ncpu": 7.8,
+    "iowait_avg": 0.22,
+    "mem_avail_min_mb": 5320,
+    "disk_rd_mb": 511,
+    "client_cpu_avg": 1.7
+   }
+  }
+ },
+ {
+  "label": "ctrl-ct-10-50mbps-simonly",
+  "sim": {
+   "label": "ctrl-ct-10-50mbps-simonly",
+   "startedAt": "2026-10-15T09:54:11.337Z",
+   "readers": 10,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 451.38507899999996,
+    "max": 481.34326400000003
+   },
+   "fullStudy": {
+    "p50": 75589.262699,
+    "max": 76668.060203
+   },
+   "scrollMs": {
+    "p50": 138,
+    "p95": 152,
+    "p99": 162,
+    "max": 210
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1933.110328,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 451,
+     "fullStudyMs": 75589,
+     "scrollP95": 154,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 432,
+     "fullStudyMs": 49790,
+     "scrollP95": 105,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 473,
+     "fullStudyMs": 76523,
+     "scrollP95": 155,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 392,
+     "fullStudyMs": 49877,
+     "scrollP95": 105,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 470,
+     "fullStudyMs": 76668,
+     "scrollP95": 155,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 410,
+     "fullStudyMs": 49806,
+     "scrollP95": 103,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 478,
+     "fullStudyMs": 76666,
+     "scrollP95": 156,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 401,
+     "fullStudyMs": 49787,
+     "scrollP95": 103,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 481,
+     "fullStudyMs": 76515,
+     "scrollP95": 155,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 426,
+     "fullStudyMs": 49786,
+     "scrollP95": 104,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": null,
+  "resources": {
+   "api": {
+    "cpu_avg": 0.87,
+    "cpu_peak": 2.14,
+    "mem_peak_mb": 953,
+    "disk_rd_mb": 4,
+    "disk_wr_mb": 0,
+    "threads_peak": 70,
+    "read_from_minio_mb": 1936,
+    "sent_mb": 1932
+   },
+   "minio": {
+    "cpu_avg": 0.18,
+    "cpu_peak": 0.36,
+    "mem_peak_mb": 1950,
+    "disk_rd_mb": 1661,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1926
+   },
+   "postgres": {
+    "cpu_avg": 0.06,
+    "cpu_peak": 0.26,
+    "mem_peak_mb": 61,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.42,
+    "cpu_peak": 2.46,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 2.71,
+    "cpu_peak": 6.76,
+    "ncpu": 7.8,
+    "iowait_avg": 0.1,
+    "mem_avail_min_mb": 5668,
+    "disk_rd_mb": 1720,
+    "client_cpu_avg": 1.18
+   }
+  }
+ },
+ {
+  "label": "ctrl-ct-10-unl-simonly",
+  "sim": {
+   "label": "ctrl-ct-10-unl-simonly",
+   "startedAt": "2026-10-15T09:57:02.590Z",
+   "readers": 10,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 184.66270300000002,
+    "max": 204.67459300000002
+   },
+   "fullStudy": {
+    "p50": 10804.484958000001,
+    "max": 11274.48485
+   },
+   "scrollMs": {
+    "p50": 19,
+    "p95": 34,
+    "p99": 58,
+    "max": 116
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 1933.110328,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 187,
+     "fullStudyMs": 10770,
+     "scrollP95": 33,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 173,
+     "fullStudyMs": 10655,
+     "scrollP95": 33,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 169,
+     "fullStudyMs": 11274,
+     "scrollP95": 36,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 191,
+     "fullStudyMs": 10804,
+     "scrollP95": 32,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 180,
+     "fullStudyMs": 11243,
+     "scrollP95": 36,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 173,
+     "fullStudyMs": 10655,
+     "scrollP95": 34,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 205,
+     "fullStudyMs": 11255,
+     "scrollP95": 35,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 185,
+     "fullStudyMs": 10632,
+     "scrollP95": 32,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 161,
+     "fullStudyMs": 11210,
+     "scrollP95": 35,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 185,
+     "fullStudyMs": 10665,
+     "scrollP95": 33,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": null,
+  "resources": {
+   "api": {
+    "cpu_avg": 2.31,
+    "cpu_peak": 2.99,
+    "mem_peak_mb": 995,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 81,
+    "read_from_minio_mb": 1856,
+    "sent_mb": 1851
+   },
+   "minio": {
+    "cpu_avg": 1.06,
+    "cpu_peak": 1.27,
+    "mem_peak_mb": 1849,
+    "disk_rd_mb": 1626,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1847
+   },
+   "postgres": {
+    "cpu_avg": 0.32,
+    "cpu_peak": 0.42,
+    "mem_peak_mb": 63,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 11
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.48,
+    "cpu_peak": 2.13,
+    "mem_peak_mb": 109,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.01,
+    "cpu_peak": 7.75,
+    "ncpu": 7.9,
+    "iowait_avg": 0.13,
+    "mem_avail_min_mb": 5760,
+    "disk_rd_mb": 1630,
+    "client_cpu_avg": 2.83
+   }
+  }
+ },
+ {
+  "label": "ctrl-ct-20-50mbps-simonly",
+  "sim": {
+   "label": "ctrl-ct-20-50mbps-simonly",
+   "startedAt": "2026-10-15T09:55:37.584Z",
+   "readers": 20,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 644.9380399999999,
+    "max": 713.197645
+   },
+   "fullStudy": {
+    "p50": 75216.67527400001,
+    "max": 75828.261034
+   },
+   "scrollMs": {
+    "p50": 138,
+    "p95": 149,
+    "p99": 154,
+    "max": 170
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3866.223008,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 611,
+     "fullStudyMs": 75661,
+     "scrollP95": 151,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 591,
+     "fullStudyMs": 48445,
+     "scrollP95": 97,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 713,
+     "fullStudyMs": 75362,
+     "scrollP95": 151,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 645,
+     "fullStudyMs": 48431,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 631,
+     "fullStudyMs": 75217,
+     "scrollP95": 150,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 636,
+     "fullStudyMs": 48541,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 703,
+     "fullStudyMs": 75219,
+     "scrollP95": 150,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 642,
+     "fullStudyMs": 48537,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 652,
+     "fullStudyMs": 75219,
+     "scrollP95": 150,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 582,
+     "fullStudyMs": 48448,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 683,
+     "fullStudyMs": 75823,
+     "scrollP95": 152,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 637,
+     "fullStudyMs": 48860,
+     "scrollP95": 99,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 698,
+     "fullStudyMs": 75826,
+     "scrollP95": 151,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 638,
+     "fullStudyMs": 48856,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 692,
+     "fullStudyMs": 75821,
+     "scrollP95": 151,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 650,
+     "fullStudyMs": 48856,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 666,
+     "fullStudyMs": 75828,
+     "scrollP95": 151,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 621,
+     "fullStudyMs": 48946,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 657,
+     "fullStudyMs": 75804,
+     "scrollP95": 151,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 618,
+     "fullStudyMs": 48954,
+     "scrollP95": 98,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": null,
+  "resources": {
+   "api": {
+    "cpu_avg": 0.58,
+    "cpu_peak": 5.53,
+    "mem_peak_mb": 994,
+    "disk_rd_mb": 8,
+    "disk_wr_mb": 0,
+    "threads_peak": 82,
+    "read_from_minio_mb": 3886,
+    "sent_mb": 3879
+   },
+   "minio": {
+    "cpu_avg": 0.32,
+    "cpu_peak": 0.56,
+    "mem_peak_mb": 2278,
+    "disk_rd_mb": 2268,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3866
+   },
+   "postgres": {
+    "cpu_avg": 0.09,
+    "cpu_peak": 0.21,
+    "mem_peak_mb": 63,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 22
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.42,
+    "cpu_peak": 2.5,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 2.87,
+    "cpu_peak": 6.57,
+    "ncpu": 7.9,
+    "iowait_avg": 0.1,
+    "mem_avail_min_mb": 5819,
+    "disk_rd_mb": 2370,
+    "client_cpu_avg": 1.46
+   }
+  }
+ },
+ {
+  "label": "ctrl-ct-20-unl-simonly",
+  "sim": {
+   "label": "ctrl-ct-20-unl-simonly",
+   "startedAt": "2026-10-15T09:57:23.035Z",
+   "readers": 20,
+   "modality": "CT",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 235.969022,
+    "max": 266.314641
+   },
+   "fullStudy": {
+    "p50": 18714.990027,
+    "max": 19227.271019
+   },
+   "scrollMs": {
+    "p50": 34,
+    "p95": 53,
+    "p99": 65,
+    "max": 86
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 3866.223008,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTCT01",
+     "compressed": false,
+     "firstImageMs": 209,
+     "fullStudyMs": 18715,
+     "scrollP95": 52,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTCT02",
+     "compressed": true,
+     "firstImageMs": 211,
+     "fullStudyMs": 18413,
+     "scrollP95": 53,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 3,
+     "accession": "LTCT03",
+     "compressed": false,
+     "firstImageMs": 266,
+     "fullStudyMs": 19227,
+     "scrollP95": 56,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTCT04",
+     "compressed": true,
+     "firstImageMs": 201,
+     "fullStudyMs": 18533,
+     "scrollP95": 50,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 5,
+     "accession": "LTCT05",
+     "compressed": false,
+     "firstImageMs": 236,
+     "fullStudyMs": 19176,
+     "scrollP95": 55,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTCT06",
+     "compressed": true,
+     "firstImageMs": 215,
+     "fullStudyMs": 18192,
+     "scrollP95": 51,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 7,
+     "accession": "LTCT07",
+     "compressed": false,
+     "firstImageMs": 242,
+     "fullStudyMs": 19197,
+     "scrollP95": 55,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTCT08",
+     "compressed": true,
+     "firstImageMs": 211,
+     "fullStudyMs": 18463,
+     "scrollP95": 52,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 9,
+     "accession": "LTCT09",
+     "compressed": false,
+     "firstImageMs": 237,
+     "fullStudyMs": 19187,
+     "scrollP95": 54,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTCT10",
+     "compressed": true,
+     "firstImageMs": 242,
+     "fullStudyMs": 18341,
+     "scrollP95": 52,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 11,
+     "accession": "LTCT11",
+     "compressed": false,
+     "firstImageMs": 218,
+     "fullStudyMs": 19132,
+     "scrollP95": 56,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTCT12",
+     "compressed": true,
+     "firstImageMs": 215,
+     "fullStudyMs": 18476,
+     "scrollP95": 54,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 13,
+     "accession": "LTCT13",
+     "compressed": false,
+     "firstImageMs": 266,
+     "fullStudyMs": 19140,
+     "scrollP95": 55,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTCT14",
+     "compressed": true,
+     "firstImageMs": 252,
+     "fullStudyMs": 18327,
+     "scrollP95": 52,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 15,
+     "accession": "LTCT15",
+     "compressed": false,
+     "firstImageMs": 237,
+     "fullStudyMs": 19102,
+     "scrollP95": 56,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTCT16",
+     "compressed": true,
+     "firstImageMs": 244,
+     "fullStudyMs": 18333,
+     "scrollP95": 52,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 17,
+     "accession": "LTCT17",
+     "compressed": false,
+     "firstImageMs": 227,
+     "fullStudyMs": 19115,
+     "scrollP95": 54,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 18,
+     "accession": "LTCT18",
+     "compressed": true,
+     "firstImageMs": 253,
+     "fullStudyMs": 18657,
+     "scrollP95": 53,
+     "errors": 0,
+     "mb": 113.5
+    },
+    {
+     "reader": 19,
+     "accession": "LTCT19",
+     "compressed": false,
+     "firstImageMs": 229,
+     "fullStudyMs": 19158,
+     "scrollP95": 56,
+     "errors": 0,
+     "mb": 273.1
+    },
+    {
+     "reader": 20,
+     "accession": "LTCT20",
+     "compressed": true,
+     "firstImageMs": 218,
+     "fullStudyMs": 18594,
+     "scrollP95": 54,
+     "errors": 0,
+     "mb": 113.5
+    }
+   ]
+  },
+  "browser": null,
+  "resources": {
+   "api": {
+    "cpu_avg": 3.32,
+    "cpu_peak": 3.79,
+    "mem_peak_mb": 1034,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 3788,
+    "sent_mb": 3781
+   },
+   "minio": {
+    "cpu_avg": 1.02,
+    "cpu_peak": 1.29,
+    "mem_peak_mb": 2896,
+    "disk_rd_mb": 2569,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 3769
+   },
+   "postgres": {
+    "cpu_avg": 0.34,
+    "cpu_peak": 0.38,
+    "mem_peak_mb": 64,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 21
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.28,
+    "cpu_peak": 1.58,
+    "mem_peak_mb": 107,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.28,
+    "cpu_peak": 7.58,
+    "ncpu": 7.9,
+    "iowait_avg": 0.08,
+    "mem_avail_min_mb": 5618,
+    "disk_rd_mb": 2583,
+    "client_cpu_avg": 2.32
+   }
+  }
+ },
+ {
+  "label": "mr-10-50mbps-cold",
+  "sim": {
+   "label": "mr-10-50mbps-cold",
+   "startedAt": "2026-10-15T09:32:51.418Z",
+   "readers": 7,
+   "modality": "MR",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 382.364899,
+    "max": 393.87328599999995
+   },
+   "fullStudy": {
+    "p50": 51801.968569,
+    "max": 52109.108246
+   },
+   "scrollMs": {
+    "p50": 151,
+    "p95": 175,
+    "p99": 199,
+    "max": 294
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 883.044504,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTMR01",
+     "compressed": false,
+     "firstImageMs": 394,
+     "fullStudyMs": 51995,
+     "scrollP95": 185,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTMR02",
+     "compressed": true,
+     "firstImageMs": 345,
+     "fullStudyMs": 33610,
+     "scrollP95": 119,
+     "errors": 0,
+     "mb": 70.3
+    },
+    {
+     "reader": 3,
+     "accession": "LTMR03",
+     "compressed": false,
+     "firstImageMs": 382,
+     "fullStudyMs": 51802,
+     "scrollP95": 180,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTMR04",
+     "compressed": true,
+     "firstImageMs": 341,
+     "fullStudyMs": 33707,
+     "scrollP95": 125,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 5,
+     "accession": "LTMR05",
+     "compressed": false,
+     "firstImageMs": 392,
+     "fullStudyMs": 51989,
+     "scrollP95": 182,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTMR06",
+     "compressed": true,
+     "firstImageMs": 332,
+     "fullStudyMs": 33808,
+     "scrollP95": 128,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 7,
+     "accession": "LTMR07",
+     "compressed": false,
+     "firstImageMs": 389,
+     "fullStudyMs": 52109,
+     "scrollP95": 184,
+     "errors": 0,
+     "mb": 168.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "mr-10-50mbps-cold",
+   "readers": [
+    8,
+    9,
+    10
+   ],
+   "modality": "MR",
+   "firstImage": {
+    "p50": 1299,
+    "max": 1925
+   },
+   "fullStudy": {
+    "p50": 55478,
+    "max": 66828
+   },
+   "scrollMs": {
+    "p50": 156,
+    "p95": 199,
+    "p99": 215,
+    "max": 289
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 8,
+     "accession": "LTMR08",
+     "compressed": true,
+     "firstImageMs": 1299,
+     "firstRenderEventMs": 456,
+     "firstInstanceBytesMs": 566,
+     "fullStudyMs": 53371,
+     "scrollP95": 181,
+     "steps": 319,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 9,
+     "accession": "LTMR09",
+     "compressed": false,
+     "firstImageMs": 1278,
+     "firstRenderEventMs": 920,
+     "firstInstanceBytesMs": 1099,
+     "fullStudyMs": 66828,
+     "scrollP95": 209,
+     "steps": 319,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 10,
+     "accession": "LTMR10",
+     "compressed": true,
+     "firstImageMs": 1925,
+     "firstRenderEventMs": 1222,
+     "firstInstanceBytesMs": 1381,
+     "fullStudyMs": 55478,
+     "scrollP95": 188,
+     "steps": 319,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.2,
+    "cpu_peak": 1.37,
+    "mem_peak_mb": 1061,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 79,
+    "read_from_minio_mb": 1198,
+    "sent_mb": 1195
+   },
+   "minio": {
+    "cpu_avg": 0.13,
+    "cpu_peak": 0.28,
+    "mem_peak_mb": 1266,
+    "disk_rd_mb": 1227,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 1191
+   },
+   "postgres": {
+    "cpu_avg": 0.04,
+    "cpu_peak": 0.1,
+    "mem_peak_mb": 61,
+    "disk_rd_mb": 1,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 7
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.42,
+    "cpu_peak": 2.46,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 6.81,
+    "cpu_peak": 7.84,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 2966,
+    "disk_rd_mb": 1243,
+    "client_cpu_avg": 6.01
+   }
+  }
+ },
+ {
+  "label": "mr-20-50mbps-cold",
+  "sim": {
+   "label": "mr-20-50mbps-cold",
+   "startedAt": "2026-10-15T09:34:14.708Z",
+   "readers": 17,
+   "modality": "MR",
+   "paceMs": 0,
+   "base": "http://127.0.0.1:5190",
+   "firstImage": {
+    "p50": 427.72921500000007,
+    "max": 456.17047299999996
+   },
+   "fullStudy": {
+    "p50": 55064.196157,
+    "max": 55830.788929999995
+   },
+   "scrollMs": {
+    "p50": 153,
+    "p95": 194,
+    "p99": 229,
+    "max": 371
+   },
+   "errors": 0,
+   "errorKinds": [],
+   "mbTotal": 2074.667114,
+   "perReader": [
+    {
+     "reader": 1,
+     "accession": "LTMR01",
+     "compressed": false,
+     "firstImageMs": 434,
+     "fullStudyMs": 55461,
+     "scrollP95": 209,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 2,
+     "accession": "LTMR02",
+     "compressed": true,
+     "firstImageMs": 394,
+     "fullStudyMs": 36694,
+     "scrollP95": 148,
+     "errors": 0,
+     "mb": 70.3
+    },
+    {
+     "reader": 3,
+     "accession": "LTMR03",
+     "compressed": false,
+     "firstImageMs": 452,
+     "fullStudyMs": 55206,
+     "scrollP95": 200,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 4,
+     "accession": "LTMR04",
+     "compressed": true,
+     "firstImageMs": 366,
+     "fullStudyMs": 36431,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 5,
+     "accession": "LTMR05",
+     "compressed": false,
+     "firstImageMs": 456,
+     "fullStudyMs": 55694,
+     "scrollP95": 208,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 6,
+     "accession": "LTMR06",
+     "compressed": true,
+     "firstImageMs": 403,
+     "fullStudyMs": 36486,
+     "scrollP95": 145,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 7,
+     "accession": "LTMR07",
+     "compressed": false,
+     "firstImageMs": 449,
+     "fullStudyMs": 55389,
+     "scrollP95": 201,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 8,
+     "accession": "LTMR08",
+     "compressed": true,
+     "firstImageMs": 384,
+     "fullStudyMs": 36108,
+     "scrollP95": 145,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 9,
+     "accession": "LTMR09",
+     "compressed": false,
+     "firstImageMs": 453,
+     "fullStudyMs": 55064,
+     "scrollP95": 205,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 10,
+     "accession": "LTMR10",
+     "compressed": true,
+     "firstImageMs": 400,
+     "fullStudyMs": 36187,
+     "scrollP95": 143,
+     "errors": 0,
+     "mb": 70.3
+    },
+    {
+     "reader": 11,
+     "accession": "LTMR11",
+     "compressed": false,
+     "firstImageMs": 428,
+     "fullStudyMs": 55829,
+     "scrollP95": 209,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 12,
+     "accession": "LTMR12",
+     "compressed": true,
+     "firstImageMs": 401,
+     "fullStudyMs": 36669,
+     "scrollP95": 146,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 13,
+     "accession": "LTMR13",
+     "compressed": false,
+     "firstImageMs": 450,
+     "fullStudyMs": 55598,
+     "scrollP95": 209,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 14,
+     "accession": "LTMR14",
+     "compressed": true,
+     "firstImageMs": 398,
+     "fullStudyMs": 36599,
+     "scrollP95": 144,
+     "errors": 0,
+     "mb": 70.2
+    },
+    {
+     "reader": 15,
+     "accession": "LTMR15",
+     "compressed": false,
+     "firstImageMs": 430,
+     "fullStudyMs": 55738,
+     "scrollP95": 206,
+     "errors": 0,
+     "mb": 168.1
+    },
+    {
+     "reader": 16,
+     "accession": "LTMR16",
+     "compressed": true,
+     "firstImageMs": 397,
+     "fullStudyMs": 36732,
+     "scrollP95": 149,
+     "errors": 0,
+     "mb": 70.3
+    },
+    {
+     "reader": 17,
+     "accession": "LTMR17",
+     "compressed": false,
+     "firstImageMs": 428,
+     "fullStudyMs": 55831,
+     "scrollP95": 208,
+     "errors": 0,
+     "mb": 168.1
+    }
+   ]
+  },
+  "browser": {
+   "label": "mr-20-50mbps-cold",
+   "readers": [
+    18,
+    19,
+    20
+   ],
+   "modality": "MR",
+   "firstImage": {
+    "p50": 1644,
+    "max": 1951
+   },
+   "fullStudy": {
+    "p50": 62557,
+    "max": 71849
+   },
+   "scrollMs": {
+    "p50": 172,
+    "p95": 221,
+    "p99": 248,
+    "max": 320
+   },
+   "errors": 0,
+   "perReader": [
+    {
+     "reader": 18,
+     "accession": "LTMR18",
+     "compressed": true,
+     "firstImageMs": 1644,
+     "firstRenderEventMs": 561,
+     "firstInstanceBytesMs": 747,
+     "fullStudyMs": 60543,
+     "scrollP95": 214,
+     "steps": 319,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 19,
+     "accession": "LTMR19",
+     "compressed": false,
+     "firstImageMs": 1639,
+     "firstRenderEventMs": 538,
+     "firstInstanceBytesMs": 799,
+     "fullStudyMs": 71849,
+     "scrollP95": 239,
+     "steps": 319,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy"
+     ]
+    },
+    {
+     "reader": 20,
+     "accession": "LTMR20",
+     "compressed": true,
+     "firstImageMs": 1951,
+     "firstRenderEventMs": 941,
+     "firstInstanceBytesMs": 1079,
+     "fullStudyMs": 62557,
+     "scrollP95": 213,
+     "steps": 319,
+     "errors": [],
+     "consoleErrors": [
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Failed to load resource: net::ERR_FAILED",
+      "Access to font at 'https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2' from origin 'http://localhost:5190' has been blocked by CORS policy",
+      "Access to font at 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2' from origin 'http://localhost:5190' has been blocked by COR"
+     ]
+    }
+   ]
+  },
+  "resources": {
+   "api": {
+    "cpu_avg": 0.38,
+    "cpu_peak": 2.71,
+    "mem_peak_mb": 1060,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "threads_peak": 80,
+    "read_from_minio_mb": 2398,
+    "sent_mb": 2393
+   },
+   "minio": {
+    "cpu_avg": 0.26,
+    "cpu_peak": 0.53,
+    "mem_peak_mb": 1672,
+    "disk_rd_mb": 2198,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 2385
+   },
+   "postgres": {
+    "cpu_avg": 0.07,
+    "cpu_peak": 0.17,
+    "mem_peak_mb": 62,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 13
+   },
+   "rabbitmq": {
+    "cpu_avg": 0.45,
+    "cpu_peak": 2.31,
+    "mem_peak_mb": 110,
+    "disk_rd_mb": 0,
+    "disk_wr_mb": 0,
+    "net_tx_mb": 0
+   },
+   "host": {
+    "cpu_avg": 7.09,
+    "cpu_peak": 7.9,
+    "ncpu": 7.9,
+    "iowait_avg": 0.02,
+    "mem_avail_min_mb": 3098,
+    "disk_rd_mb": 2274,
+    "client_cpu_avg": 5.91
+   }
+  }
+ }
+]

@@ -1,0 +1,643 @@
+{
+ "summary": {
+  "label": "cr-20-50mbps-cold",
+  "startedAt": "2026-10-15T09:36:09.018Z",
+  "readers": 17,
+  "modality": "CR",
+  "paceMs": 0,
+  "base": "http://127.0.0.1:5190",
+  "firstImage": {
+   "p50": 2864.760821,
+   "max": 3130.8432869999997
+  },
+  "fullStudy": {
+   "p50": 5386.767873999999,
+   "max": 5687.049215999999
+  },
+  "scrollMs": {
+   "p50": 2514,
+   "p95": 2557,
+   "p99": 2557,
+   "max": 2557
+  },
+  "errors": 0,
+  "errorKinds": [],
+  "mbTotal": 355.446814,
+  "perReader": [
+   {
+    "reader": 1,
+    "accession": "LTCR01",
+    "compressed": false,
+    "firstImageMs": 2865,
+    "fullStudyMs": 5387,
+    "scrollP95": 2522,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 2,
+    "accession": "LTCR02",
+    "compressed": true,
+    "firstImageMs": 1215,
+    "fullStudyMs": 2209,
+    "scrollP95": 993,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 3,
+    "accession": "LTCR03",
+    "compressed": false,
+    "firstImageMs": 2881,
+    "fullStudyMs": 5395,
+    "scrollP95": 2514,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 4,
+    "accession": "LTCR04",
+    "compressed": true,
+    "firstImageMs": 1281,
+    "fullStudyMs": 2267,
+    "scrollP95": 986,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 5,
+    "accession": "LTCR05",
+    "compressed": false,
+    "firstImageMs": 3089,
+    "fullStudyMs": 5645,
+    "scrollP95": 2556,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 6,
+    "accession": "LTCR06",
+    "compressed": true,
+    "firstImageMs": 1475,
+    "fullStudyMs": 2454,
+    "scrollP95": 979,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 7,
+    "accession": "LTCR07",
+    "compressed": false,
+    "firstImageMs": 3064,
+    "fullStudyMs": 5600,
+    "scrollP95": 2536,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 8,
+    "accession": "LTCR08",
+    "compressed": true,
+    "firstImageMs": 1447,
+    "fullStudyMs": 2451,
+    "scrollP95": 1004,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 9,
+    "accession": "LTCR09",
+    "compressed": false,
+    "firstImageMs": 2995,
+    "fullStudyMs": 5527,
+    "scrollP95": 2532,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 10,
+    "accession": "LTCR10",
+    "compressed": true,
+    "firstImageMs": 1463,
+    "fullStudyMs": 2435,
+    "scrollP95": 972,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 11,
+    "accession": "LTCR11",
+    "compressed": false,
+    "firstImageMs": 3125,
+    "fullStudyMs": 5682,
+    "scrollP95": 2557,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 12,
+    "accession": "LTCR12",
+    "compressed": true,
+    "firstImageMs": 1483,
+    "fullStudyMs": 2457,
+    "scrollP95": 974,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 13,
+    "accession": "LTCR13",
+    "compressed": false,
+    "firstImageMs": 3035,
+    "fullStudyMs": 5588,
+    "scrollP95": 2553,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 14,
+    "accession": "LTCR14",
+    "compressed": true,
+    "firstImageMs": 1419,
+    "fullStudyMs": 2413,
+    "scrollP95": 994,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 15,
+    "accession": "LTCR15",
+    "compressed": false,
+    "firstImageMs": 3108,
+    "fullStudyMs": 5657,
+    "scrollP95": 2549,
+    "errors": 0,
+    "mb": 30
+   },
+   {
+    "reader": 16,
+    "accession": "LTCR16",
+    "compressed": true,
+    "firstImageMs": 1326,
+    "fullStudyMs": 2316,
+    "scrollP95": 989,
+    "errors": 0,
+    "mb": 10.7
+   },
+   {
+    "reader": 17,
+    "accession": "LTCR17",
+    "compressed": false,
+    "firstImageMs": 3131,
+    "fullStudyMs": 5687,
+    "scrollP95": 2556,
+    "errors": 0,
+    "mb": 30
+   }
+  ]
+ },
+ "results": [
+  {
+   "reader": 1,
+   "accession": "LTCR01",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2680,
+     "ttfb": 130,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2522,
+     "ttfb": 87,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 184.30693399999996,
+   "firstImageMs": 2864.760821,
+   "fullStudyMs": 5386.767873999999,
+   "bytes": 30001724
+  },
+  {
+   "reader": 2,
+   "accession": "LTCR02",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1028,
+     "ttfb": 109,
+     "bytes": 5339790,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 993,
+     "ttfb": 76,
+     "bytes": 5339348,
+     "status": 200
+    }
+   ],
+   "openMs": 187.01946999999996,
+   "firstImageMs": 1215.220675,
+   "fullStudyMs": 2208.566994,
+   "bytes": 10679138
+  },
+  {
+   "reader": 3,
+   "accession": "LTCR03",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2693,
+     "ttfb": 159,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2514,
+     "ttfb": 86,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 187.67032499999993,
+   "firstImageMs": 2881.078606,
+   "fullStudyMs": 5394.962286999999,
+   "bytes": 30001724
+  },
+  {
+   "reader": 4,
+   "accession": "LTCR04",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1066,
+     "ttfb": 160,
+     "bytes": 5339804,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 986,
+     "ttfb": 93,
+     "bytes": 5339746,
+     "status": 200
+    }
+   ],
+   "openMs": 215.00728400000003,
+   "firstImageMs": 1280.8924109999998,
+   "fullStudyMs": 2267.322925,
+   "bytes": 10679550
+  },
+  {
+   "reader": 5,
+   "accession": "LTCR05",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2873,
+     "ttfb": 350,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2556,
+     "ttfb": 133,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 215.99948500000005,
+   "firstImageMs": 3089.1036000000004,
+   "fullStudyMs": 5644.862144000001,
+   "bytes": 30001724
+  },
+  {
+   "reader": 6,
+   "accession": "LTCR06",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1250,
+     "ttfb": 337,
+     "bytes": 5339692,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 979,
+     "ttfb": 109,
+     "bytes": 5339066,
+     "status": 200
+    }
+   ],
+   "openMs": 224.87316799999996,
+   "firstImageMs": 1475.034491,
+   "fullStudyMs": 2454.2963219999997,
+   "bytes": 10678758
+  },
+  {
+   "reader": 7,
+   "accession": "LTCR07",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2843,
+     "ttfb": 329,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2536,
+     "ttfb": 107,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 220.65204399999993,
+   "firstImageMs": 3063.6765889999997,
+   "fullStudyMs": 5599.667520999999,
+   "bytes": 30001724
+  },
+  {
+   "reader": 8,
+   "accession": "LTCR08",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1221,
+     "ttfb": 313,
+     "bytes": 5339118,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 1004,
+     "ttfb": 125,
+     "bytes": 5340222,
+     "status": 200
+    }
+   ],
+   "openMs": 225.421016,
+   "firstImageMs": 1446.717469,
+   "fullStudyMs": 2450.778064,
+   "bytes": 10679340
+  },
+  {
+   "reader": 9,
+   "accession": "LTCR09",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2774,
+     "ttfb": 247,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2532,
+     "ttfb": 141,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 220.99377600000003,
+   "firstImageMs": 2995.207215,
+   "fullStudyMs": 5526.7914550000005,
+   "bytes": 30001724
+  },
+  {
+   "reader": 10,
+   "accession": "LTCR10",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1237,
+     "ttfb": 321,
+     "bytes": 5338716,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 972,
+     "ttfb": 105,
+     "bytes": 5339194,
+     "status": 200
+    }
+   ],
+   "openMs": 226.44373699999994,
+   "firstImageMs": 1463.287843,
+   "fullStudyMs": 2434.9915459999997,
+   "bytes": 10677910
+  },
+  {
+   "reader": 11,
+   "accession": "LTCR11",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2897,
+     "ttfb": 389,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2557,
+     "ttfb": 125,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 227.90438000000006,
+   "firstImageMs": 3125.34296,
+   "fullStudyMs": 5682.406439,
+   "bytes": 30001724
+  },
+  {
+   "reader": 12,
+   "accession": "LTCR12",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1261,
+     "ttfb": 335,
+     "bytes": 5339884,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 974,
+     "ttfb": 115,
+     "bytes": 5339702,
+     "status": 200
+    }
+   ],
+   "openMs": 222.04364700000008,
+   "firstImageMs": 1482.8165800000002,
+   "fullStudyMs": 2457.227616,
+   "bytes": 10679586
+  },
+  {
+   "reader": 13,
+   "accession": "LTCR13",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2824,
+     "ttfb": 299,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2553,
+     "ttfb": 120,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 211.43526199999997,
+   "firstImageMs": 3035.347063,
+   "fullStudyMs": 5588.041827,
+   "bytes": 30001724
+  },
+  {
+   "reader": 14,
+   "accession": "LTCR14",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1198,
+     "ttfb": 275,
+     "bytes": 5338756,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 994,
+     "ttfb": 106,
+     "bytes": 5339192,
+     "status": 200
+    }
+   ],
+   "openMs": 220.492389,
+   "firstImageMs": 1418.651863,
+   "fullStudyMs": 2413.064135,
+   "bytes": 10677948
+  },
+  {
+   "reader": 15,
+   "accession": "LTCR15",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2893,
+     "ttfb": 353,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2549,
+     "ttfb": 117,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 215.27011000000005,
+   "firstImageMs": 3108.1436679999997,
+   "fullStudyMs": 5657.119041,
+   "bytes": 30001724
+  },
+  {
+   "reader": 16,
+   "accession": "LTCR16",
+   "compressed": true,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 1113,
+     "ttfb": 203,
+     "bytes": 5339242,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 989,
+     "ttfb": 95,
+     "bytes": 5339826,
+     "status": 200
+    }
+   ],
+   "openMs": 213.81720300000006,
+   "firstImageMs": 1326.4900320000002,
+   "fullStudyMs": 2315.7183680000003,
+   "bytes": 10679068
+  },
+  {
+   "reader": 17,
+   "accession": "LTCR17",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 2908,
+     "ttfb": 389,
+     "bytes": 15000862,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 2556,
+     "ttfb": 126,
+     "bytes": 15000862,
+     "status": 200
+    }
+   ],
+   "openMs": 223.02239399999996,
+   "firstImageMs": 3130.8432869999997,
+   "fullStudyMs": 5687.049215999999,
+   "bytes": 30001724
+  }
+ ]
+}

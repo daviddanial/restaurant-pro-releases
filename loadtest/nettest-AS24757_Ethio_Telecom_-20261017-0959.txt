@@ -1,0 +1,27 @@
+== connection: AS24757 Ethio Telecom, Nazrēt ET, ቅዳሜ፣ ኦክቶበር 17 ቀን  9:59:28 ጡዋት EAT 2026 ዓ/ም
+== round trip to the VPS (TCP connect, 5 tries)
+avg 251 ms, worst 293 ms
+== download from the VPS, one connection (3 x index-Dxu2yuw1.js)
+0.10 Mbps
+0.19 Mbps
+0.15 Mbps
+== download from the VPS, 8 connections at once
+0.68 Mbps
+== reference servers (15 s max each)
+Cloudflare(nearby) connect 65 ms, 36.53 Mbps
+Germany            connect 227 ms, 0.12 Mbps
+USA                connect 1414 ms, 0.00 Mbps
+Singapore          connect 0 ms, 0.00 Mbps
+== route to the VPS
+Start: 2026-10-17T10:01:40+0300
+HOST: said-HP-Pavilion-Laptop-14-dv0xxx Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- 10.251.203.70                      0.0%    20    1.8   4.9   1.5  47.4  10.6
+  2.|-- ???                               100.0    20    0.0   0.0   0.0   0.0   0.0
+  3.|-- 10.197.32.146                     95.0%    20   32.0  32.0  32.0  32.0   0.0
+  4.|-- 10.197.32.57                      95.0%    20   23.6  23.6  23.6  23.6   0.0
+  5.|-- 10.180.181.102                    95.0%    20   29.7  29.7  29.7  29.7   0.0
+  6.|-- ???                               100.0    20    0.0   0.0   0.0   0.0   0.0
+  7.|-- ???                               100.0    20    0.0   0.0   0.0   0.0   0.0
+  8.|-- 41.189.225.41                     95.0%    20   30.6  30.6  30.6  30.6   0.0
+  9.|-- 185.1.47.50                       95.0%    20  105.7 105.7 105.7 105.7   0.0
+ 10.|-- ???                               100.0    20    0.0   0.0   0.0   0.0   0.0

@@ -1,0 +1,333 @@
+{
+ "summary": {
+  "label": "dbg-acc-20",
+  "startedAt": "2026-10-15T07:28:31.314Z",
+  "readers": 1,
+  "modality": "MR",
+  "paceMs": 0,
+  "base": "http://127.0.0.1:5190",
+  "firstImage": {
+   "p50": 541.506138,
+   "max": 541.506138
+  },
+  "fullStudy": {
+   "p50": 11403.594733,
+   "max": 11403.594733
+  },
+  "scrollMs": {
+   "p50": 278,
+   "p95": 285,
+   "p99": 286,
+   "max": 286
+  },
+  "errors": 0,
+  "errorKinds": [],
+  "mbTotal": 21.00924,
+  "perReader": [
+   {
+    "reader": 1,
+    "accession": "LTMR01",
+    "compressed": false,
+    "firstImageMs": 542,
+    "fullStudyMs": 11404,
+    "scrollP95": 285,
+    "errors": 0,
+    "mb": 21
+   }
+  ]
+ },
+ "results": [
+  {
+   "reader": 1,
+   "accession": "LTMR01",
+   "compressed": false,
+   "errors": [],
+   "images": [
+    {
+     "i": 0,
+     "ms": 270,
+     "ttfb": 70,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 1,
+     "ms": 274,
+     "ttfb": 73,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 2,
+     "ms": 276,
+     "ttfb": 76,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 3,
+     "ms": 282,
+     "ttfb": 81,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 4,
+     "ms": 282,
+     "ttfb": 93,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 5,
+     "ms": 275,
+     "ttfb": 70,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 6,
+     "ms": 271,
+     "ttfb": 67,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 7,
+     "ms": 276,
+     "ttfb": 71,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 8,
+     "ms": 283,
+     "ttfb": 77,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 9,
+     "ms": 276,
+     "ttfb": 71,
+     "bytes": 525228,
+     "status": 200
+    },
+    {
+     "i": 10,
+     "ms": 284,
+     "ttfb": 96,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 11,
+     "ms": 282,
+     "ttfb": 78,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 12,
+     "ms": 281,
+     "ttfb": 84,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 13,
+     "ms": 283,
+     "ttfb": 81,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 14,
+     "ms": 276,
+     "ttfb": 70,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 15,
+     "ms": 286,
+     "ttfb": 79,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 16,
+     "ms": 270,
+     "ttfb": 69,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 17,
+     "ms": 276,
+     "ttfb": 88,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 18,
+     "ms": 285,
+     "ttfb": 98,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 19,
+     "ms": 276,
+     "ttfb": 91,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 20,
+     "ms": 274,
+     "ttfb": 80,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 21,
+     "ms": 282,
+     "ttfb": 89,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 22,
+     "ms": 283,
+     "ttfb": 79,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 23,
+     "ms": 273,
+     "ttfb": 73,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 24,
+     "ms": 277,
+     "ttfb": 88,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 25,
+     "ms": 281,
+     "ttfb": 78,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 26,
+     "ms": 281,
+     "ttfb": 77,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 27,
+     "ms": 282,
+     "ttfb": 82,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 28,
+     "ms": 282,
+     "ttfb": 79,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 29,
+     "ms": 275,
+     "ttfb": 71,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 30,
+     "ms": 281,
+     "ttfb": 78,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 31,
+     "ms": 277,
+     "ttfb": 89,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 32,
+     "ms": 275,
+     "ttfb": 70,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 33,
+     "ms": 282,
+     "ttfb": 79,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 34,
+     "ms": 281,
+     "ttfb": 77,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 35,
+     "ms": 278,
+     "ttfb": 69,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 36,
+     "ms": 272,
+     "ttfb": 69,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 37,
+     "ms": 282,
+     "ttfb": 82,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 38,
+     "ms": 276,
+     "ttfb": 75,
+     "bytes": 525232,
+     "status": 200
+    },
+    {
+     "i": 39,
+     "ms": 272,
+     "ttfb": 75,
+     "bytes": 525232,
+     "status": 200
+    }
+   ],
+   "openMs": 271.361211,
+   "firstImageMs": 541.506138,
+   "fullStudyMs": 11403.594733,
+   "bytes": 21009240
+  }
+ ]
+}
