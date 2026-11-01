@@ -1,6 +1,9 @@
 import {
   init as csInit,
   volumeLoader,
+  registerImageLoader,
+  imageLoadPoolManager,
+  Enums as CoreEnums,
   cornerstoneStreamingImageVolumeLoader,
 } from '@cornerstonejs/core'
 import {
@@ -16,6 +19,12 @@ import {
 } from '@cornerstonejs/tools'
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader'
 import { getBearerToken } from '../authToken'
+import { withRetry } from './retryingLoader'
+
+/** Background (prefetch) downloads allowed at once. The default is 1000, which sends a whole
+ *  series at once: a newly opened study queues behind it, and one dropped connection fails
+ *  hundreds of requests together. */
+export const MAX_PREFETCH_REQUESTS = 6
 
 let initPromise: Promise<void> | null = null
 let toolsRegistered = false
@@ -46,6 +55,19 @@ export function ensureCornerstoneInit(): Promise<void> {
           }
         },
       })
+
+      // Retry transient failures (dropped mobile connections) instead of leaving a black viewport.
+      const wadouriLoad = dicomImageLoader.wadouri.loadImage as unknown as Parameters<typeof withRetry>[0]
+      const retrying = withRetry(wadouriLoad) as unknown as Parameters<typeof registerImageLoader>[1]
+      registerImageLoader('wadouri', retrying)
+      registerImageLoader('dicomweb', retrying)
+
+      // Queued prefetches are dropped when the viewer moves to another series/study
+      // (stackPrefetch.disable clears the queue), so only a few are ever in flight.
+      imageLoadPoolManager.setMaxSimultaneousRequests(
+        CoreEnums.RequestType.Prefetch,
+        MAX_PREFETCH_REQUESTS,
+      )
 
       if (!volumeLoaderRegistered) {
         volumeLoader.registerVolumeLoader(
