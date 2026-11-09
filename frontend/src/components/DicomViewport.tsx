@@ -31,6 +31,7 @@ import {
   utilities as toolUtilities,
 } from '@cornerstonejs/tools'
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
+import { DirectionalPrefetcher, countLoaded } from '../cornerstone/directionalPrefetch'
 import { presetsForModality } from '../wlPresets'
 import { getBearerToken } from '../authToken'
 import {
@@ -241,6 +242,13 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const stackRef = useRef<StackEntry[]>([])
   const positionsRef = useRef<(number | null)[]>([])
   const syncingRef = useRef(false)
+  // Background loader: mostly ahead in the scroll direction (see directionalPrefetch).
+  const prefetcherRef = useRef(new DirectionalPrefetcher())
+  // A step (arrow key / wheel) is waiting for its slice to load: further steps are dropped
+  // instead of starting more downloads, so scrolling moves at network speed, never freezes
+  // and jumps.
+  const stepBusyRef = useRef(false)
+  const [loadedCount, setLoadedCount] = useState(0)
   const playingRef = useRef(false)
   const invertRef = useRef(false)
   // Read through a ref: the listener is bound once but the callback identity changes.
@@ -313,7 +321,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const setActiveTool = useCallback((next: Tool) => {
     const tg = ToolGroupManager.getToolGroup(toolGroupId)
     if (!tg) return
-    const { Primary, Secondary, Auxiliary, Wheel } = ToolsEnums.MouseBindings
+    const { Primary, Secondary, Auxiliary } = ToolsEnums.MouseBindings
     const activeName =
       next === 'wwwc' ? WindowLevelTool.toolName
         : next === 'zoom' ? ZoomTool.toolName
@@ -340,7 +348,6 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     tg.setToolActive(activeName, { bindings: [{ mouseButton: Primary }] })
     tg.setToolActive(ZoomTool.toolName, { bindings: [{ mouseButton: Secondary }] })
     tg.setToolActive(PanTool.toolName, { bindings: [{ mouseButton: Auxiliary }] })
-    tg.setToolActive(StackScrollTool.toolName, { bindings: [{ mouseButton: Wheel }] })
 
     // Passive (not Enabled) so finished lengths stay clickable for selection/delete
     // while another tool owns the primary button.
@@ -407,9 +414,6 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         })
         tg.addViewport(viewportId, renderingEngineId)
 
-        tg.setToolActive(StackScrollTool.toolName, {
-          bindings: [{ mouseButton: ToolsEnums.MouseBindings.Wheel }],
-        })
         tg.setToolActive(WindowLevelTool.toolName, {
           bindings: [{ mouseButton: ToolsEnums.MouseBindings.Primary }],
         })
@@ -425,6 +429,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
             imageIdIndex?: number
           }
           const idx = detail?.imageIdIndex
+          if (idx != null) prefetcherRef.current.setCurrent(idx)
           if (idx == null || syncingRef.current) return
           const entry = stackRef.current[idx]
           if (!entry) return
@@ -573,7 +578,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         // Fetch the rest of the series in the background, nearest slices first, so scrolling
         // reads from memory instead of waiting on the network one image at a time.
         const el = elementRef.current
-        if (el && stack.length > 1) toolUtilities.stackPrefetch.enable(el)
+        if (stack.length > 1) prefetcherRef.current.start(stack.map((s) => s.imageId), startIdx)
 
         // For studies ingested before plane tags were stored, fill from WADO metadata.
         if (!hasSpatialPositions(positionsRef.current) && instances.length > 0 && instances.length <= 256) {
@@ -597,7 +602,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       cancelled = true
       dropPreview()
       const el = elementRef.current
-      if (el) toolUtilities.stackPrefetch.disable(el)
+      prefetcherRef.current.stop()
     }
   }, [ready, studyUid, seriesUid, stack, stackKey, cineRate, frameTime, modality, getViewport, instances])
   // intentionally omit instanceIndex — jump handled below
@@ -645,15 +650,51 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     return () => window.clearInterval(id)
   }, [playing, fps, stack.length, getViewport])
 
-  const stepFrame = useCallback((delta: number) => {
+  const stepFrame = useCallback((delta: number, wrap = true) => {
     const viewport = getViewport()
     if (!viewport || stack.length === 0) return
     const cur = viewport.getCurrentImageIdIndex()
     let next = cur + delta
+    if (!wrap && (next < 0 || next >= stack.length)) return
     if (next < 0) next = stack.length - 1
     if (next >= stack.length) next = 0
+    if (stepBusyRef.current) return
+    stepBusyRef.current = true
+    // Safety valve: never block stepping for long if a load hangs.
+    const release = window.setTimeout(() => { stepBusyRef.current = false }, 8000)
     viewport.setImageIdIndex(next)
+      .catch(() => { /* failed slice: allow stepping past it */ })
+      .finally(() => { window.clearTimeout(release); stepBusyRef.current = false })
   }, [getViewport, stack.length])
+
+  // Mouse wheel: same guarded step as the arrow keys (replaces Cornerstone's StackScrollTool,
+  // which starts a new download for every wheel notch).
+  useEffect(() => {
+    const el = elementRef.current
+    if (!el || !ready) return
+    let acc = 0
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) return // pinch-zoom gesture
+      e.preventDefault()
+      acc += e.deltaMode === 1 ? e.deltaY * 40 : e.deltaY // Firefox reports lines
+      if (Math.abs(acc) < 40) return // trackpads send many tiny deltas
+      const dir = acc > 0 ? 1 : -1
+      acc = 0
+      stepFrame(dir, false)
+    }
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => el.removeEventListener('wheel', onWheel)
+  }, [ready, stepFrame])
+
+  // How much of the series is in memory, for the loading bar.
+  useEffect(() => {
+    const ids = stack.map((s) => s.imageId)
+    if (!ready || ids.length < 2) { setLoadedCount(ids.length); return }
+    const tick = () => { const n = countLoaded(ids); setLoadedCount(n); return n >= ids.length }
+    if (tick()) return
+    const id = window.setInterval(() => { if (tick()) window.clearInterval(id) }, 500)
+    return () => window.clearInterval(id)
+  }, [ready, stack])
 
   const goToFraction = useCallback((fraction: number) => {
     const viewport = getViewport()
@@ -1047,6 +1088,12 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         </>
       )}
       {loading && !previewUrl && <div className="viewport-overlay muted">Loading DICOM…</div>}
+      {!loading && stack.length > 1 && loadedCount < stack.length && (
+        <div className="viewport-loadbar" title="Images of this series downloaded so far">
+          <div className="viewport-loadbar-fill" style={{ width: `${(100 * loadedCount) / stack.length}%` }} />
+          <span>Loaded {loadedCount} / {stack.length}</span>
+        </div>
+      )}
       {error && <div className="viewport-overlay error">{error}</div>}
       <div className="viewport-hud">
         <div>{wl.width > 0 ? `W: ${Math.round(wl.width)}  L: ${Math.round(wl.center)}` : 'W/L: DICOM'}</div>
