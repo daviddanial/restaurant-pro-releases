@@ -26,12 +26,16 @@ import {
   ZoomTool,
   StackScrollTool,
   LengthTool,
+  AngleTool,
+  CobbAngleTool,
+  EllipticalROITool,
   annotation,
   cancelActiveManipulations,
   utilities as toolUtilities,
 } from '@cornerstonejs/tools'
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
 import { DirectionalPrefetcher, countLoaded } from '../cornerstone/directionalPrefetch'
+import { StackProbeTool } from '../cornerstone/stackProbeTool'
 import { presetsForModality } from '../wlPresets'
 import { getBearerToken } from '../authToken'
 import {
@@ -83,7 +87,18 @@ export type DicomViewportHandle = {
   goToPosition: (positionMm: number) => boolean
 }
 
-type Tool = 'wwwc' | 'zoom' | 'pan' | 'length'
+type MeasureTool = 'length' | 'angle' | 'cobb' | 'ellipse' | 'probe'
+type Tool = 'wwwc' | 'zoom' | 'pan' | MeasureTool
+
+/** Measurement tools: drawn with the left button, selectable/deletable afterwards. */
+const MEASURE_TOOL_NAMES: Record<MeasureTool, string> = {
+  length: LengthTool.toolName,
+  angle: AngleTool.toolName,
+  cobb: CobbAngleTool.toolName,
+  ellipse: EllipticalROITool.toolName,
+  probe: StackProbeTool.toolName,
+}
+const isMeasureTool = (t: Tool): t is MeasureTool => t in MEASURE_TOOL_NAMES
 
 type StackEntry = {
   imageId: string
@@ -322,11 +337,26 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     const tg = ToolGroupManager.getToolGroup(toolGroupId)
     if (!tg) return
     const { Primary, Secondary, Auxiliary } = ToolsEnums.MouseBindings
+
+    // Switching tools mid-draw (e.g. an angle still waiting for its 3rd point) must drop the
+    // half-drawn measurement, or the next tool's clicks would keep extending it.
+    const el = elementRef.current
+    for (const name of Object.values(MEASURE_TOOL_NAMES)) {
+      const inst = tg.getToolInstance(name) as {
+        editData?: { newAnnotation?: boolean; annotation?: { annotationUID?: string } }
+        cancel?: (element: HTMLDivElement) => unknown
+      } | undefined
+      if (!el || !inst?.editData?.newAnnotation) continue
+      const uid = inst.editData.annotation?.annotationUID
+      try { inst.cancel?.(el) } catch { /* ignore */ }
+      try { cancelActiveManipulations(el) } catch { /* ignore */ }
+      if (uid) annotation.state.removeAnnotation(uid)
+    }
     const activeName =
       next === 'wwwc' ? WindowLevelTool.toolName
         : next === 'zoom' ? ZoomTool.toolName
           : next === 'pan' ? PanTool.toolName
-            : LengthTool.toolName
+            : MEASURE_TOOL_NAMES[next]
 
     // setToolPassive only drops the primary binding, so tools that also own a
     // secondary/middle/wheel button stay half-active. Clear everything and
@@ -335,7 +365,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       WindowLevelTool.toolName,
       ZoomTool.toolName,
       PanTool.toolName,
-      LengthTool.toolName,
+      ...Object.values(MEASURE_TOOL_NAMES),
       StackScrollTool.toolName,
     ]) {
       try {
@@ -349,11 +379,12 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     tg.setToolActive(ZoomTool.toolName, { bindings: [{ mouseButton: Secondary }] })
     tg.setToolActive(PanTool.toolName, { bindings: [{ mouseButton: Auxiliary }] })
 
-    // Passive (not Enabled) so finished lengths stay clickable for selection/delete
+    // Passive (not Enabled) so finished measurements stay clickable for selection/delete
     // while another tool owns the primary button.
-    if (next !== 'length') {
+    for (const name of Object.values(MEASURE_TOOL_NAMES)) {
+      if (name === activeName) continue
       try {
-        tg.setToolPassive(LengthTool.toolName)
+        tg.setToolPassive(name)
       } catch {
         /* ignore */
       }
@@ -394,7 +425,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         tg.addTool(PanTool.toolName)
         tg.addTool(ZoomTool.toolName)
         tg.addTool(StackScrollTool.toolName)
-        tg.addTool(LengthTool.toolName, {
+        // Same Esc behaviour for every measurement tool: only abort a draw in progress.
+        const measureConfig = {
           actions: {
             cancelInProgress: {
               // Cornerstone keyboard path (element-focused). Only abort new draws.
@@ -411,7 +443,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
               bindings: [{ key: 'Escape' }],
             },
           },
-        })
+        }
+        for (const name of Object.values(MEASURE_TOOL_NAMES)) tg.addTool(name, measureConfig)
         tg.addViewport(viewportId, renderingEngineId)
 
         tg.setToolActive(WindowLevelTool.toolName, {
@@ -815,11 +848,11 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     return deleteAnnotationUids(annotation.selection.getAnnotationsSelected())
   }, [deleteAnnotationUids])
 
-  /** Remove the most recently added length on this viewport (Esc "undo last"). */
-  const deleteLastLengthMeasurement = useCallback(() => {
+  /** Remove the most recently added measurement of the active tool on this viewport (Esc "undo last"). */
+  const deleteLastMeasurement = useCallback((toolName: string) => {
     const el = elementRef.current
     if (!el) return false
-    const anns = annotation.state.getAnnotations(LengthTool.toolName, el) || []
+    const anns = annotation.state.getAnnotations(toolName, el) || []
     if (anns.length === 0) return false
     const last = anns[anns.length - 1]
     if (!last?.annotationUID) return false
@@ -833,7 +866,10 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     const el = elementRef.current
     if (!el) return false
     const tg = ToolGroupManager.getToolGroup(toolGroupId)
-    const lengthTool = tg?.getToolInstance(LengthTool.toolName) as {
+    const drawing = Object.values(MEASURE_TOOL_NAMES)
+      .map((name) => tg?.getToolInstance(name) as { editData?: { newAnnotation?: boolean } } | undefined)
+      .find((t) => t?.editData?.newAnnotation)
+    const lengthTool = drawing as {
       isDrawing?: boolean
       editData?: {
         newAnnotation?: boolean
@@ -931,8 +967,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         // 2) Delete any selected finished measurement.
         if (deleteSelectedMeasurements()) return
         // 3) Length active + nothing selected → remove the last length (undo last draw).
-        if (tool === 'length') {
-          deleteLastLengthMeasurement()
+        if (isMeasureTool(tool)) {
+          deleteLastMeasurement(MEASURE_TOOL_NAMES[tool])
         }
         return
       }
@@ -956,6 +992,10 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       if (e.key === '[') rotateBy(-90)
       if (e.key === ']') rotateBy(90)
       if (e.key === 'l' || e.key === 'L') setTool('length')
+      if (e.key === 'a' || e.key === 'A') setTool('angle')
+      if (e.key === 'c' || e.key === 'C') setTool('cobb')
+      if (e.key === 'e' || e.key === 'E') setTool('ellipse')
+      if (e.key === 'h' || e.key === 'H') setTool('probe')
       if (e.key === 'w' || e.key === 'W') setTool('wwwc')
       if (e.key === 'z' || e.key === 'Z') setTool('zoom')
       if (e.key === 'p' || e.key === 'P') setTool('pan')
@@ -972,7 +1012,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     fitToWindow,
     rotateBy,
     deleteSelectedMeasurements,
-    deleteLastLengthMeasurement,
+    deleteLastMeasurement,
     cancelUnfinishedMeasurement,
     refreshAnnotations,
     tool,
@@ -993,6 +1033,10 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       <button className={`btn secondary ${tool === 'zoom' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('zoom')}>Zoom</button>
       <button className={`btn secondary ${tool === 'pan' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('pan')}>Pan</button>
       <button className={`btn secondary ${tool === 'length' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('length')} title="Length (L)">Length</button>
+      <button className={`btn secondary ${tool === 'angle' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('angle')} title="Angle: click 3 points (A)">Angle</button>
+      <button className={`btn secondary ${tool === 'cobb' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('cobb')} title="Cobb angle: draw two lines (C)">Cobb</button>
+      <button className={`btn secondary ${tool === 'ellipse' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('ellipse')} title="Ellipse ROI: area and mean/min/max density (E)">Ellipse</button>
+      <button className={`btn secondary ${tool === 'probe' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('probe')} title="Density at a point, HU on CT (H)">HU</button>
       {selectedCount > 0 && (
         <button
           className="btn secondary"

@@ -14,12 +14,16 @@ import {
   ZoomTool,
   StackScrollTool,
   LengthTool,
+  AngleTool,
+  CobbAngleTool,
+  EllipticalROITool,
   CrosshairsTool,
   TrackballRotateTool,
 } from '@cornerstonejs/tools'
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader'
 import { getBearerToken } from '../authToken'
 import { withRetry } from './retryingLoader'
+import { StackProbeTool } from './stackProbeTool'
 
 /** Background (prefetch) downloads allowed at once. The default is 1000, which sends a whole
  *  series at once: a newly opened study queues behind it, and one dropped connection fails
@@ -85,6 +89,10 @@ export function ensureCornerstoneInit(): Promise<void> {
         addTool(ZoomTool)
         addTool(StackScrollTool)
         addTool(LengthTool)
+        addTool(AngleTool)
+        addTool(CobbAngleTool)
+        addTool(EllipticalROITool)
+        addTool(StackProbeTool)
         addTool(CrosshairsTool)
         addTool(TrackballRotateTool)
         toolsRegistered = true
