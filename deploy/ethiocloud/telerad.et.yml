@@ -1,0 +1,111 @@
+# TeleRad on the Ethio Telecom cloud server (standalone, no Feya/HABETL).
+#   cd /opt/telerad && docker compose -f docker-compose.yml -f telerad.et.yml up -d --no-build
+#
+# * images are built elsewhere and loaded (telerad-api:et, telerad-frontend:et)
+# * only Caddy is published (80/443); everything else binds to 127.0.0.1
+# * secrets come from .env (created by setup.sh, never committed)
+
+services:
+  postgres:
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${TELERAD_DB_USER}
+      POSTGRES_PASSWORD: ${TELERAD_DB_PASSWORD}
+    ports: !override
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${TELERAD_DB_USER} -d telerad"]
+
+  minio:
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${TELERAD_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${TELERAD_MINIO_PASSWORD}
+    ports: !override
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+
+  # The base entrypoint hardcodes minioadmin/minioadmin.
+  minio-init:
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 '${TELERAD_MINIO_USER}' '${TELERAD_MINIO_PASSWORD}' >/dev/null; do
+        echo 'waiting for minio'; sleep 3;
+      done;
+      mc mb -p local/telerad || true;
+      echo 'minio bucket ready';
+      "
+
+  rabbitmq:
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${TELERAD_RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${TELERAD_RABBIT_PASSWORD}
+    ports: !override
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+
+  api:
+    image: telerad-api:et
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:18080:8080"
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${TELERAD_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${TELERAD_DB_PASSWORD}
+      SPRING_RABBITMQ_USERNAME: ${TELERAD_RABBIT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${TELERAD_RABBIT_PASSWORD}
+      TELERAD_S3_ACCESS_KEY: ${TELERAD_MINIO_USER}
+      TELERAD_S3_SECRET_KEY: ${TELERAD_MINIO_PASSWORD}
+      TELERAD_JWT_SECRET: ${TELERAD_JWT_SECRET}
+      TELERAD_SERVICE_TOKEN: ${TELERAD_SERVICE_TOKEN}
+      TELERAD_EHR_WEBHOOK_SECRET: ${TELERAD_EHR_WEBHOOK_SECRET}
+      TELERAD_NOTIFY_EMAIL_ENABLED: "false"
+      # No Feya EHR on this server.
+      TELERAD_NOTIFY_WEBHOOK_ENABLED: "false"
+      TELERAD_GATEWAY_BEARER_DEV: "false"
+      TELERAD_SHARE_PUBLIC_BASE_URL: https://${TELERAD_HOST}
+      TELERAD_CORS_ORIGINS: https://${TELERAD_HOST}
+    logging:
+      driver: json-file
+      options: { max-size: "20m", max-file: "5" }
+
+  dicom-scp:
+    image: telerad-api:et
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:11112:11112"
+      - "127.0.0.1:18081:8081"
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${TELERAD_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${TELERAD_DB_PASSWORD}
+      SPRING_RABBITMQ_USERNAME: ${TELERAD_RABBIT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${TELERAD_RABBIT_PASSWORD}
+      TELERAD_S3_ACCESS_KEY: ${TELERAD_MINIO_USER}
+      TELERAD_S3_SECRET_KEY: ${TELERAD_MINIO_PASSWORD}
+      TELERAD_JWT_SECRET: ${TELERAD_JWT_SECRET}
+
+  frontend:
+    image: telerad-frontend:et
+    restart: unless-stopped
+    ports: !override
+      - "127.0.0.1:5173:80"
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    environment:
+      TELERAD_HOST: ${TELERAD_HOST}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+
+volumes:
+  caddy_data:
+  caddy_config:
