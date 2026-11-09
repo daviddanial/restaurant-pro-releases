@@ -25,17 +25,22 @@ const MAX_IMAGES = Number(args['max-images'] || 0)
 const REOPEN = args.reopen === '1' 
 const STEP_TIMEOUT = 30_000
 
-const creds = JSON.parse(fs.readFileSync(path.join(HERE, 'creds.json'), 'utf8'))
-const studies = JSON.parse(fs.readFileSync(path.join(HERE, 'study_ids.json'), 'utf8'))
+// --email/--password/--study-id/--images: read one given study with one given account (e.g. on the VPS)
+// instead of the local synthetic set (lt_rad_NN accounts + study_ids.json).
+const ONE = args['study-id'] ? { id: args['study-id'], accession: args['study-id'].slice(0, 8), compressed: null,
+  images: Number(args.images || 0) } : null
+const creds = ONE ? {} : JSON.parse(fs.readFileSync(path.join(HERE, 'creds.json'), 'utf8'))
+const studies = ONE ? [] : JSON.parse(fs.readFileSync(path.join(HERE, 'study_ids.json'), 'utf8'))
   .filter((s) => s.modality === MODALITY).sort((a, b) => a.accession.localeCompare(b.accession))
 
 const pct = (arr, p) => { if (!arr.length) return null; const s = [...arr].sort((a, b) => a - b); return s[Math.min(s.length - 1, Math.floor(p / 100 * s.length))] }
 
 async function session(browser, n) {
-  const email = `lt_rad_${String(n).padStart(2, '0')}@telerad.local`
-  const study = studies[n - 1]
+  const email = ONE ? args.email : `lt_rad_${String(n).padStart(2, '0')}@telerad.local`
+  const study = ONE || studies[n - 1]
   const auth = await (await fetch(`${BASE}/api/auth/login`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: creds[email] }),
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password: ONE ? args.password : creds[email] }),
   })).json()
   const ctxOpts = { viewport: { width: 1600, height: 900 }, extraHTTPHeaders: { 'x-lt-reader': String(n) } }
   // Reopen test: a persistent profile has a disk HTTP cache like a real workstation browser;
