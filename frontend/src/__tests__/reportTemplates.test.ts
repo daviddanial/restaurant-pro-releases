@@ -41,4 +41,19 @@ describe('report templates', () => {
   it('lists unique modalities', () => {
     expect(uniqueSorted(['US', 'CT', 'CT'])).toEqual(['CT', 'US'])
   })
+
+  it('includes the imported CT normal formats with unique names and parsed sections', () => {
+    const ct = REPORT_TEMPLATES.filter((t) => t.id.startsWith('tpl-ct-normal-'))
+    expect(ct).toHaveLength(30)
+    expect(new Set(REPORT_TEMPLATES.map((t) => t.name)).size).toBe(REPORT_TEMPLATES.length)
+    for (const t of ct) {
+      expect(t.modality).toBe('CT')
+      expect(t.body).toContain('FINDINGS:\n- ')
+      expect(t.impression).toMatch(/^1\. /)
+      expect(t.body).not.toMatch(/NAME:|AGE:|SEX:/)
+    }
+    const head = applyTemplate(ct.find((t) => t.name === 'CT Head — Without Contrast (Normal)')!, { modality: 'CT' })
+    expect(head.findings).toContain('posterior fossa structures are unremarkable')
+    expect(head.impression).toBe('1. Normal non contrast Head CT')
+  })
 })

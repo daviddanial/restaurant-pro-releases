@@ -1,3 +1,5 @@
+import { CT_NORMAL_TEMPLATES } from './ctNormalTemplates'
+
 export type TemplateType = 'Global' | 'Radiologist-Specific'
 
 export interface ReportTemplate {
@@ -13,7 +15,7 @@ export interface ReportTemplate {
 
 export const TEMPLATE_TYPES = ['All', 'Radiologist-Specific', 'Global'] as const
 
-export const REPORT_TEMPLATES: ReportTemplate[] = [
+const BUILTIN_TEMPLATES: ReportTemplate[] = [
   {
     id: 'tpl-ct-chest-pe',
     name: 'CT Chest — PE Protocol',
@@ -116,6 +118,9 @@ Kidneys: {RENAL_FINDINGS}`,
     impression: `1. {IMPRESSION_ADDENDUM}`,
   },
 ]
+
+/** Built-in examples plus the imported CT normal-report formats. */
+export const REPORT_TEMPLATES: ReportTemplate[] = [...BUILTIN_TEMPLATES, ...CT_NORMAL_TEMPLATES]
 
 export interface OrderFields {
   modality?: string | null
