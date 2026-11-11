@@ -579,6 +579,82 @@ button, input, select, textarea {
   color: #64748b;
   margin: 0 0 0.15rem;
 }
+/* Key images (sidebar): click to jump to the slice with its window/level. */
+.key-image-rail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #1f2937;
+}
+.key-image-card {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  color: #cbd5e1;
+  cursor: pointer;
+  text-align: left;
+}
+.key-image-card:hover,
+.key-image-card:focus-visible {
+  border-color: #fbbf24;
+  outline: none;
+}
+.key-image-card img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: #000;
+  border-radius: 4px;
+}
+.key-image-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  background: #000;
+  color: #fbbf24;
+  border-radius: 4px;
+}
+.key-image-caption {
+  font-size: 0.625rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.viewport-hud .hud-key {
+  color: #fbbf24;
+}
+.viewport-hud .hud-warn {
+  color: #fca5a5;
+}
+/* Key images in the report editor. */
+.report-key-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.report-key-images figure {
+  margin: 0;
+  width: 9rem;
+}
+.report-key-images img,
+.report-key-images .key-image-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: #000;
+  border-radius: 6px;
+}
+.report-key-images figcaption {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+}
 .viewer-series-label.prior {
   margin-top: 0.75rem;
   padding-top: 0.75rem;

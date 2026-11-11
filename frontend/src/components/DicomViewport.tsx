@@ -36,6 +36,16 @@ import {
 import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
 import { DirectionalPrefetcher, countLoaded } from '../cornerstone/directionalPrefetch'
 import { StackProbeTool } from '../cornerstone/stackProbeTool'
+import {
+  type KeyImage,
+  type KeyImageRequest,
+  deleteMeasurement,
+  loadMeasurements,
+  locationLabel,
+  measurementSummary,
+  saveMeasurement,
+  serializeAnnotation,
+} from '../studyAnnotations'
 import { presetsForModality } from '../wlPresets'
 import { getBearerToken } from '../authToken'
 import {
@@ -75,6 +85,63 @@ type Props = {
   active?: boolean
   /** When false, do not host tools in the viewer chrome (inactive panes). */
   showToolbar?: boolean
+  /** Save measurements and key images with the study (panes of the current study only). */
+  persist?: ViewportPersistence | null
+  /** Window/level to apply once the image is shown (e.g. after jumping to a key image). */
+  windowOverride?: { center: number; width: number; key: string } | null
+}
+
+export type ViewportPersistence = {
+  studyId: string
+  seriesDescription?: string | null
+  /** Radiologist/admin: may add measurements and key images. */
+  canEdit: boolean
+  /** Admin: may also change other users' measurements. */
+  canEditOthers: boolean
+  keyImages: KeyImage[]
+  onAddKeyImage: (req: KeyImageRequest) => Promise<void>
+  onRemoveKeyImage: (id: string) => Promise<void>
+}
+
+/** Changes that alter a measurement's geometry or label (stats recalculation is not a change). */
+const SAVE_CHANGE_TYPES = new Set(['HandlesUpdated', 'LabelChange'])
+const SAVE_DELAY_MS = 700
+
+type AnnotationLike = {
+  annotationUID?: string
+  metadata: Record<string, unknown> & { toolName?: string; referencedImageId?: string }
+  data: { handles?: unknown; label?: unknown; cachedStats?: Record<string, Record<string, unknown>> }
+}
+
+/** JPEG of the viewport as displayed: image canvas plus the SVG measurement layer, max 1024 px. */
+async function captureViewport(el: HTMLElement): Promise<string | null> {
+  const canvas = el.querySelector('canvas') as HTMLCanvasElement | null
+  if (!canvas || !canvas.width || !canvas.height) return null
+  const scale = Math.min(1, 1024 / Math.max(canvas.width, canvas.height))
+  const out = document.createElement('canvas')
+  out.width = Math.round(canvas.width * scale)
+  out.height = Math.round(canvas.height * scale)
+  const ctx = out.getContext('2d')
+  if (!ctx) return null
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, out.width, out.height)
+  ctx.drawImage(canvas, 0, 0, out.width, out.height)
+  const svg = el.querySelector('svg') as SVGSVGElement | null
+  if (svg) {
+    const clone = svg.cloneNode(true) as SVGSVGElement
+    clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+    clone.setAttribute('width', String(el.clientWidth))
+    clone.setAttribute('height', String(el.clientHeight))
+    const url = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)], { type: 'image/svg+xml' }))
+    try {
+      const img = new Image()
+      await new Promise<void>((resolve) => { img.onload = () => resolve(); img.onerror = () => resolve(); img.src = url })
+      if (img.complete && img.naturalWidth > 0) ctx.drawImage(img, 0, 0, out.width, out.height)
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+  return out.toDataURL('image/jpeg', 0.88)
 }
 
 export type DicomViewportHandle = {
@@ -245,6 +312,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   onProgress,
   active = true,
   showToolbar = true,
+  persist = null,
+  windowOverride = null,
 }: Props, ref) {
   const toolsSlot = useViewerToolsSlot()
   const reactId = useId().replace(/:/g, '')
@@ -259,6 +328,12 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const syncingRef = useRef(false)
   // Background loader: mostly ahead in the scroll direction (see directionalPrefetch).
   const prefetcherRef = useRef(new DirectionalPrefetcher())
+  const persistRef = useRef(persist)
+  persistRef.current = persist
+  const instancesRef = useRef(instances)
+  instancesRef.current = instances
+  const saveTimersRef = useRef(new Map<string, number>())
+  const [saveError, setSaveError] = useState(false)
   // A step (arrow key / wheel) is waiting for its slice to load: further steps are dropped
   // instead of starting more downloads, so scrolling moves at network speed, never freezes
   // and jumps.
@@ -301,6 +376,23 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     [studyUid, seriesUid, stackKey],
   )
   stackRef.current = stack
+
+  // imageId <-> (SOP, frame), to save measurements against the image and redraw them later.
+  const stackLookup = useMemo(() => {
+    const byImageId = new Map<string, { sop: string; frame: number; instanceIndex: number; multiFrame: boolean }>()
+    const byKey = new Map<string, string>()
+    for (const e of stack) {
+      const inst = instances[e.instanceIndex]
+      if (!inst) continue
+      const multiFrame = (inst.numberOfFrames || 1) > 1
+      byImageId.set(e.imageId, { sop: inst.sopUid, frame: e.frameIndex, instanceIndex: e.instanceIndex, multiFrame })
+      byKey.set(`${inst.sopUid}#${e.frameIndex}`, e.imageId)
+    }
+    return { byImageId, byKey }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- instances covered by stack identity
+  }, [stack])
+  const stackLookupRef = useRef(stackLookup)
+  stackLookupRef.current = stackLookup
 
   const planeKey = useMemo(
     () => instances.map((i) => {
@@ -832,10 +924,21 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     setSelectedCount(annotation.selection.getAnnotationsSelectedCount())
   }, [getViewport, viewportId])
 
-  const deleteAnnotationUids = useCallback((uids: string[]) => {
+  const deleteAnnotationUids = useCallback((requested: string[]) => {
+    // Other users' saved measurements are read-only.
+    const uids = requested.filter((uid) => !annotation.locking.isAnnotationLocked(uid))
     if (uids.length === 0) return false
+    const p = persistRef.current
     for (const uid of uids) {
       annotation.state.removeAnnotation(uid)
+      const timer = saveTimersRef.current.get(uid)
+      if (timer) { window.clearTimeout(timer); saveTimersRef.current.delete(uid) }
+      if (p?.canEdit) {
+        deleteMeasurement(p.studyId, uid).catch((e) => {
+          console.warn('[telerad] could not delete measurement', e)
+          setSaveError(true)
+        })
+      }
     }
     annotation.selection.deselectAnnotation()
     setCtxMenu(null)
@@ -852,12 +955,171 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
   const deleteLastMeasurement = useCallback((toolName: string) => {
     const el = elementRef.current
     if (!el) return false
-    const anns = annotation.state.getAnnotations(toolName, el) || []
+    const anns = (annotation.state.getAnnotations(toolName, el) || [])
+      .filter((a) => a.annotationUID && !annotation.locking.isAnnotationLocked(a.annotationUID))
     if (anns.length === 0) return false
     const last = anns[anns.length - 1]
     if (!last?.annotationUID) return false
     return deleteAnnotationUids([last.annotationUID])
   }, [deleteAnnotationUids])
+
+  // ---------------------------------------------------------------- saved measurements
+
+  const saveNow = useCallback(async (uid: string, attempt = 0) => {
+    const p = persistRef.current
+    const ann = annotation.state.getAnnotation(uid) as unknown as AnnotationLike | undefined
+    if (!p?.canEdit || !ann?.metadata?.toolName || !ann.metadata.referencedImageId) return
+    const where = stackLookupRef.current.byImageId.get(ann.metadata.referencedImageId)
+    if (!where) return
+    const summary = measurementSummary(ann.metadata.toolName, ann.data.cachedStats)
+    if (summary == null && attempt < 3) {
+      // Statistics are computed on the next render; try again shortly.
+      const t = window.setTimeout(() => { void saveNow(uid, attempt + 1) }, SAVE_DELAY_MS)
+      saveTimersRef.current.set(uid, t)
+      return
+    }
+    try {
+      await saveMeasurement(p.studyId, uid, {
+        seriesInstanceUid: seriesUid,
+        sopInstanceUid: where.sop,
+        frameNumber: where.frame,
+        toolName: ann.metadata.toolName,
+        data: serializeAnnotation(ann),
+        summary,
+        location: locationLabel(p.seriesDescription, where.instanceIndex + 1, where.frame, where.multiFrame),
+      })
+      setSaveError(false)
+    } catch (e) {
+      console.warn('[telerad] could not save measurement', e)
+      setSaveError(true)
+    }
+  }, [seriesUid])
+
+  const scheduleSave = useCallback((uid: string) => {
+    const timers = saveTimersRef.current
+    const prev = timers.get(uid)
+    if (prev) window.clearTimeout(prev)
+    timers.set(uid, window.setTimeout(() => { timers.delete(uid); void saveNow(uid) }, SAVE_DELAY_MS))
+  }, [saveNow])
+
+  // Save finished / edited measurements of this stack.
+  useEffect(() => {
+    if (!persist?.canEdit) return
+    const measureNames = new Set(Object.values(MEASURE_TOOL_NAMES))
+    const onEvent = (evt: Event) => {
+      const d = (evt as CustomEvent).detail as { annotation?: AnnotationLike; changeType?: string }
+      const ann = d?.annotation
+      if (!ann?.annotationUID || !ann.metadata?.toolName || !measureNames.has(ann.metadata.toolName)) return
+      if (evt.type === ToolsEnums.Events.ANNOTATION_MODIFIED && !SAVE_CHANGE_TYPES.has(d.changeType ?? '')) return
+      const imageId = ann.metadata.referencedImageId
+      if (!imageId || !stackLookupRef.current.byImageId.has(imageId)) return
+      if (annotation.locking.isAnnotationLocked(ann.annotationUID)) return
+      scheduleSave(ann.annotationUID)
+    }
+    eventTarget.addEventListener(ToolsEnums.Events.ANNOTATION_COMPLETED, onEvent)
+    eventTarget.addEventListener(ToolsEnums.Events.ANNOTATION_MODIFIED, onEvent)
+    return () => {
+      eventTarget.removeEventListener(ToolsEnums.Events.ANNOTATION_COMPLETED, onEvent)
+      eventTarget.removeEventListener(ToolsEnums.Events.ANNOTATION_MODIFIED, onEvent)
+    }
+  }, [persist?.canEdit, scheduleSave])
+
+  // Flush pending saves when the viewport goes away (series change, leaving the study).
+  useEffect(() => () => {
+    for (const [uid, t] of saveTimersRef.current) { window.clearTimeout(t); void saveNow(uid) }
+    saveTimersRef.current.clear()
+  }, [saveNow])
+
+  // Redraw the study's saved measurements on this stack once it is shown.
+  useEffect(() => {
+    const p = persistRef.current
+    const el = elementRef.current
+    if (!ready || loading || !p || !el || stack.length === 0) return
+    let cancelled = false
+    loadMeasurements(p.studyId).then((rows) => {
+      if (cancelled) return
+      let added = 0
+      for (const m of rows.values()) {
+        const imageId = stackLookupRef.current.byKey.get(`${m.sopInstanceUid}#${m.frameNumber}`)
+        if (!imageId || annotation.state.getAnnotation(m.id)) continue
+        let saved: { metadata?: Record<string, unknown>; data?: Record<string, unknown> }
+        try { saved = JSON.parse(m.data) } catch { continue }
+        const ann = {
+          annotationUID: m.id,
+          highlighted: false,
+          invalidated: true,
+          isLocked: false,
+          isVisible: true,
+          metadata: { ...(saved.metadata || {}), toolName: m.toolName, referencedImageId: imageId },
+          data: { ...(saved.data || {}), cachedStats: {} },
+        }
+        try {
+          annotation.state.addAnnotation(ann as never, el)
+        } catch {
+          continue
+        }
+        if (!p.canEdit || (!m.mine && !p.canEditOthers)) annotation.locking.setAnnotationLocked(m.id, true)
+        added++
+      }
+      if (added) refreshAnnotations()
+    }).catch((e) => console.warn('[telerad] could not load saved measurements', e))
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- persist read via ref; reload per stack/study
+  }, [ready, loading, stack, persist?.studyId, refreshAnnotations])
+
+  // ---------------------------------------------------------------- key images
+
+  const currentEntry = stack[stackIndex]
+  const currentSop = currentEntry ? instances[currentEntry.instanceIndex]?.sopUid : undefined
+  const currentKeyImage = persist && currentSop
+    ? persist.keyImages.find((k) => k.sopInstanceUid === currentSop && k.frameNumber === currentEntry!.frameIndex)
+    : undefined
+  const [keyBusy, setKeyBusy] = useState(false)
+
+  const toggleKeyImage = useCallback(async () => {
+    const p = persistRef.current
+    const el = elementRef.current
+    const entry = stackRef.current[stackIndex]
+    if (!p?.canEdit || !el || !entry || keyBusy) return
+    const inst = instancesRef.current[entry.instanceIndex]
+    if (!inst) return
+    setKeyBusy(true)
+    try {
+      const existing = p.keyImages.find((k) => k.sopInstanceUid === inst.sopUid && k.frameNumber === entry.frameIndex)
+      if (existing) {
+        if (existing.mine || p.canEditOthers) await p.onRemoveKeyImage(existing.id)
+      } else {
+        const snapshot = await captureViewport(el).catch(() => null)
+        await p.onAddKeyImage({
+          seriesInstanceUid: seriesUid,
+          sopInstanceUid: inst.sopUid,
+          frameNumber: entry.frameIndex,
+          windowCenter: wl.width > 0 ? wl.center : null,
+          windowWidth: wl.width > 0 ? wl.width : null,
+          location: locationLabel(p.seriesDescription, entry.instanceIndex + 1, entry.frameIndex, (inst.numberOfFrames || 1) > 1),
+          snapshotDataUrl: snapshot,
+        })
+      }
+      setSaveError(false)
+    } catch (e) {
+      console.warn('[telerad] key image failed', e)
+      setSaveError(true)
+    } finally {
+      setKeyBusy(false)
+    }
+  }, [stackIndex, keyBusy, seriesUid, wl])
+  const toggleKeyImageRef = useRef(toggleKeyImage)
+  toggleKeyImageRef.current = toggleKeyImage
+
+  // Apply a requested window/level (jump to key image) once the image is on screen.
+  useEffect(() => {
+    if (!windowOverride || !ready || loading || !(windowOverride.width > 0)) return
+    const viewport = getViewport()
+    if (!viewport) return
+    applyWl(viewport, windowOverride)
+    setWl({ center: windowOverride.center, width: windowOverride.width })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-apply only for a new request
+  }, [windowOverride?.key, ready, loading, getViewport])
 
   /** Esc: drop an unfinished length draw without leaving a stub annotation.
    *  Returns true only when a *new* in-progress annotation was discarded — never
@@ -996,6 +1258,7 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       if (e.key === 'c' || e.key === 'C') setTool('cobb')
       if (e.key === 'e' || e.key === 'E') setTool('ellipse')
       if (e.key === 'h' || e.key === 'H') setTool('probe')
+      if (e.key === 'k' || e.key === 'K') void toggleKeyImageRef.current()
       if (e.key === 'w' || e.key === 'W') setTool('wwwc')
       if (e.key === 'z' || e.key === 'Z') setTool('zoom')
       if (e.key === 'p' || e.key === 'P') setTool('pan')
@@ -1037,6 +1300,18 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
       <button className={`btn secondary ${tool === 'cobb' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('cobb')} title="Cobb angle: draw two lines (C)">Cobb</button>
       <button className={`btn secondary ${tool === 'ellipse' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('ellipse')} title="Ellipse ROI: area and mean/min/max density (E)">Ellipse</button>
       <button className={`btn secondary ${tool === 'probe' ? 'active-tool' : ''}`} type="button" onClick={() => setTool('probe')} title="Density at a point, HU on CT (H)">HU</button>
+      {persist?.canEdit && (
+        <button
+          className={`btn secondary ${currentKeyImage ? 'active-tool' : ''}`}
+          type="button"
+          disabled={keyBusy}
+          onClick={() => { void toggleKeyImage() }}
+          title={currentKeyImage ? 'Unmark key image (K)' : 'Mark this slice as key image (K)'}
+          aria-pressed={Boolean(currentKeyImage)}
+        >
+          {currentKeyImage ? '★ Key' : '☆ Key'}
+        </button>
+      )}
       {selectedCount > 0 && (
         <button
           className="btn secondary"
@@ -1148,6 +1423,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         </div>
         <div>{counterLabel}</div>
         {playing && <div>Cine {Math.round(fps)} fps</div>}
+        {currentKeyImage && <div className="hud-key">★ Key image</div>}
+        {saveError && <div className="hud-warn">⚠ Not saved — check connection</div>}
       </div>
       {ctxMenu && (
         <div

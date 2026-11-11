@@ -1,7 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api'
-import { DicomViewport, type DicomViewportHandle } from '../components/DicomViewport'
+import { DicomViewport, type DicomViewportHandle, type ViewportPersistence } from '../components/DicomViewport'
+import { useAuth } from '../auth'
+import {
+  type KeyImage,
+  type KeyImageRequest,
+  addKeyImage,
+  deleteKeyImage,
+  keyImageBlob,
+  listKeyImages,
+} from '../studyAnnotations'
 import { MprViewer } from '../components/MprViewer'
 import { PatientSharePanel } from '../components/PatientSharePanel'
 import { PrintPreviewModal } from '../components/PrintPreviewModal'
@@ -96,6 +105,54 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
   const [priorInstanceIdx, setPriorInstanceIdx] = useState(0)
 
   const viewportRefs = useRef<Record<string, DicomViewportHandle | null>>({})
+
+  // ---- saved measurements / key images (current study only; never in patient share mode)
+  const { user } = useAuth()
+  const studyId = detail?.study.id
+  const canEdit = !shareMode && (user?.role === 'RADIOLOGIST' || user?.role === 'ADMIN')
+  const [keyImages, setKeyImages] = useState<KeyImage[]>([])
+  const [keyThumbs, setKeyThumbs] = useState<Record<string, string>>({})
+
+  const reloadKeyImages = useCallback(async () => {
+    if (!studyId || shareMode) return
+    setKeyImages(await listKeyImages(studyId))
+  }, [studyId, shareMode])
+
+  useEffect(() => {
+    setKeyImages([])
+    reloadKeyImages().catch(() => undefined)
+  }, [reloadKeyImages])
+
+  // Thumbnails (object URLs) for the sidebar; fetched once per key image.
+  useEffect(() => {
+    if (!studyId) return
+    let cancelled = false
+    for (const k of keyImages) {
+      if (!k.hasSnapshot || keyThumbs[k.id]) continue
+      keyImageBlob(studyId, k.id)
+        .then((b) => {
+          if (cancelled) return
+          const url = URL.createObjectURL(b)
+          setKeyThumbs((prev) => ({ ...prev, [k.id]: url }))
+        })
+        .catch(() => undefined)
+    }
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyThumbs only grows
+  }, [keyImages, studyId])
+  useEffect(() => () => { Object.values(keyThumbs).forEach((u) => URL.revokeObjectURL(u)) }, [])  // eslint-disable-line react-hooks/exhaustive-deps
+
+  const persistBase = useMemo<Omit<ViewportPersistence, 'seriesDescription'> | null>(() => {
+    if (!studyId || shareMode) return null
+    return {
+      studyId,
+      canEdit,
+      canEditOthers: user?.role === 'ADMIN',
+      keyImages,
+      onAddKeyImage: async (req: KeyImageRequest) => { await addKeyImage(studyId, req); await reloadKeyImages() },
+      onRemoveKeyImage: async (id: string) => { await deleteKeyImage(studyId, id); await reloadKeyImages() },
+    }
+  }, [studyId, shareMode, canEdit, user?.role, keyImages, reloadKeyImages])
   const priorViewport = useRef<DicomViewportHandle>(null)
   const [toolsSlot, setToolsSlot] = useState<HTMLElement | null>(null)
 
@@ -258,6 +315,21 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
       s.id === slotId ? { ...s, instanceIdx } : s
     )))
   }, [])
+
+  /** Show a key image in the active pane (left pane when comparing), with its window/level. */
+  const jumpToKeyImage = useCallback((k: KeyImage) => {
+    if (!detail) return
+    const seriesIdx = detail.series.findIndex((s) => s.seriesInstanceUid === k.seriesInstanceUid)
+    if (seriesIdx < 0) return
+    const instanceIdx = Math.max(0, detail.series[seriesIdx].instances.findIndex((i) => i.sopInstanceUid === k.sopInstanceUid))
+    if (mprMode) setMprMode(false)
+    const targetId = comparing ? (slots[0]?.id ?? 'slot-0') : (activeSlot?.id ?? slots[0]?.id ?? 'slot-0')
+    const wl = k.windowWidth && k.windowWidth > 0 && k.windowCenter != null
+      ? { center: k.windowCenter, width: k.windowWidth, key: `${k.id}:${Date.now()}` }
+      : undefined
+    setSlots((prev) => prev.map((s) => (s.id === targetId ? { ...s, seriesIdx, instanceIdx, wl } : s)))
+    setActiveSlotId(targetId)
+  }, [detail, mprMode, comparing, slots, activeSlot])
 
   const onSeriesSelect = useCallback((seriesIdx: number) => {
     if (mprMode) {
@@ -509,6 +581,27 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
 
         <div className="viewer-layout">
           <aside className="viewer-series" aria-label="Series">
+            {!shareMode && keyImages.length > 0 && (
+              <>
+                <p className="viewer-series-label">Key images · {keyImages.length}</p>
+                <div className="key-image-rail">
+                  {keyImages.map((k) => (
+                    <button
+                      key={k.id}
+                      type="button"
+                      className="key-image-card"
+                      onClick={() => jumpToKeyImage(k)}
+                      title={`${k.location ?? 'Key image'}${k.createdByName ? ` · ${k.createdByName}` : ''}`}
+                    >
+                      {keyThumbs[k.id]
+                        ? <img src={keyThumbs[k.id]} alt="" />
+                        : <span className="key-image-placeholder">★</span>}
+                      <span className="key-image-caption">{k.location ?? 'Key image'}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
             <p className="viewer-series-label">
               {mprMode
                 ? 'Series → MPR volume'
@@ -577,6 +670,7 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
                   }}
                   onInstanceChange={(idx) => setSlotInstance(slots[0]?.id ?? 'slot-0', idx)}
                   onProgress={(progress) => onSlotProgress('current', progress)}
+                  persist={persistBase}
                 />
               </ViewportPane>
               <ViewportPane
@@ -639,6 +733,7 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
                       viewportRef={(handle) => { viewportRefs.current[slot.id] = handle }}
                       onInstanceChange={(idx) => setSlotInstance(slot.id, idx)}
                       onProgress={(progress) => onSlotProgress(slot.id, progress)}
+                      persist={persistBase}
                     />
                   </ViewportPane>
                 )
@@ -686,9 +781,11 @@ function SlotViewport({
   viewportRef,
   onInstanceChange,
   onProgress,
+  persist,
 }: {
   detail: StudyDetail
   slot: ViewportSlot
+  persist: Omit<ViewportPersistence, 'seriesDescription'> | null
   active: boolean
   showToolbar: boolean
   viewportRef: Ref<DicomViewportHandle>
@@ -733,6 +830,8 @@ function SlotViewport({
       onProgress={onProgress}
       active={active}
       showToolbar={showToolbar}
+      persist={persist ? { ...persist, seriesDescription: series.seriesDescription } : null}
+      windowOverride={slot.wl ?? null}
     />
   )
 }

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
 import { InsertTemplateModal } from '../components/InsertTemplateModal'
+import { type KeyImage, fetchMeasurements, keyImageBlob, listKeyImages, measurementsReportText } from '../studyAnnotations'
 import type { StudyDetail } from '../types'
 
 export function ReportEditorPage() {
@@ -17,6 +18,45 @@ export function ReportEditorPage() {
   const [saving, setSaving] = useState(false)
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
   const [templateOpen, setTemplateOpen] = useState(false)
+  const [keyImages, setKeyImages] = useState<KeyImage[]>([])
+  const [keyThumbs, setKeyThumbs] = useState<Record<string, string>>({})
+
+  // Key images saved in the viewer: shown here and added to the PDF when the report is signed.
+  useEffect(() => {
+    if (!id) return
+    let cancelled = false
+    const urls: string[] = []
+    listKeyImages(id)
+      .then(async (rows) => {
+        if (cancelled) return
+        setKeyImages(rows)
+        for (const k of rows.filter((r) => r.hasSnapshot)) {
+          const blob = await keyImageBlob(id, k.id).catch(() => null)
+          if (!blob || cancelled) continue
+          const url = URL.createObjectURL(blob)
+          urls.push(url)
+          setKeyThumbs((prev) => ({ ...prev, [k.id]: url }))
+        }
+      })
+      .catch(() => undefined)
+    return () => { cancelled = true; urls.forEach((u) => URL.revokeObjectURL(u)) }
+  }, [id])
+
+  async function insertMeasurements() {
+    if (!id) return
+    setError(null)
+    try {
+      const text = measurementsReportText(await fetchMeasurements(id))
+      if (!text) {
+        setMessage('No saved measurements on this study yet. Draw them in the viewer first.')
+        return
+      }
+      setFindings((prev) => (prev.trim() ? `${prev.trimEnd()}\n\n${text}` : text))
+      setMessage('Measurements inserted into Findings.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not load measurements')
+    }
+  }
 
   async function load() {
     const data = await api<StudyDetail>(`/api/studies/${id}`)
@@ -118,6 +158,11 @@ export function ReportEditorPage() {
               Insert Template
             </button>
           )}
+          {!signed && (
+            <button className="btn-insert-tpl" type="button" onClick={() => { void insertMeasurements() }}>
+              Insert Measurements
+            </button>
+          )}
           <span className="muted" style={{ fontSize: '0.75rem', marginLeft: 'auto' }}>
             {signed
               ? 'Signed'
@@ -137,6 +182,22 @@ export function ReportEditorPage() {
             <label>Impression</label>
             <textarea value={impression} disabled={signed} onChange={(e) => setImpression(e.target.value)} />
           </div>
+          {keyImages.length > 0 && (
+            <div className="field">
+              <label>Key images · {keyImages.length}</label>
+              <p className="muted" style={{ fontSize: '0.75rem', margin: '0 0 0.5rem' }}>
+                {signed ? 'Included in the signed PDF.' : 'Added to the PDF when you sign. Mark or unmark them in the viewer (K).'}
+              </p>
+              <div className="report-key-images">
+                {keyImages.map((k) => (
+                  <figure key={k.id}>
+                    {keyThumbs[k.id] ? <img src={keyThumbs[k.id]} alt={k.location ?? 'Key image'} /> : <div className="key-image-placeholder">★</div>}
+                    <figcaption>{k.location ?? 'Key image'}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          )}
           <label className="critical-toggle">
             <input type="checkbox" checked={critical} disabled={signed} onChange={(e) => setCritical(e.target.checked)} />
             Critical Finding

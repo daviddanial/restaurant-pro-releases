@@ -5,6 +5,8 @@ export type ViewportSlot = {
   /** Index into the current study's series list (ignored when role is prior). */
   seriesIdx: number
   instanceIdx: number
+  /** One-off window/level to apply (jump to a key image); `key` changes per request. */
+  wl?: { center: number; width: number; key: string }
 }
 
 export const LAYOUT_OPTIONS: { id: LayoutMode; label: string; title: string }[] = [

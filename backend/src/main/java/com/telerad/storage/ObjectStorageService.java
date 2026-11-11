@@ -37,6 +37,13 @@ public class ObjectStorageService {
                 RequestBody.fromInputStream(stream, size));
     }
 
+    public void delete(String key) {
+        s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(properties.getS3().getBucket())
+                .key(key)
+                .build());
+    }
+
     public byte[] getBytes(String key) {
         var response = s3Client.getObjectAsBytes(GetObjectRequest.builder()
                 .bucket(properties.getS3().getBucket())

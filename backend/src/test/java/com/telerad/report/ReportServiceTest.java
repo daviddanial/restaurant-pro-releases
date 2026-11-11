@@ -39,6 +39,7 @@ class ReportServiceTest {
     @Mock AuditService auditService;
     @Mock ReportDeliveryService reportDeliveryService;
     @Mock NotificationService notificationService;
+    @Mock com.telerad.annotation.StudyAnnotationService annotationService;
     @InjectMocks ReportService reportService;
 
     private UUID radId;

@@ -1,5 +1,6 @@
 package com.telerad.report;
 
+import com.telerad.annotation.StudyAnnotationService;
 import com.telerad.audit.AuditService;
 import com.telerad.auth.UserPrincipal;
 import com.telerad.common.*;
@@ -36,6 +37,7 @@ public class ReportService {
     private final AuditService auditService;
     private final ReportDeliveryService reportDeliveryService;
     private final NotificationService notificationService;
+    private final StudyAnnotationService annotationService;
 
     public record ReportRequest(String findings, String impression, Boolean critical) {}
 
@@ -214,6 +216,7 @@ public class ReportService {
                 h1{font-size:20px;border-bottom:2px solid #0b3d5c;padding-bottom:8px}
                 .meta{margin:16px 0;font-size:12px;color:#333}
                 .section{margin-top:24px}
+                .section p{white-space:pre-wrap}
                 .label{font-weight:bold;color:#0b3d5c}
                 .critical{color:#b00020;font-weight:bold}
                 </style></head><body>
@@ -230,12 +233,14 @@ public class ReportService {
                 </div>
                 <div class="section"><div class="label">Findings</div><p>%s</p></div>
                 <div class="section"><div class="label">Impression</div><p>%s</p></div>
+                %s
                 </body></html>
                 """.formatted(
                 esc(hospital), esc(patient), esc(study.getAccessionNumber()), esc(study.getModality()),
                 esc(study.getStudyInstanceUid()), esc(signerName), report.getSignedAt(),
                 report.isCritical() ? "<div class=\"critical\">CRITICAL RESULT</div>" : "",
-                esc(report.getFindings()), esc(report.getImpression())
+                esc(report.getFindings()), esc(report.getImpression()),
+                keyImagesHtml(study)
         );
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -246,6 +251,25 @@ public class ReportService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "PDF generation failed: " + e.getMessage());
         }
+    }
+
+    /** "Key images" section: snapshots saved in the viewer, two per row, with their location as caption. */
+    private String keyImagesHtml(Study study) {
+        List<StudyAnnotationService.ReportImage> images = annotationService.reportImages(study.getId());
+        if (images.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder("<div class=\"section\"><div class=\"label\">Key images</div>"
+                + "<table style=\"width:100%;border-collapse:collapse;margin-top:8px\">");
+        for (int i = 0; i < images.size(); i++) {
+            if (i % 2 == 0) sb.append("<tr>");
+            StudyAnnotationService.ReportImage img = images.get(i);
+            sb.append("<td style=\"width:50%;padding:6px;vertical-align:top;text-align:center\">")
+              .append("<img style=\"width:240px\" src=\"data:").append(img.contentType()).append(";base64,")
+              .append(Base64.getEncoder().encodeToString(img.jpeg())).append("\" />")
+              .append("<div style=\"font-size:10px;color:#333;margin-top:4px\">")
+              .append(esc(img.location() != null ? img.location() : "Key image " + (i + 1))).append("</div></td>");
+            if (i % 2 == 1 || i == images.size() - 1) sb.append("</tr>");
+        }
+        return sb.append("</table></div>").toString();
     }
 
     private String buildFhirJson(Study study, Report report) {
