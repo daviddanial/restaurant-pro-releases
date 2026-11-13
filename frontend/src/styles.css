@@ -2578,3 +2578,32 @@ a.btn-report:focus-visible {
     margin: 12mm;
   }
 }
+
+/* ---- Local-first images (KB note 13) */
+.images-not-here .panel { max-width: 640px; margin: 2rem auto; }
+.images-not-here h2 { margin: 0.25rem 0 0.75rem; }
+.upload-progress {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-muted);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin: 0.75rem 0 0.35rem;
+}
+.upload-progress > div { height: 100%; background: var(--accent); transition: width 0.4s ease; }
+.badge.source-badge.hospital { background: var(--accent-soft); color: var(--accent-strong); }
+.badge.location-hospital { background: var(--warn-soft); color: #92400e; }
+.badge.location-sending { background: var(--accent-soft); color: var(--accent-strong); }
+.image-location-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem; }
+.btn.btn-small { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+.image-settings { max-width: 640px; }
+.field .hint { font-size: 0.75rem; }
+.enroll-token { white-space: pre-wrap; word-break: break-all; margin: 0.5rem 0 0; }
+.restore-draft {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+  background: var(--warn-soft); border: 1px solid #fcd34d; border-radius: 8px;
+  padding: 0.6rem 0.75rem; margin-bottom: 0.85rem; font-size: 0.875rem;
+}
+.restore-draft span { flex: 1 1 260px; }
+.save-warn { color: #b45309; font-weight: 600; }
+.image-settings + h3 { margin-top: 1.5rem; }

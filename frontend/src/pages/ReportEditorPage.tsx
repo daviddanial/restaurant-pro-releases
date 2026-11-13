@@ -5,6 +5,7 @@ import { useAuth } from '../auth'
 import { InsertTemplateModal } from '../components/InsertTemplateModal'
 import { type KeyImage, fetchMeasurements, keyImageBlob, listKeyImages, measurementsReportText } from '../studyAnnotations'
 import type { StudyDetail } from '../types'
+import { clearDraftBackup, loadDraftBackup, sameDraft, saveDraftBackup, type DraftBackup } from '../reportDraftBackup'
 
 export function ReportEditorPage() {
   const { id } = useParams()
@@ -20,6 +21,10 @@ export function ReportEditorPage() {
   const [templateOpen, setTemplateOpen] = useState(false)
   const [keyImages, setKeyImages] = useState<KeyImage[]>([])
   const [keyThumbs, setKeyThumbs] = useState<Record<string, string>>({})
+  /** The last server save failed (internet down): the text is kept in this browser meanwhile. */
+  const [notSaved, setNotSaved] = useState(false)
+  /** Text from this browser that the server does not have (e.g. typed offline before a reload). */
+  const [restore, setRestore] = useState<DraftBackup | null>(null)
 
   // Key images saved in the viewer: shown here and added to the PDF when the report is signed.
   useEffect(() => {
@@ -61,9 +66,31 @@ export function ReportEditorPage() {
   async function load() {
     const data = await api<StudyDetail>(`/api/studies/${id}`)
     setDetail(data)
-    setFindings(data.report?.findings || '')
-    setImpression(data.report?.impression || '')
-    setCritical(!!data.report?.critical)
+    const server = {
+      findings: data.report?.findings || '',
+      impression: data.report?.impression || '',
+      critical: !!data.report?.critical,
+    }
+    setFindings(server.findings)
+    setImpression(server.impression)
+    setCritical(server.critical)
+    const backup = id ? loadDraftBackup(id) : null
+    if (backup && id) {
+      if (data.report?.status === 'SIGNED' || sameDraft(backup, server)) clearDraftBackup(id)
+      else setRestore(backup)
+    }
+  }
+
+  // Keep a copy in this browser while editing (cleared once the server has the same text).
+  useEffect(() => {
+    if (!id || !detail || detail.report?.status === 'SIGNED' || restore) return
+    saveDraftBackup(id, { findings, impression, critical })
+  }, [id, detail, findings, impression, critical, restore])
+
+  function savedToServer(sent: { findings: string; impression: string; critical: boolean }) {
+    setLastSavedAt(new Date())
+    setNotSaved(false)
+    if (id && sameDraft(sent, { findings, impression, critical })) clearDraftBackup(id)
   }
 
   useEffect(() => {
@@ -72,16 +99,21 @@ export function ReportEditorPage() {
 
   useEffect(() => {
     if (!detail || detail.report?.status === 'SIGNED') return
-    const t = window.setInterval(() => {
-      api(`/api/studies/${id}/report`, {
-        method: 'PUT',
-        body: JSON.stringify({ findings, impression, critical }),
-      })
-        .then(() => setLastSavedAt(new Date()))
-        .catch(() => undefined)
-    }, 8000)
-    return () => window.clearInterval(t)
-  }, [id, detail, findings, impression, critical])
+    if (restore) return // do not overwrite the server copy before the doctor chooses
+    const save = () => {
+      const sent = { findings, impression, critical }
+      api(`/api/studies/${id}/report`, { method: 'PUT', body: JSON.stringify(sent) })
+        .then(() => savedToServer(sent))
+        .catch(() => setNotSaved(true))
+    }
+    const t = window.setInterval(save, 8000)
+    // Save as soon as the connection comes back, not at the next tick.
+    window.addEventListener('online', save)
+    return () => {
+      window.clearInterval(t)
+      window.removeEventListener('online', save)
+    }
+  }, [id, detail, findings, impression, critical, restore])  // eslint-disable-line react-hooks/exhaustive-deps
 
   async function saveDraft() {
     setSaving(true)
@@ -91,10 +123,11 @@ export function ReportEditorPage() {
         method: 'PUT',
         body: JSON.stringify({ findings, impression, critical }),
       })
-      setLastSavedAt(new Date())
+      savedToServer({ findings, impression, critical })
       setMessage('Draft saved')
       await load()
     } catch (err) {
+      setNotSaved(true)
       setError(err instanceof Error ? err.message : 'Save failed')
     } finally {
       setSaving(false)
@@ -111,6 +144,7 @@ export function ReportEditorPage() {
         body: JSON.stringify({ findings, impression, critical }),
       })
       await api(`/api/studies/${id}/report/sign`, { method: 'POST' })
+      if (id) clearDraftBackup(id)
       setMessage('Report signed and delivered to hospital portal')
       await load()
     } catch (err) {
@@ -166,14 +200,46 @@ export function ReportEditorPage() {
           <span className="muted" style={{ fontSize: '0.75rem', marginLeft: 'auto' }}>
             {signed
               ? 'Signed'
-              : lastSavedAt
-                ? `Saved ${lastSavedAt.toLocaleTimeString()}`
-                : 'Autosave on'}
+              : notSaved
+                ? <span className="save-warn">⚠ Not saved: kept on this computer, saves when the connection is back</span>
+                : lastSavedAt
+                  ? `Saved ${lastSavedAt.toLocaleTimeString()}`
+                  : 'Autosave on'}
           </span>
         </div>
         <div className="report-page-inner">
           {message && <div className="success">{message}</div>}
           {error && <div className="error">{error}</div>}
+          {restore && !signed && (
+            <div className="restore-draft">
+              <span>
+                Text from {new Date(restore.savedAt).toLocaleString()} on this computer was not saved to the server
+                (the connection was probably down).
+              </span>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => {
+                  setFindings(restore.findings)
+                  setImpression(restore.impression)
+                  setCritical(restore.critical)
+                  setRestore(null)
+                }}
+              >
+                Restore it
+              </button>
+              <button
+                type="button"
+                className="btn secondary"
+                onClick={() => {
+                  if (id) clearDraftBackup(id)
+                  setRestore(null)
+                }}
+              >
+                Discard
+              </button>
+            </div>
+          )}
           <div className="field">
             <label>Findings</label>
             <textarea value={findings} disabled={signed} onChange={(e) => setFindings(e.target.value)} />

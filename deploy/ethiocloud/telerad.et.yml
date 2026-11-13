@@ -50,7 +50,12 @@ services:
     restart: unless-stopped
     ports: !override
       - "127.0.0.1:18080:8080"
+      # Hospital servers (edge agents): mutual TLS, a client certificate is required.
+      # Open TCP 8443 in the cloud security group too (runbook note 14).
+      - "8443:8443"
     environment:
+      # The mTLS server certificate must name the host hospital servers connect to.
+      TELERAD_GATEWAY_SERVER_HOSTNAMES: ${TELERAD_HOST}
       SPRING_DATASOURCE_USERNAME: ${TELERAD_DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${TELERAD_DB_PASSWORD}
       SPRING_RABBITMQ_USERNAME: ${TELERAD_RABBIT_USER}

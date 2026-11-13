@@ -44,7 +44,8 @@ public class GatewayService {
             Instant enrolledAt,
             Instant certNotAfter,
             Instant lastHeartbeatAt,
-            Instant lastSuccessfulUploadAt
+            Instant lastSuccessfulUploadAt,
+            String lanUrl
     ) {}
 
     public record CreateGatewayResult(GatewayDto gateway, String enrollmentToken, Instant enrollmentExpiresAt) {}
@@ -316,7 +317,29 @@ public class GatewayService {
     public void recordHeartbeat(Gateway gateway, String payloadJson) {
         gateway.setLastHeartbeatAt(Instant.now());
         gateway.setLastHeartbeatPayload(payloadJson);
+        String lanUrl = lanUrlFrom(payloadJson);
+        if (lanUrl != null) gateway.setLanUrl(lanUrl);
         gatewayRepository.save(gateway);
+    }
+
+    /** The image-service address the agent reports; only plain http(s) origins are accepted. */
+    static String lanUrlFrom(String payloadJson) {
+        if (payloadJson == null) return null;
+        try {
+            var node = new com.fasterxml.jackson.databind.ObjectMapper().readTree(payloadJson).get("lanUrl");
+            if (node == null || !node.isTextual()) return null;
+            String url = node.asText().trim();
+            if (url.isEmpty()) return null;
+            java.net.URI uri = java.net.URI.create(url);
+            String scheme = uri.getScheme();
+            if (!"https".equals(scheme) && !"http".equals(scheme)) return null;
+            if (uri.getHost() == null || uri.getRawQuery() != null || uri.getRawFragment() != null) return null;
+            String path = uri.getRawPath() == null ? "" : uri.getRawPath();
+            if (!path.isEmpty() && !path.equals("/")) return null;
+            return scheme + "://" + uri.getRawAuthority();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Transactional
@@ -355,7 +378,8 @@ public class GatewayService {
                 g.getEnrolledAt(),
                 g.getCertNotAfter(),
                 g.getLastHeartbeatAt(),
-                g.getLastSuccessfulUploadAt()
+                g.getLastSuccessfulUploadAt(),
+                g.getLanUrl()
         );
     }
 

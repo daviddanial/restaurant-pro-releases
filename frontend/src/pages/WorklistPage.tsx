@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
+import { ImageLocationBadge } from '../components/ImageLocationBadge'
 import type { StudyListItem, StudyPriority, StudyStatus } from '../types'
 
 const AVAILABILITY = ['Online', 'On-call', 'Offline'] as const
@@ -14,6 +15,8 @@ export function WorklistPage() {
   const [error, setError] = useState<string | null>(null)
   const [priority, setPriority] = useState('')
   const [site, setSite] = useState('')
+  /** '' all; 'cloud' readable from anywhere; 'hospital' only on the hospital server. */
+  const [images, setImages] = useState('')
   const [availability, setAvailability] = useState<Availability>('Online')
   const [claimingId, setClaimingId] = useState<string | null>(null)
 
@@ -41,9 +44,11 @@ export function WorklistPage() {
       if (priority === 'STAT' && s.priority !== 'STAT') return false
       if (priority === 'REGULAR' && s.priority === 'STAT') return false
       if (site && s.hospitalName !== site) return false
+      if (images === 'cloud' && s.cloudStatus === 'EDGE_ONLY') return false
+      if (images === 'hospital' && s.cloudStatus !== 'EDGE_ONLY') return false
       return true
     })
-  }, [items, priority, site])
+  }, [items, priority, site, images])
 
   const claimedCount = items.filter((s) => s.status === 'IN_PROGRESS').length
   const queueCount = items.length || 1
@@ -122,6 +127,14 @@ export function WorklistPage() {
           </select>
         </label>
         <label className="filter-select">
+          <span className="sr-only">Images</span>
+          <select value={images} onChange={(e) => setImages(e.target.value)}>
+            <option value="">All images</option>
+            <option value="cloud">Readable remotely</option>
+            <option value="hospital">Hospital server only</option>
+          </select>
+        </label>
+        <label className="filter-select">
           <span className="sr-only">Subspecialty</span>
           <select defaultValue="">
             <option value="">All subspecialties</option>
@@ -141,6 +154,7 @@ export function WorklistPage() {
               <th>Modality</th>
               <th>Referring Site</th>
               <th>Status</th>
+              <th>Images</th>
               <th>Assign Date</th>
               <th className="col-action">Action</th>
             </tr>
@@ -156,6 +170,7 @@ export function WorklistPage() {
                   <td className="muted-cell">{s.modality || '—'}</td>
                   <td className="muted-cell">{s.hospitalName || '—'}</td>
                   <td><StatusBadge status={s.status} /></td>
+                  <td><ImageLocationBadge study={s} /></td>
                   <td className="date-cell">{formatAssignDate(s.readyAt)}</td>
                   <td className="col-action">
                     <div className="claim-cell">
@@ -174,7 +189,7 @@ export function WorklistPage() {
             })}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={8} className="muted" style={{ padding: '2rem', textAlign: 'center' }}>
+                <td colSpan={9} className="muted" style={{ padding: '2rem', textAlign: 'center' }}>
                   No studies in worklist.
                 </td>
               </tr>

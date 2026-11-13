@@ -73,6 +73,14 @@ public class ExportService {
     ) {}
 
     @Transactional
+    /** Export reads the cloud copy; images kept only on the hospital server must be sent first. */
+    static void requireCloudCopies(List<Instance> instances) {
+        if (instances.stream().anyMatch(i -> i.getStorageKey() == null)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "The images are on the hospital server. Send the study to the cloud first, then export.");
+        }
+    }
+
     public ExportJobDto start(UUID studyId, StartRequest request) {
         if (request == null || request.scope() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "scope is required");
@@ -86,6 +94,7 @@ public class ExportService {
         if (instances.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No DICOM objects to export");
         }
+        requireCloudCopies(instances);
 
         ExportJob job = ExportJob.builder()
                 .tenantId(study.getTenantId())
@@ -129,6 +138,7 @@ public class ExportService {
         if (instances.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No DICOM objects to export");
         }
+        requireCloudCopies(instances);
         ExportJob job = ExportJob.builder()
                 .tenantId(study.getTenantId())
                 .studyId(study.getId())

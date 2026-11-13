@@ -100,7 +100,8 @@ public class IngestWorker {
         Optional<Instance> existing = instanceRepository.findBySopInstanceUid(sopUid);
         if (existing.isPresent()) {
             Instance inst = existing.get();
-            inst.setStorageKey(storageKey);
+            // An index-only update (no file) must not drop an existing cloud copy.
+            if (storageKey != null) inst.setStorageKey(storageKey);
             if (transferSyntaxUid != null) inst.setTransferSyntaxUid(transferSyntaxUid);
             // Backfill plane tags on re-upload so sync scroll works for older studies.
             String ipp = encodeDoubles(attrs, Tag.ImagePositionPatient, 3);

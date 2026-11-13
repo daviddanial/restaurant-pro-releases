@@ -38,7 +38,13 @@ export interface StudyListItem {
   slaDueAt: string | null
   slaBreachedAt: string | null
   slaOverdue: boolean
+  /** Where the image files are: in the cloud, only on the hospital server, or on their way. */
+  cloudStatus: CloudStatus
+  /** The hospital server holds the image files. */
+  onHospitalServer: boolean
 }
+
+export type CloudStatus = 'AVAILABLE' | 'EDGE_ONLY' | 'REQUESTED' | 'PENDING_DELETE'
 
 export interface RadiologistOption {
   id: string

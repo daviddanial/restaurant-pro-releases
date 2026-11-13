@@ -157,7 +157,7 @@ public class GatewayCaService {
     private void ensureServerKeystore(Path dir) throws Exception {
         Path p12 = Path.of(props.getServerKeystore()).toAbsolutePath().normalize();
         Path trust = dir.resolve("truststore.p12");
-        if (Files.exists(p12) && Files.exists(trust)) return;
+        if (Files.exists(p12) && Files.exists(trust) && serverCertCovers(p12, serverNames())) return;
         Files.createDirectories(p12.getParent());
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048);
@@ -175,11 +175,8 @@ public class GatewayCaService {
                 subject,
                 kp.getPublic()
         );
-        builder.addExtension(Extension.subjectAlternativeName, false, new GeneralNames(new GeneralName[]{
-                new GeneralName(GeneralName.dNSName, "localhost"),
-                new GeneralName(GeneralName.dNSName, "telerad-gateway-api"),
-                new GeneralName(GeneralName.iPAddress, "127.0.0.1")
-        }));
+        builder.addExtension(Extension.subjectAlternativeName, false, new GeneralNames(
+                serverNames().stream().map(GatewayCaService::generalName).toArray(GeneralName[]::new)));
         X509Certificate serverCert = new JcaX509CertificateConverter().getCertificate(builder.build(signer));
         serverCert.verify(caCert.getPublicKey());
         KeyStore ks = KeyStore.getInstance("PKCS12");
@@ -197,6 +194,45 @@ public class GatewayCaService {
             ts.store(out, pass);
         }
         log.info("Wrote gateway mTLS server keystore {}", p12);
+    }
+
+    /** Built-in names plus the configured public host names of the mTLS port. */
+    java.util.List<String> serverNames() {
+        java.util.LinkedHashSet<String> names = new java.util.LinkedHashSet<>(
+                java.util.List.of("localhost", "telerad-gateway-api", "127.0.0.1"));
+        for (String n : props.getServerHostnames() == null ? java.util.List.<String>of() : props.getServerHostnames()) {
+            if (n != null && !n.isBlank()) names.add(n.trim().toLowerCase(java.util.Locale.ROOT));
+        }
+        return new java.util.ArrayList<>(names);
+    }
+
+    static boolean isIpLiteral(String name) {
+        return name.matches("[0-9.]+") || name.contains(":");
+    }
+
+    static GeneralName generalName(String name) {
+        return new GeneralName(isIpLiteral(name) ? GeneralName.iPAddress : GeneralName.dNSName, name);
+    }
+
+    /** True when the existing server certificate already names every required host. */
+    private boolean serverCertCovers(Path p12, java.util.List<String> names) {
+        try (java.io.InputStream in = Files.newInputStream(p12)) {
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            ks.load(in, props.getServerKeystorePassword().toCharArray());
+            X509Certificate cert = (X509Certificate) ks.getCertificate("server");
+            java.util.Set<String> have = new java.util.HashSet<>();
+            if (cert.getSubjectAlternativeNames() != null) {
+                for (java.util.List<?> san : cert.getSubjectAlternativeNames()) {
+                    have.add(String.valueOf(san.get(1)).toLowerCase(java.util.Locale.ROOT));
+                }
+            }
+            boolean ok = have.containsAll(names);
+            if (!ok) log.info("Re-issuing gateway mTLS server certificate for {}", names);
+            return ok;
+        } catch (Exception e) {
+            log.warn("Cannot read gateway server keystore ({}); re-issuing", e.getMessage());
+            return false;
+        }
     }
 
     private static PKCS10CertificationRequest readCsr(String pem) throws IOException {

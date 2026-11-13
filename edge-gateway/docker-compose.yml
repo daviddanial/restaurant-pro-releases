@@ -1,21 +1,30 @@
-# Facility edge stack: Orthanc (DICOM) + TeleRad agent.
-# Only DICOM port is published to the LAN. Orthanc HTTP stays on the internal network.
+# Hospital server (KB note 13): Orthanc keeps the images; the agent indexes them to the cloud,
+# uploads on request, and serves them to browsers on the hospital network.
 #
-# Usage (from repo root or this directory):
-#   docker compose -f edge-gateway/docker-compose.yml up -d
+# Published to the hospital LAN:
+#   11113  DICOM (modalities send here, AE TELERAD_EDGE)
+#   8090   image service for the TeleRad viewer (HTTPS in production: lan_tls_cert / lan_tls_key)
+# Orthanc HTTP (8042) stays internal; docker-compose.emergency.yml publishes it for the
+# emergency viewer during an internet outage.
 #
-# Before first run: enroll the agent (see README) and place config under ./secrets/.
+# Usage: docker compose -f edge-gateway/docker-compose.yml up -d
+# Before first run: render secrets/orthanc.json and enroll the agent (see the runbook).
 
 services:
   orthanc:
-    image: jodogne/orthanc:1.12.4
+    # Includes Orthanc Explorer 2 + OHIF (the emergency viewer), DICOMweb and GDCM
+    # (JPEG 2000 / JPEG-LS decoding for previews).
+    image: orthancteam/orthanc:26.9.1
     restart: unless-stopped
+    environment:
+      OHIF_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC__STORAGE_DIRECTORY: /var/lib/orthanc/db
     volumes:
-      - ./orthanc/orthanc.json:/etc/orthanc/orthanc.json:ro
+      - ./secrets/orthanc.json:/etc/orthanc/orthanc.json:ro
       - orthanc_data:/var/lib/orthanc/db
     ports:
       - "11113:4242"
-    # HTTP UI/API not published — agent reaches it on the compose network only
     expose:
       - "8042"
     healthcheck:
@@ -34,6 +43,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: telerad-edge-agent:local
     restart: unless-stopped
     depends_on:
       orthanc:
@@ -43,13 +53,19 @@ services:
     volumes:
       - ./secrets/config.json:/config/config.json:ro
       - ./allowlist.json:/config/allowlist.json:ro
+      # TLS certificate for the image service (renewed in place; the agent reloads it).
+      - ./secrets/tls:/config/tls:ro
       - agent_data:/data
-    # No host ports — outbound HTTPS/mTLS only
+      # Read-only: lets the heartbeat report the free space of the image disk.
+      - orthanc_data:/orthanc-storage:ro
+    ports:
+      - "8090:8090"
     healthcheck:
-      test: ["CMD-SHELL", "test -f /data/queue.sqlite3 || exit 0"]
+      test: ["CMD-SHELL", "curl -fsk https://127.0.0.1:8090/health || curl -fs http://127.0.0.1:8090/health"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 20s
     logging:
       driver: json-file
       options:

@@ -95,6 +95,7 @@ public class WadoController {
             @RequestHeader(value = HttpHeaders.ACCEPT_ENCODING, required = false) String acceptEncoding,
             @RequestHeader(value = HttpHeaders.IF_NONE_MATCH, required = false) String ifNoneMatch) {
         Instance instance = requireInstance(studyUID, seriesUID, sopUID);
+        requireCloudCopy(instance);
         boolean gzip = instance.getGzipStorageKey() != null && acceptsGzip(acceptEncoding);
         String etag = "\"" + sopUID + (gzip ? ".gz" : "") + "\"";
         CacheControl cacheControl = imageCacheControl();
@@ -159,6 +160,7 @@ public class WadoController {
             @RequestParam(required = false) Double windowWidth,
             @RequestParam(required = false) Integer maxSize) {
         Instance instance = requireInstance(studyUID, seriesUID, sopUID);
+        requireCloudCopy(instance);
         int frameNumber = Math.max(1, frame);
         if (frameNumber > Math.max(1, instance.getNumberOfFrames())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Frame out of range");
@@ -185,6 +187,7 @@ public class WadoController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Study study = instance.getSeries().getStudy();
         assertCanView(study);
+        requireCloudCopy(instance);
         try {
             Attributes attrs;
             // Header only: stop before pixel data and drop the rest of the object unread.
@@ -270,6 +273,13 @@ public class WadoController {
         }
         assertCanView(study);
         return instance;
+    }
+
+    /** Images kept only on the hospital server have no cloud file (KB note 13). */
+    static void requireCloudCopy(Instance instance) {
+        if (instance.getStorageKey() == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "IMAGE_ON_HOSPITAL_SERVER");
+        }
     }
 
     private void assertCanView(Study study) {

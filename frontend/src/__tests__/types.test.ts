@@ -27,6 +27,8 @@ describe('types smoke', () => {
       slaDueAt: null,
       slaBreachedAt: null,
       slaOverdue: false,
+      cloudStatus: 'AVAILABLE',
+      onHospitalServer: false,
     }
     expect(item.priority).toBe('STAT')
 

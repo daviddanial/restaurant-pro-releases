@@ -21,7 +21,7 @@ import {
   TrackballRotateTool,
 } from '@cornerstonejs/tools'
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader'
-import { getBearerToken } from '../authToken'
+import { imageAuthHeaders, imageBase } from '../imageSource'
 import { withRetry } from './retryingLoader'
 import { StackProbeTool } from './stackProbeTool'
 
@@ -52,11 +52,11 @@ export function ensureCornerstoneInit(): Promise<void> {
       dicomImageLoader.init({
         maxWebWorkers: Math.min(navigator.hardwareConcurrency || 2, 4),
         useLegacyMetadataProvider: true,
-        beforeSend(_xhr, _imageId, _defaultHeaders) {
-          const token = getBearerToken()
-          if (token) {
-            return { Authorization: `Bearer ${token}` }
-          }
+        // The cloud session token for cloud images; the image pass for the hospital server.
+        beforeSend(_xhr, imageId, _defaultHeaders) {
+          const url = String(imageId).replace(/^(wadouri|dicomweb):/, '')
+          const headers = imageAuthHeaders(url)
+          if (headers.Authorization) return headers
         },
       })
 
@@ -105,15 +105,19 @@ export function ensureCornerstoneInit(): Promise<void> {
   return initPromise
 }
 
+/** URL of one DICOM object, from the hospital server or the cloud (see imageSource). */
+export function instanceUrl(studyUid: string, seriesUid: string, sopUid: string): string {
+  return `${imageBase(studyUid)}/studies/${studyUid}/series/${seriesUid}/instances/${sopUid}`
+}
+
 export function buildWadoUriImageId(
   studyUid: string,
   seriesUid: string,
   sopUid: string,
   frame?: number,
 ): string {
-  const base = `/api/dicom/studies/${studyUid}/series/${seriesUid}/instances/${sopUid}`
-  // Absolute URL helps the loader when the page origin differs during preview.
-  const absolute = new URL(base, window.location.origin).href
+  // Absolute URL: the hospital server is on another origin than the page.
+  const absolute = instanceUrl(studyUid, seriesUid, sopUid)
   if (frame != null && frame > 0) {
     return `wadouri:${absolute}?frame=${frame}`
   }

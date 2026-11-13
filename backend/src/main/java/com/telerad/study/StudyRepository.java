@@ -49,6 +49,27 @@ public interface StudyRepository extends JpaRepository<Study, UUID> {
                            @Param("excludeId") UUID excludeId,
                            @Param("modality") String modality);
 
+    /** Studies a hospital server should act on (upload or confirm it still holds them). */
+    List<Study> findByEdgeGatewayIdAndCloudStatusOrderByCloudRequestedAtAsc(
+            UUID edgeGatewayId, com.telerad.common.CloudStatus cloudStatus);
+
+    /**
+     * Cloud copies whose retention ran out: reported before the cutoff, and not requested again
+     * since. Only studies the hospital server still holds are candidates.
+     */
+    @Query("""
+        SELECT s FROM Study s
+        WHERE s.tenantId = :tenantId
+        AND s.edgeGatewayId IS NOT NULL
+        AND s.edgeEvictedAt IS NULL
+        AND s.cloudStatus = com.telerad.common.CloudStatus.AVAILABLE
+        AND s.status IN (com.telerad.common.StudyStatus.REPORTED, com.telerad.common.StudyStatus.DELIVERED)
+        AND s.reportedAt IS NOT NULL AND s.reportedAt < :cutoff
+        AND (s.cloudRequestedAt IS NULL OR s.cloudRequestedAt < :cutoff)
+        """)
+    List<Study> findCloudRetentionCandidates(@Param("tenantId") UUID tenantId,
+                                             @Param("cutoff") java.time.Instant cutoff);
+
     List<Study> findByAssignedToAndStatusIn(UUID userId, List<StudyStatus> statuses);
 
     long countByAssignedToAndStatus(UUID assignedTo, StudyStatus status);

@@ -60,7 +60,10 @@ public class DicomObjectIngestService {
             throw new IllegalArgumentException("Missing Study/Series/SOP Instance UID");
         }
 
-        boolean duplicate = instanceRepository.findBySopInstanceUid(sopUid).isPresent();
+        // An index-only row (image on the hospital server, no cloud copy yet) is not a duplicate.
+        boolean duplicate = instanceRepository.findBySopInstanceUid(sopUid)
+                .map(existing -> existing.getStorageKey() != null)
+                .orElse(false);
         String key = tenantId + "/" + studyUid + "/" + seriesUid + "/" + sopUid + ".dcm";
         if (!duplicate) {
             storage.put(key, data, "application/dicom");
@@ -76,6 +79,30 @@ public class DicomObjectIngestService {
             runAfterCommit(() -> publisher.publish(tenantId, key, studyUid, publishSource, null));
         }
         return new IngestOneResult(sopUid, studyUid, seriesUid, duplicate, !duplicate);
+    }
+
+    /**
+     * Index one instance kept on a hospital server: the cloud gets the study/series/instance rows
+     * from the DICOM header (no pixel data is sent) but no file. The file can be uploaded later
+     * through {@link #ingestBytes}, which fills in the storage key of the same row.
+     */
+    @Transactional
+    public IngestOneResult indexHeader(UUID tenantId, byte[] header) throws Exception {
+        Attributes attrs;
+        String tsuid;
+        try (DicomInputStream dis = new DicomInputStream(new ByteArrayInputStream(header))) {
+            tsuid = GzipVariantService.fileTransferSyntax(dis);
+            attrs = dis.readDataset(-1, -1);
+        }
+        String studyUid = attrs.getString(Tag.StudyInstanceUID);
+        String seriesUid = attrs.getString(Tag.SeriesInstanceUID);
+        String sopUid = attrs.getString(Tag.SOPInstanceUID);
+        if (studyUid == null || seriesUid == null || sopUid == null) {
+            throw new IllegalArgumentException("Missing Study/Series/SOP Instance UID");
+        }
+        boolean known = instanceRepository.findBySopInstanceUid(sopUid).isPresent();
+        ingestWorker.upsertFromDataset(tenantId, null, attrs, tsuid, StudySource.GATEWAY);
+        return new IngestOneResult(sopUid, studyUid, seriesUid, known, false);
     }
 
     private static void runAfterCommit(Runnable action) {

@@ -34,6 +34,24 @@ public class StudyService {
 
     @Transactional(readOnly = true)
     public List<StudyListItem> worklist(String modality, String priority, String status) {
+        return worklist(modality, priority, status, null);
+    }
+
+    /**
+     * @param images null for all; "cloud" for studies whose images are (or are being sent) in the
+     *               cloud, i.e. ready for a remote read; "hospital" for studies only on the hospital server
+     */
+    @Transactional(readOnly = true)
+    public List<StudyListItem> worklist(String modality, String priority, String status, String images) {
+        List<StudyListItem> all = worklistAll(modality, priority, status);
+        if (images == null || images.isBlank()) return all;
+        boolean cloud = images.equalsIgnoreCase("cloud");
+        return all.stream()
+                .filter(i -> (i.cloudStatus() != com.telerad.common.CloudStatus.EDGE_ONLY) == cloud)
+                .toList();
+    }
+
+    private List<StudyListItem> worklistAll(String modality, String priority, String status) {
         UserPrincipal user = UserPrincipal.current();
         List<StudyStatus> statuses;
         if (status != null && !status.isBlank()) {
@@ -230,7 +248,8 @@ public class StudyService {
                 s.getAssignedTo(), s.getInstanceCount(), s.getSource(), patientName, patientMrn,
                 patientSex, patientBirthDate,
                 s.getReadyAt(), s.getReportedAt(), hasSigned,
-                s.getSlaDueAt(), s.getSlaBreachedAt(), overdue
+                s.getSlaDueAt(), s.getSlaBreachedAt(), overdue,
+                s.getCloudStatus(), com.telerad.images.ImageLocationService.onHospitalServer(s)
         );
     }
 
@@ -285,7 +304,11 @@ public class StudyService {
             int instanceCount, com.telerad.common.StudySource source, String patientName, String patientMrn,
             String patientSex, java.time.LocalDate patientBirthDate,
             Instant readyAt, Instant reportedAt, boolean hasSignedReport,
-            Instant slaDueAt, Instant slaBreachedAt, boolean slaOverdue
+            Instant slaDueAt, Instant slaBreachedAt, boolean slaOverdue,
+            /** Where the image files are: AVAILABLE (cloud), EDGE_ONLY, REQUESTED, PENDING_DELETE. */
+            com.telerad.common.CloudStatus cloudStatus,
+            /** The hospital server holds the image files. */
+            boolean onHospitalServer
     ) {}
 
     public record SeriesDto(UUID id, String seriesInstanceUid, String modality, Integer seriesNumber,

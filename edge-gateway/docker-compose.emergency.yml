@@ -1,0 +1,12 @@
+# Emergency viewer: during an internet outage, staff on the hospital network can open the
+# images directly on the hospital server (Orthanc Explorer 2 study list + OHIF viewer).
+# Not a certified diagnostic viewer: for urgent looks only; report in TeleRad once the internet is back.
+#
+# Turn on (render the config with --emergency-password-file first, see the runbook):
+#   docker compose -f docker-compose.yml -f docker-compose.emergency.yml up -d orthanc
+# Then browse to http://<hospital-server-ip>:8042/ui/ , sign in as "emergency", open a study with OHIF.
+# Turn off when the internet is back: run the same command without this file.
+services:
+  orthanc:
+    ports:
+      - "8042:8042"

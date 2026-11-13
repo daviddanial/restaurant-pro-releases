@@ -11,12 +11,14 @@ import {
   keyImageBlob,
   listKeyImages,
 } from '../studyAnnotations'
+import { ImagesNotHere } from '../components/ImagesNotHere'
 import { MprViewer } from '../components/MprViewer'
 import { PatientSharePanel } from '../components/PatientSharePanel'
 import { PrintPreviewModal } from '../components/PrintPreviewModal'
 import { SeriesThumbnail } from '../components/SeriesThumbnail'
 import { ViewerExportMenu } from '../components/ViewerExportMenu'
 import { clearShareToken, shareApi, shareBlob } from '../shareApi'
+import { resolveImageSource, type ImageSource } from '../imageSource'
 import { pickDefaultMprSeriesIdx, seriesSupportsMpr } from '../mprEligibility'
 import { defaultPrior, formatInterval, formatStudyDate, matchPriorSeries } from '../priors'
 import type { SeriesDto, StudyDetail, StudyListItem } from '../types'
@@ -88,6 +90,9 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
   const navigate = useNavigate()
   const [detail, setDetail] = useState<StudyDetail | null>(null)
   const [error, setError] = useState<string | null>(null)
+  /** Where the current study's images load from (hospital server or cloud). */
+  const [imgSource, setImgSource] = useState<ImageSource | null>(null)
+  const [sourceAttempt, setSourceAttempt] = useState(0)
 
   const [layout, setLayout] = useState<LayoutMode>('1x1')
   const [slots, setSlots] = useState<ViewportSlot[]>(() => buildSlots('1x1', 1))
@@ -191,8 +196,11 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
     if (!id) return
     let cancelled = false
     loadStudy<StudyDetail>(studyPath(id))
-      .then((data) => {
+      .then(async (data) => {
+        // Pick the image source before any image ID is built (patient shares: cloud only).
+        const source: ImageSource = shareMode ? { kind: 'cloud' } : await resolveImageSource(data.study)
         if (cancelled) return
+        setImgSource(source)
         setDetail(data)
         const next = buildSlots('1x1', data.series.length)
         setLayout('1x1')
@@ -207,7 +215,7 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
     return () => {
       cancelled = true
     }
-  }, [id, loadStudy, studyPath])
+  }, [id, loadStudy, studyPath, shareMode, sourceAttempt])
 
   // Hanging protocol: frozen priors in share mode; live priors for staff.
   useEffect(() => {
@@ -239,8 +247,11 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
     setPriorSeriesIdx(0)
     setPriorInstanceIdx(0)
     loadStudy<StudyDetail>(studyPath(priorId))
-      .then((data) => {
-        if (!cancelled) setPriorDetail(data)
+      .then(async (data) => {
+        const source: ImageSource = shareMode ? { kind: 'cloud' } : await resolveImageSource(data.study)
+        if (cancelled) return
+        // A prior only on an unreachable hospital server cannot be compared from here.
+        setPriorDetail(source.kind === 'unavailable' ? null : data)
       })
       .catch(() => {
         if (!cancelled) setPriorDetail(null)
@@ -248,7 +259,7 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
     return () => {
       cancelled = true
     }
-  }, [priorId, loadStudy, studyPath])
+  }, [priorId, loadStudy, studyPath, shareMode])
 
   const comparing = Boolean(priorId && priorDetail) && !mprMode
   // Prior compare always uses a dedicated 1×2 (current | prior). Same-study multi
@@ -379,6 +390,17 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
     )
   }
 
+  if (imgSource?.kind === 'unavailable') {
+    return (
+      <ImagesNotHere
+        study={detail.study}
+        access={imgSource.access}
+        onBack={() => navigate(-1)}
+        onAvailable={() => setSourceAttempt((n) => n + 1)}
+      />
+    )
+  }
+
   const study = detail.study
   const priorStudy = priorDetail?.study
   const interval = priorStudy ? formatInterval(priorStudy.studyDate, study.studyDate) : null
@@ -431,6 +453,16 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
                 </span>
               )}
               {detail.report?.status === 'SIGNED' && <span className="badge">Report signed</span>}
+              {!shareMode && imgSource && (
+                <span
+                  className={`badge source-badge ${imgSource.kind}`}
+                  title={imgSource.kind === 'hospital'
+                    ? 'Images load from the hospital server over the hospital network'
+                    : 'Images load from the cloud'}
+                >
+                  {imgSource.kind === 'hospital' ? 'Hospital server' : 'Cloud'}
+                </span>
+              )}
               {shareMode && <span className="badge">Shared study</span>}
             </div>
 

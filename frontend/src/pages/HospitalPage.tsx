@@ -2,7 +2,9 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
+import { ImageLocationBadge } from '../components/ImageLocationBadge'
 import { PatientSharePanel } from '../components/PatientSharePanel'
+import { requestCloudCopy } from '../imageSource'
 import type { HospitalReportItem, StudyListItem, StudyStatus } from '../types'
 
 const PROGRESS_STEPS = ['Received', 'Assigned', 'In Progress', 'Report Ready'] as const
@@ -81,6 +83,7 @@ export function HospitalPage() {
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [sendingId, setSendingId] = useState<string | null>(null)
 
   async function load() {
     if (!hospitalId) return
@@ -95,6 +98,21 @@ export function HospitalPage() {
   useEffect(() => {
     load().catch((err) => setError(err.message))
   }, [hospitalId])
+
+  /** Ask the hospital server to upload a study (and its prior) for a remote read. */
+  async function sendForRemoteReading(study: StudyListItem) {
+    setSendingId(study.id)
+    setError(null)
+    try {
+      const access = await requestCloudCopy(study.id)
+      setStudies((prev) => prev.map((x) => (x.id === study.id ? { ...x, cloudStatus: access.cloudStatus } : x)))
+      setMessage('Sent: the hospital server is uploading the study for remote reading.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not send the study')
+    } finally {
+      setSendingId(null)
+    }
+  }
 
   function addFiles(list: FileList | File[]) {
     const next = Array.from(list).filter((f) => {
@@ -305,6 +323,7 @@ export function HospitalPage() {
               <th>Modality</th>
               <th>Date Created</th>
               <th>Progress</th>
+              <th>Images</th>
               <th className="col-report">Report</th>
               <th>Share</th>
             </tr>
@@ -338,6 +357,21 @@ export function HospitalPage() {
                         ))}
                       </div>
                       <div className="progress-caption">{slaCaption(s)}</div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="image-location-cell">
+                      <ImageLocationBadge study={s} />
+                      {s.cloudStatus === 'EDGE_ONLY' && s.onHospitalServer && (
+                        <button
+                          type="button"
+                          className="btn secondary btn-small"
+                          disabled={sendingId === s.id}
+                          onClick={() => void sendForRemoteReading(s)}
+                        >
+                          {sendingId === s.id ? 'Sending…' : 'Send for remote reading'}
+                        </button>
+                      )}
                     </div>
                   </td>
                   <td className="col-report">
@@ -382,7 +416,7 @@ export function HospitalPage() {
             })}
             {filteredStudies.length === 0 && (
               <tr>
-                <td colSpan={7} className="muted" style={{ padding: '1.75rem', textAlign: 'center' }}>
+                <td colSpan={8} className="muted" style={{ padding: '1.75rem', textAlign: 'center' }}>
                   No orders yet.
                 </td>
               </tr>

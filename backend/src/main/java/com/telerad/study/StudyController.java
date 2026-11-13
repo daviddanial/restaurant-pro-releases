@@ -17,8 +17,9 @@ public class StudyController {
     public List<StudyService.StudyListItem> worklist(
             @RequestParam(required = false) String modality,
             @RequestParam(required = false) String priority,
-            @RequestParam(required = false) String status) {
-        return studyService.worklist(modality, priority, status);
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String images) {
+        return studyService.worklist(modality, priority, status, images);
     }
 
     @GetMapping("/api/hospitals/{hospitalId}/studies")

@@ -30,4 +30,10 @@ public class GatewayProperties {
     private boolean mtlsEnabled = true;
     private String serverKeystore = "certs/gateway-ca/server.p12";
     private String serverKeystorePassword = "telerad";
+    /**
+     * Public host names / IPs hospital servers use to reach the mTLS port (env
+     * TELERAD_GATEWAY_SERVER_HOSTNAMES, comma-separated). They go into the server certificate's
+     * subject alternative names; the certificate is re-issued when one is missing.
+     */
+    private java.util.List<String> serverHostnames = new java.util.ArrayList<>();
 }

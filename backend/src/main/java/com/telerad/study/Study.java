@@ -87,6 +87,31 @@ public class Study {
     @Builder.Default
     private int instanceCount = 0;
 
+    /** Hospital server that holds this study's image files, if it came through one. */
+    @Column(name = "edge_gateway_id")
+    private UUID edgeGatewayId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "cloud_status", nullable = false, length = 16)
+    @Builder.Default
+    private com.telerad.common.CloudStatus cloudStatus = com.telerad.common.CloudStatus.AVAILABLE;
+
+    @Column(name = "cloud_requested_at")
+    private Instant cloudRequestedAt;
+
+    @Column(name = "cloud_requested_by")
+    private UUID cloudRequestedBy;
+
+    @Column(name = "cloud_available_at")
+    private Instant cloudAvailableAt;
+
+    @Column(name = "cloud_deleted_at")
+    private Instant cloudDeletedAt;
+
+    /** The hospital server reported it no longer holds the study. */
+    @Column(name = "edge_evicted_at")
+    private Instant edgeEvictedAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

@@ -33,7 +33,8 @@ import {
   cancelActiveManipulations,
   utilities as toolUtilities,
 } from '@cornerstonejs/tools'
-import { buildWadoUriImageId, ensureCornerstoneInit } from '../cornerstone/initCornerstone'
+import { buildWadoUriImageId, ensureCornerstoneInit, instanceUrl } from '../cornerstone/initCornerstone'
+import { imageAuthHeaders, isHospitalSource } from '../imageSource'
 import { DirectionalPrefetcher, countLoaded } from '../cornerstone/directionalPrefetch'
 import { StackProbeTool } from '../cornerstone/stackProbeTool'
 import {
@@ -649,10 +650,8 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
     }
 
     function loadPreview(inst: ViewportInstance) {
-      const token = getBearerToken()
-      const url = `/api/dicom/studies/${studyUid}/series/${seriesUid}/instances/${encodeURIComponent(inst.sopUid)}`
-        + `/frames/1?maxSize=${PREVIEW_MAX_SIZE}`
-      fetch(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+      const url = `${instanceUrl(studyUid, seriesUid, encodeURIComponent(inst.sopUid))}/frames/1?maxSize=${PREVIEW_MAX_SIZE}`
+      fetch(url, { headers: imageAuthHeaders(url) })
         .then((res) => (res.ok ? res.blob() : null))
         .then((blob) => {
           if (!blob || cancelled || fullImageShown) return
@@ -706,7 +705,9 @@ export const DicomViewport = forwardRef<DicomViewportHandle, Props>(function Dic
         if (stack.length > 1) prefetcherRef.current.start(stack.map((s) => s.imageId), startIdx)
 
         // For studies ingested before plane tags were stored, fill from WADO metadata.
-        if (!hasSpatialPositions(positionsRef.current) && instances.length > 0 && instances.length <= 256) {
+        // (Cloud only: index rows from the hospital server already carry the plane tags.)
+        if (!hasSpatialPositions(positionsRef.current) && instances.length > 0 && instances.length <= 256
+            && !isHospitalSource(studyUid)) {
           const key = stackKey
           void enrichPlaneFromMetadata(instances).then((next) => {
             if (!cancelled && next) setEnrichment({ key, planes: next })

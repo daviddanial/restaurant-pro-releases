@@ -74,3 +74,4 @@ edge-gateway/secrets/
 certs/gateway-ca/
 loadtest/.browsers/
 loadtest/results_vps/
+__pycache__/

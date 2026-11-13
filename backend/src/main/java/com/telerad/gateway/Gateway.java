@@ -69,6 +69,10 @@ public class Gateway {
     @Column(name = "last_successful_upload_at")
     private Instant lastSuccessfulUploadAt;
 
+    /** Address browsers on the hospital network use for the image service (reported by the agent). */
+    @Column(name = "lan_url", length = 512)
+    private String lanUrl;
+
     @PrePersist
     void prePersist() {
         if (id == null) id = UUID.randomUUID();

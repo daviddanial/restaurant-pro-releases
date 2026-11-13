@@ -59,7 +59,7 @@ public class SecurityConfig {
      * Behind a TLS proxy the browser's Origin (https) never matches what the API sees, so the
      * public site must be listed or every login is refused with "Invalid CORS request".
      */
-    static List<String> allowedOriginPatterns(String extraOrigins) {
+    public static List<String> allowedOriginPatterns(String extraOrigins) {
         List<String> origins = new ArrayList<>(List.of("http://localhost:*", "http://127.0.0.1:*"));
         if (extraOrigins != null) {
             for (String origin : extraOrigins.split(",")) {
