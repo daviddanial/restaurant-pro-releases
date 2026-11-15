@@ -31,6 +31,7 @@ public class StudyService {
     private final ReportRepository reportRepository;
     private final AuditService auditService;
     private final UserAccountRepository userAccountRepository;
+    private final com.telerad.order.ImagingOrderRepository orderRepository;
 
     @Transactional(readOnly = true)
     public List<StudyListItem> worklist(String modality, String priority, String status) {
@@ -238,6 +239,11 @@ public class StudyService {
         String hospitalName = tenantRepository.findById(s.getTenantId()).map(Tenant::getName).orElse(null);
         boolean hasSigned = reportRepository.findByStudyId(s.getId())
                 .map(r -> r.getStatus() == com.telerad.common.ReportStatus.SIGNED).orElse(false);
+        com.telerad.order.OrderStatus orderStatus = s.getMatchState() == com.telerad.order.MatchState.LINKED
+                && orderRepository != null
+                ? orderRepository.findByStudyId(s.getId())
+                    .map(o -> com.telerad.order.OrderService.effectiveStatus(o, s)).orElse(null)
+                : null;
         boolean overdue = s.getSlaDueAt() != null
                 && Instant.now().isAfter(s.getSlaDueAt())
                 && s.getStatus() != StudyStatus.REPORTED
@@ -249,7 +255,10 @@ public class StudyService {
                 patientSex, patientBirthDate,
                 s.getReadyAt(), s.getReportedAt(), hasSigned,
                 s.getSlaDueAt(), s.getSlaBreachedAt(), overdue,
-                s.getCloudStatus(), com.telerad.images.ImageLocationService.onHospitalServer(s)
+                s.getCloudStatus(), com.telerad.images.ImageLocationService.onHospitalServer(s),
+                s.getMatchState(), s.getMatchNote(), s.isNameDiffers(),
+                com.telerad.order.OrderMatcher.displayName(s.getScannerPatientName()), orderStatus,
+                s.getImagesAfterReportAt()
         );
     }
 
@@ -308,7 +317,16 @@ public class StudyService {
             /** Where the image files are: AVAILABLE (cloud), EDGE_ONLY, REQUESTED, PENDING_DELETE. */
             com.telerad.common.CloudStatus cloudStatus,
             /** The hospital server holds the image files. */
-            boolean onHospitalServer
+            boolean onHospitalServer,
+            /** Link to an order (KB note 15); null when the facility does not use orders. */
+            com.telerad.order.MatchState matchState,
+            String matchNote,
+            /** Linked, but the name typed at the scanner differs from the order's (the order's is shown). */
+            boolean nameDiffers,
+            String scannerPatientName,
+            com.telerad.order.OrderStatus orderStatus,
+            /** New images arrived after the report was signed. */
+            Instant imagesAfterReportAt
     ) {}
 
     public record SeriesDto(UUID id, String seriesInstanceUid, String modality, Integer seriesNumber,

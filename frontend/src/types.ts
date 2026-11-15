@@ -42,6 +42,128 @@ export interface StudyListItem {
   cloudStatus: CloudStatus
   /** The hospital server holds the image files. */
   onHospitalServer: boolean
+  /** Link to an order (KB note 15); null when the facility does not use orders. */
+  matchState?: MatchState | null
+  matchNote?: string | null
+  /** Linked, but the name typed at the scanner differs (the order's name is shown). */
+  nameDiffers?: boolean
+  scannerPatientName?: string | null
+  orderStatus?: OrderStatus | null
+  /** New images arrived after the report was signed. */
+  imagesAfterReportAt?: string | null
+}
+
+export type MatchState = 'LINKED' | 'NEEDS_CHECK' | 'SUGGESTED' | 'UNMATCHED' | 'RELEASED'
+
+export type OrderStatus =
+  | 'SCHEDULED'
+  | 'ARRIVED'
+  | 'SCANNING'
+  | 'SCANNED'
+  | 'READY'
+  | 'REPORTING'
+  | 'SIGNED'
+  | 'DELIVERED'
+  | 'CANCELLED'
+  | 'NO_SHOW'
+
+export type ReadyMode = 'AUTO' | 'WAIT_FOR_MRT'
+
+/** One entry of the central procedure list (KB note 15 §9). */
+export interface ProcedureDto {
+  id: string
+  modality: string
+  name: string
+  active: boolean
+  sortOrder: number
+}
+
+export interface ModalityDto {
+  code: string
+  label: string
+  procedures: number
+}
+
+/** Side of the body, chosen on the order. */
+export type Laterality = 'NOT_APPLICABLE' | 'LEFT' | 'RIGHT' | 'BILATERAL'
+
+export interface OrderPatient {
+  id: string
+  mrn: string
+  name: string | null
+  birthDate: string | null
+  sex: string | null
+}
+
+export interface ImagingOrder {
+  id: string
+  tenantId: string
+  hospitalName: string | null
+  accessionNumber: string
+  patient: OrderPatient | null
+  modality: string
+  procedureId: string | null
+  procedureDescription: string | null
+  laterality: Laterality
+  additionalInstructions: string | null
+  priority: StudyPriority
+  referringPhysician: string | null
+  clinicalInfo: string | null
+  source: 'MANUAL' | 'HL7' | 'FHIR'
+  status: OrderStatus
+  scheduledDate: string
+  studyId: string | null
+  imageCount: number
+  arrivedAt: string | null
+  scanningAt: string | null
+  scannedAt: string | null
+  readyAt: string | null
+  mrtConfirmedAt: string | null
+  cancelledAt: string | null
+  cancelReason: string | null
+  createdAt: string
+  waitingForMrt: boolean
+  nameDiffers: boolean
+  scannerPatientName: string | null
+  imagesAfterReport: boolean
+}
+
+export interface OrderEventDto {
+  at: string
+  kind: string
+  detail: string | null
+  userId: string | null
+}
+
+export interface OrderDetail {
+  order: ImagingOrder
+  history: OrderEventDto[]
+}
+
+export interface ReconcileItem {
+  studyId: string
+  studyInstanceUid: string
+  matchState: MatchState
+  matchNote: string | null
+  scannerAccession: string | null
+  scannerPatientId: string | null
+  scannerPatientName: string | null
+  scannerBirthDate: string | null
+  modality: string | null
+  studyDescription: string | null
+  studyDate: string | null
+  imageCount: number
+  receivedAt: string
+  suggested: ImagingOrder | null
+  candidates: ImagingOrder[]
+}
+
+export interface FacilityOrderSettings {
+  tenantId: string
+  hospitalName: string
+  ordersEnabled: boolean
+  readyMode: ReadyMode
+  scanStableSeconds: number
 }
 
 export type CloudStatus = 'AVAILABLE' | 'EDGE_ONLY' | 'REQUESTED' | 'PENDING_DELETE'

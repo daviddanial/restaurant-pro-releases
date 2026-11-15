@@ -70,6 +70,9 @@ public interface StudyRepository extends JpaRepository<Study, UUID> {
     List<Study> findCloudRetentionCandidates(@Param("tenantId") UUID tenantId,
                                              @Param("cutoff") java.time.Instant cutoff);
 
+    List<Study> findByTenantIdAndMatchStateInOrderByCreatedAtAsc(
+            UUID tenantId, java.util.Collection<com.telerad.order.MatchState> states);
+
     List<Study> findByAssignedToAndStatusIn(UUID userId, List<StudyStatus> statuses);
 
     long countByAssignedToAndStatus(UUID assignedTo, StudyStatus status);

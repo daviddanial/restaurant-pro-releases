@@ -1,3 +1,4 @@
+import { OrderFlags } from '../components/OrderFlags'
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
@@ -336,7 +337,10 @@ export function HospitalPage() {
               const canShare = s.status !== 'RECEIVED' && s.instanceCount > 0
               return (
                 <tr key={s.id} className={tone === 'breach' ? 'row-overdue' : undefined}>
-                  <td className="patient-cell">{displayPatientName(s.patientName)}</td>
+                  <td className="patient-cell">
+                    {displayPatientName(s.patientName)}
+                    <OrderFlags study={s} />
+                  </td>
                   <td className="mono muted-cell">{s.patientMrn || '—'}</td>
                   <td className="muted-cell">{s.modality || '—'}</td>
                   <td className="date-cell">{formatDateCreated(s)}</td>

@@ -33,6 +33,7 @@ public class GatewayIngestController {
     private final GatewayIngestAuditRepository ingestAuditRepository;
     private final ObjectMapper objectMapper;
     private final ImageLocationService imageLocationService;
+    private final com.telerad.order.OrderService orderService;
     private final EdgeTokenService edgeTokenService;
     private final TenantRepository tenantRepository;
 
@@ -203,6 +204,7 @@ public class GatewayIngestController {
         }
         for (String uid : studyUids) {
             imageLocationService.afterIndexed(gateway, gateway.getTenantId(), uid, Boolean.TRUE.equals(studyComplete));
+            if (Boolean.TRUE.equals(studyComplete)) orderService.onStudyComplete(gateway.getTenantId(), uid);
             persistAudit(gateway, requestId, sourceIp, uid, null, null, "indexed", null, null);
         }
         Map<String, Object> out = new LinkedHashMap<>();

@@ -69,4 +69,17 @@ class ApiExceptionHandlerTest {
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(res.getBody()).containsEntry("error", "Unexpected error");
     }
+
+    @Test
+    void wrongRoleIs403NotA500() {
+        var res = handler.handleDenied(new org.springframework.security.access.AccessDeniedException("x"));
+        org.assertj.core.api.Assertions.assertThat(res.getStatusCode().value()).isEqualTo(403);
+    }
+
+    @Test
+    void unknownPathIs404() {
+        var res = handler.handleNotFound(new org.springframework.web.servlet.resource.NoResourceFoundException(
+                org.springframework.http.HttpMethod.GET, "api/studies"));
+        org.assertj.core.api.Assertions.assertThat(res.getStatusCode().value()).isEqualTo(404);
+    }
 }

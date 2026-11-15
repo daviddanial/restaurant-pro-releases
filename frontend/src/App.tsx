@@ -7,6 +7,8 @@ import { AppShell } from './pages/AppShell'
 import { DispatchPage } from './pages/DispatchPage'
 import { HospitalPage } from './pages/HospitalPage'
 import { LoginPage } from './pages/LoginPage'
+import { OrderSlipPage } from './pages/OrderSlipPage'
+import { ReceptionPage } from './pages/ReceptionPage'
 import PatientSharePublicPage from './pages/PatientSharePublicPage'
 import { ReportEditorPage } from './pages/ReportEditorPage'
 import ShareSlipPage from './pages/ShareSlipPage'
@@ -55,6 +57,8 @@ export default function App() {
               </Route>
               <Route element={<RequireAuth roles={['HOSPITAL_USER', 'ADMIN']} />}>
                 <Route path="/hospital" element={<HospitalPage />} />
+                <Route path="/reception" element={<ReceptionPage />} />
+                <Route path="/reception/orders/:id/slip" element={<OrderSlipPage />} />
                 <Route path="/dispatch" element={<DispatchPage />} />
               </Route>
               <Route element={<RequireAuth roles={['ADMIN']} />}>

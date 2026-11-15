@@ -38,6 +38,7 @@ public class IngestWorker {
     private final NotificationService notificationService;
     private final IngestLocks ingestLocks;
     private final GzipVariantService gzipVariantService;
+    private final com.telerad.order.OrderService orderService;
 
     @RabbitListener(queues = "${telerad.rabbit.ingest-queue}")
     @Transactional
@@ -110,15 +111,19 @@ public class IngestWorker {
             if (iop != null) inst.setImageOrientationPatient(iop);
             instanceRepository.save(inst);
             Study study = inst.getSeries().getStudy();
-            if (study.getStatus() != StudyStatus.REPORTED && study.getStatus() != StudyStatus.DELIVERED) {
-                bumpReady(study);
+            // Never backwards: a re-sent image does not move a study that is being read.
+            if ((study.getStatus() == StudyStatus.RECEIVED || study.getStatus() == StudyStatus.READY)
+                    && orderService.readyAllowed(study)) {
+                markReady(study);
             }
             return study;
         }
 
         Patient patient = upsertPatient(tenantId, attrs);
 
-        Study study = studyRepository.findByTenantIdAndStudyInstanceUid(tenantId, studyUid)
+        Optional<Study> found = studyRepository.findByTenantIdAndStudyInstanceUid(tenantId, studyUid);
+        boolean newStudy = found.isEmpty();
+        Study study = found
                 .orElseGet(() -> Study.builder()
                         .tenantId(tenantId)
                         .studyInstanceUid(studyUid)
@@ -131,9 +136,14 @@ public class IngestWorker {
             log.warn("Study {} already reported; adding instance without status change", studyUid);
         }
 
-        study.setPatientId(patient.getId());
-        study.setAccessionNumber(attrs.getString(Tag.AccessionNumber));
-        study.setStudyDescription(attrs.getString(Tag.StudyDescription));
+        // Linked to an order: the order's patient and accession stay, whatever later images say.
+        boolean linked = study.getMatchState() == com.telerad.order.MatchState.LINKED;
+        if (!linked) {
+            study.setPatientId(patient.getId());
+            study.setAccessionNumber(attrs.getString(Tag.AccessionNumber));
+        }
+        String description = attrs.getString(Tag.StudyDescription);
+        if (!linked || description != null) study.setStudyDescription(description);
         String modality = attrs.getString(Tag.Modality);
         if (modality != null) study.setModality(modality);
         study.setStudyDate(parseDate(attrs.getString(Tag.StudyDate)));
@@ -169,16 +179,29 @@ public class IngestWorker {
         series.setInstanceCount(series.getInstanceCount() + 1);
         seriesRepository.save(series);
         savedStudy.setInstanceCount(savedStudy.getInstanceCount() + 1);
-        if (savedStudy.getStatus() != StudyStatus.REPORTED && savedStudy.getStatus() != StudyStatus.DELIVERED
-                && savedStudy.getStatus() != StudyStatus.IN_PROGRESS) {
-            bumpReady(savedStudy);
+        if ((savedStudy.getStatus() == StudyStatus.REPORTED || savedStudy.getStatus() == StudyStatus.DELIVERED)
+                && savedStudy.getImagesAfterReportAt() == null) {
+            savedStudy.setImagesAfterReportAt(Instant.now());
+            log.warn("Study {} got a new image after its report was signed", studyUid);
+        }
+        boolean mayBeReady = orderService.onImageReceived(savedStudy, scannerData(attrs), newStudy);
+        if (mayBeReady && (savedStudy.getStatus() == StudyStatus.RECEIVED || savedStudy.getStatus() == StudyStatus.READY)) {
+            markReady(savedStudy);
         } else {
             studyRepository.save(savedStudy);
         }
         return savedStudy;
     }
 
-    private void bumpReady(Study study) {
+    private com.telerad.order.OrderService.ScannerData scannerData(Attributes attrs) {
+        return new com.telerad.order.OrderService.ScannerData(attrs.getString(Tag.AccessionNumber),
+                attrs.getString(Tag.PatientID), attrs.getString(Tag.PatientName),
+                parseDate(attrs.getString(Tag.PatientBirthDate)), attrs.getString(Tag.Modality),
+                parseDate(attrs.getString(Tag.StudyDate)));
+    }
+
+    /** Ready to read: status, SLA deadline, and the "study ready" notification the first time. */
+    public void markReady(Study study) {
         boolean firstReady = study.getReadyAt() == null;
         study.setStatus(StudyStatus.READY);
         if (firstReady) {
@@ -209,6 +232,7 @@ public class IngestWorker {
         String pid = Optional.ofNullable(attrs.getString(Tag.PatientID)).orElse("UNKNOWN");
         return patientRepository.findByTenantIdAndPatientId(tenantId, pid)
                 .map(p -> {
+                    if (p.isRegistered()) return p; // reception's demographics win over the header
                     p.setPatientName(attrs.getString(Tag.PatientName));
                     p.setSex(attrs.getString(Tag.PatientSex));
                     p.setBirthDate(parseDate(attrs.getString(Tag.PatientBirthDate)));

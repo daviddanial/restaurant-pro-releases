@@ -2607,3 +2607,96 @@ a.btn-report:focus-visible {
 .restore-draft span { flex: 1 1 260px; }
 .save-warn { color: #b45309; font-weight: 600; }
 .image-settings + h3 { margin-top: 1.5rem; }
+
+/* ------------------------------------------------------------------ orders (KB note 15) */
+.reception-head-controls { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.order-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: start;
+}
+.order-form .field-wide { grid-column: 1 / -1; }
+.order-form .order-actions { grid-column: 1 / -1; }
+.order-created { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.orders-table td { vertical-align: top; }
+.order-row-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+.order-row-actions input { min-width: 14rem; }
+.inline-form { display: flex; gap: 0.4rem; margin-top: 0.4rem; flex-wrap: wrap; }
+.btn-link {
+  background: none; border: none; color: var(--accent, #0f766e); cursor: pointer; padding: 0.2rem;
+  text-decoration: underline; font: inherit; font-size: 0.85rem;
+}
+.order-status {
+  display: inline-block; padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+  background: #e2e8f0; color: #1e293b;
+}
+.order-status.status-arrived, .order-status.status-scanning { background: #dbeafe; color: #1e3a8a; }
+.order-status.status-scanned { background: #e0e7ff; color: #312e81; }
+.order-status.status-ready, .order-status.status-reporting { background: #ccfbf1; color: #134e4a; }
+.order-status.status-signed, .order-status.status-delivered { background: #dcfce7; color: #14532d; }
+.order-status.status-cancelled, .order-status.status-no_show { background: #f1f5f9; color: #64748b; }
+.order-steps { display: flex; gap: 2px; margin-top: 0.35rem; }
+.order-steps span { width: 14px; height: 4px; border-radius: 2px; background: #e2e8f0; }
+.order-steps span.on { background: #0f766e; }
+.row-closed td { opacity: 0.6; }
+.history-row td { background: #f8fafc; }
+.order-history { margin: 0; padding-left: 1.2rem; font-size: 0.85rem; }
+.order-history li { margin: 0.15rem 0; }
+.flag-warn {
+  display: inline-block; margin: 0.2rem 0.3rem 0 0; padding: 0.05rem 0.45rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 600; background: #fef3c7; color: #78350f; border: 1px solid #fcd34d;
+}
+.needs-check { border-left: 4px solid #f59e0b; }
+.count-pill {
+  display: inline-block; min-width: 1.5rem; padding: 0 0.4rem; border-radius: 999px; background: #f59e0b;
+  color: #fff; font-size: 0.8rem; text-align: center; vertical-align: middle;
+}
+.check-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem; margin-top: 0.75rem; }
+.check-note { margin-top: 0.25rem; color: #92400e; }
+.check-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 0.6rem 0; }
+.check-compare dl { margin: 0; }
+.check-compare dt { font-weight: 700; margin-bottom: 0.2rem; }
+.check-compare dd { margin: 0.1rem 0; }
+.check-line { display: flex; gap: 0.5rem; align-items: center; font-weight: 600; }
+.new-images-notice {
+  display: flex; gap: 0.75rem; align-items: center; padding: 0.45rem 1rem;
+  background: #fef3c7; color: #78350f; font-weight: 600;
+}
+
+.order-slip-page .slip-toolbar { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.order-slip { max-width: 180mm; background: #fff; color: #0f172a; }
+.order-slip .slip-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; border-bottom: 2px solid #0f172a; }
+.order-slip .slip-head h1 { margin: 0; font-size: 1.4rem; }
+.order-slip .slip-head p { margin: 0.2rem 0 0.6rem; }
+.order-slip .slip-priority { font-size: 1.4rem; font-weight: 800; border: 3px solid #0f172a; padding: 0.1rem 0.6rem; }
+.order-slip .slip-patient { margin: 0.8rem 0; line-height: 1.6; }
+.order-slip .slip-name { font-size: 1.6rem; font-weight: 800; }
+.order-slip .slip-info { font-size: 0.9rem; }
+.order-slip .slip-barcodes { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 0.8rem 0; }
+.order-slip .slip-barcode { margin: 0; }
+.order-slip .slip-barcode figcaption { font-weight: 700; margin-bottom: 0.2rem; }
+.order-slip .slip-barcode svg { display: block; max-width: 100%; height: auto; }
+.order-slip .slip-mrt { border-top: 1px solid #cbd5e1; padding-top: 0.6rem; font-size: 0.9rem; }
+.orders-table .nowrap { white-space: nowrap; }
+.reception-head-controls input[type='date'] { padding: 0.3rem 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+.order-row-actions input, .inline-form input { padding: 0.3rem 0.5rem; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; font-size: 0.85rem; }
+.order-instr { margin-top: 0.2rem; font-size: 0.8rem; color: #92400e; }
+.order-slip .slip-exam { font-size: 1.15rem; }
+.order-slip .slip-side { margin-left: 0.6rem; padding: 0 0.5rem; border: 2px solid #0f172a; font-weight: 800; }
+.order-slip .slip-instr { margin-top: 0.4rem; padding: 0.4rem 0.6rem; border: 2px dashed #0f172a; }
+.order-form .field-proc { grid-column: span 2; }
+.proc-tabs { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.75rem 0; }
+.proc-tabs button { border: 1px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 0.3rem 0.8rem; cursor: pointer; font: inherit; font-size: 0.85rem; }
+.proc-tabs button.active { background: #0f766e; border-color: #0f766e; color: #fff; }
+.proc-tabs button.active .muted { color: #ccfbf1; }
+.proc-tools, .proc-add { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.proc-tools input:not([type='checkbox']), .proc-add input { flex: 1 1 260px; padding: 0.4rem 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+.proc-table td { vertical-align: middle; }
+.proc-actions { display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; }
+
+/* A long unbroken value (e.g. a recipient list) must not stretch the whole page: panels keep the
+   page width and table cells may break such values. */
+.stack > * { min-width: 0; }
+.stack > .panel .table td { overflow-wrap: anywhere; }
+.proc-tools .check-line { white-space: nowrap; font-weight: 500; }

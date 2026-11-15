@@ -1,6 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { api } from '../api'
 import { ImageSettingsPanel } from '../components/ImageSettingsPanel'
+import { OrderSettingsPanel } from '../components/OrderSettingsPanel'
+import { ProceduresPanel } from '../components/ProceduresPanel'
 import type { AuditEvent, DicomNodeDto, NotificationEventDto, TenantDto, UserDto } from '../types'
 
 export function AdminPage() {
@@ -116,6 +118,8 @@ export function AdminPage() {
       </div>
 
       <ImageSettingsPanel tenants={tenants} />
+      <OrderSettingsPanel tenants={tenants} />
+      <ProceduresPanel />
 
       <div className="panel">
         <h2>DICOM AE titles (C-STORE allowlist)</h2>

@@ -1,3 +1,4 @@
+import { OrderFlags } from '../components/OrderFlags'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api'
@@ -165,7 +166,10 @@ export function WorklistPage() {
               return (
                 <tr key={s.id} className={s.slaOverdue ? 'row-overdue' : undefined}>
                   <td><PriorityBadge priority={s.priority} /></td>
-                  <td className="patient-cell">{displayPatientName(s.patientName)}</td>
+                  <td className="patient-cell">
+                    {displayPatientName(s.patientName)}
+                    <OrderFlags study={s} />
+                  </td>
                   <td className="mono muted-cell">{s.patientMrn || '—'}</td>
                   <td className="muted-cell">{s.modality || '—'}</td>
                   <td className="muted-cell">{s.hospitalName || '—'}</td>

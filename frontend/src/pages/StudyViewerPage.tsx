@@ -1,3 +1,4 @@
+import { OrderFlags } from '../components/OrderFlags'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type Ref } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api'
@@ -160,6 +161,8 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
   }, [studyId, shareMode, canEdit, user?.role, keyImages, reloadKeyImages])
   const priorViewport = useRef<DicomViewportHandle>(null)
   const [toolsSlot, setToolsSlot] = useState<HTMLElement | null>(null)
+  /** Images that arrived after the study was opened (KB note 15 §6). */
+  const [newImages, setNewImages] = useState(0)
 
   // Viewer is a fixed workspace: never let the document scroll (Cornerstone
   // thumbnail temp nodes and other offscreen hosts must not reveal page bg).
@@ -191,6 +194,19 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
     <T,>(path: string) => (shareMode ? shareApi<T>(path) : api<T>(path)),
     [shareMode],
   )
+
+  // Late images (e.g. a contrast series sent after the first one): tell the reader, do not reload under them.
+  const openedCount = detail?.study.instanceCount
+  useEffect(() => {
+    if (!id || shareMode || openedCount == null) return
+    setNewImages(0)
+    const t = window.setInterval(() => {
+      api<StudyDetail>(`/api/studies/${id}`)
+        .then((d) => setNewImages(Math.max(0, d.study.instanceCount - openedCount)))
+        .catch(() => undefined)
+    }, 30000)
+    return () => window.clearInterval(t)
+  }, [id, shareMode, openedCount])
 
   useEffect(() => {
     if (!id) return
@@ -434,10 +450,19 @@ export function StudyViewerPage({ shareMode = false }: StudyViewerProps) {
   return (
     <ViewerToolsSlotContext.Provider value={toolsSlot}>
       <div className="viewer-shell">
+        {newImages > 0 && (
+          <div className="new-images-notice" role="status">
+            New images added to this study ({newImages} more).
+            <button type="button" className="btn btn-small" onClick={() => window.location.reload()}>
+              Reload to see them
+            </button>
+          </div>
+        )}
         <div className="viewer-topstrip">
           <div className="viewer-topstrip-row">
             <div className="viewer-topstrip-id">
               <strong>{study.patientName || 'Unknown patient'}</strong>
+              {!shareMode && <OrderFlags study={study} />}
               <span className="muted">MRN {study.patientMrn || '—'}</span>
               <span className="mono muted">{study.accessionNumber || '—'}</span>
               <span className="muted">{study.modality || '—'}</span>

@@ -69,6 +69,25 @@ public class Tenant {
     @Column(name = "edge_local_retention_days")
     private Integer edgeLocalRetentionDays;
 
+    /** Orders and scanner workflow (KB note 15): studies are linked to orders before they can be read. */
+    @Column(name = "orders_enabled", nullable = false)
+    @Builder.Default
+    private boolean ordersEnabled = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ready_mode", nullable = false, length = 16)
+    @Builder.Default
+    private com.telerad.order.ReadyMode readyMode = com.telerad.order.ReadyMode.AUTO;
+
+    /** No new image for this long means the scan is finished. */
+    @Column(name = "scan_stable_seconds", nullable = false)
+    @Builder.Default
+    private int scanStableSeconds = 120;
+
+    /** Accession numbers are {prefix}-{yyMMdd}-{nnnn}; null uses the tenant code. */
+    @Column(name = "accession_prefix", length = 16)
+    private String accessionPrefix;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

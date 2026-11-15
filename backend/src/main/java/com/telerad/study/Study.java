@@ -112,6 +112,39 @@ public class Study {
     @Column(name = "edge_evicted_at")
     private Instant edgeEvictedAt;
 
+    /** Link to an order (KB note 15); null when the facility does not use orders. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "match_state", length = 16)
+    private com.telerad.order.MatchState matchState;
+
+    @Column(name = "match_note", length = 512)
+    private String matchNote;
+
+    @Column(name = "suggested_order_id")
+    private UUID suggestedOrderId;
+
+    /** What the scanner wrote into the header, kept for audit and reconciliation. */
+    @Column(name = "scanner_patient_id", length = 128)
+    private String scannerPatientId;
+
+    @Column(name = "scanner_patient_name")
+    private String scannerPatientName;
+
+    @Column(name = "scanner_birth_date")
+    private LocalDate scannerBirthDate;
+
+    /** Linked by accession + patient ID, but the scanner's name differs from the order's. */
+    @Column(name = "name_differs", nullable = false)
+    @Builder.Default
+    private boolean nameDiffers = false;
+
+    @Column(name = "last_image_at")
+    private Instant lastImageAt;
+
+    /** New images arrived after the report was signed. */
+    @Column(name = "images_after_report_at")
+    private Instant imagesAfterReportAt;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

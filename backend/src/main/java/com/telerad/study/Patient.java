@@ -32,6 +32,11 @@ public class Patient {
     @Column(length = 16)
     private String sex;
 
+    /** Registered by reception: the image header never overwrites these demographics. */
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean registered = false;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

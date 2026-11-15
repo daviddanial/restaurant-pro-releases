@@ -33,6 +33,7 @@ class IngestWorkerTest {
     @Mock NotificationService notificationService;
     @Mock IngestLocks ingestLocks;
     @Mock GzipVariantService gzipVariantService;
+    @Mock com.telerad.order.OrderService orderService;
     @InjectMocks IngestWorker ingestWorker;
 
     private UUID tenantId;
@@ -54,6 +55,9 @@ class IngestWorkerTest {
         attrs.setInt(Tag.InstanceNumber, VR.IS, 1);
         attrs.setInt(Tag.Rows, VR.US, 512);
         attrs.setInt(Tag.Columns, VR.US, 512);
+        // Facility without orders: every study may become ready (the order rules have their own tests).
+        lenient().when(orderService.onImageReceived(any(), any(), anyBoolean())).thenReturn(true);
+        lenient().when(orderService.readyAllowed(any())).thenReturn(true);
     }
 
     @Test
